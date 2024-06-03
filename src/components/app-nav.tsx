@@ -7,8 +7,8 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 const routes = [
-  { label: 'Search', path: '/app/search' },
-  { label: 'Profile', path: '/app/profile' },
+  { label: 'Search', path: '/' },
+  { label: 'Profile', path: '/profile' },
 ];
 
 export default function AppNav() {

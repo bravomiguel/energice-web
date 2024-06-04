@@ -32,6 +32,19 @@ const config = {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic':
+          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'custom-gradient': 'linear-gradient(to top, #0097a7ff, #4285f4ff)',
+      },
+      screens: {
+        xs: '480px',
+      },
+      colors: {
+        'blue-koldup': '#4285f4ff',
+        'green-koldup': '#0097a7ff',
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],

@@ -1,65 +1,75 @@
-// import NextAuth, { NextAuthConfig } from 'next-auth';
-// import credentials from 'next-auth/providers/credentials';
-// import prisma from './db';
-// import bcrypt from 'bcryptjs';
+import NextAuth, { NextAuthConfig } from 'next-auth';
+import credentials from 'next-auth/providers/credentials';
+import prisma from './db';
+import bcrypt from 'bcryptjs';
+import { authFormSchema } from './validations';
 
-// const config = {
-//   pages: {
-//     signIn: '/login',
-//   },
-//   // default settings below
-//   // session: {
-//   //   maxAge: 30 * 24 * 60 * 60,
-//   //   strategy: "jwt",
-//   // },
-//   providers: [
-//     credentials({
-//       async authorize(credentials) {
-//         // runs on login
-//         const { email, password } = credentials;
+const config = {
+  pages: {
+    signIn: '/signup',
+  },
+  // default settings below
+  // session: {
+  //   maxAge: 30 * 24 * 60 * 60,
+  //   strategy: "jwt",
+  // },
+  providers: [
+    credentials({
+      async authorize(credentials) {
+        // runs on signin
+        // const { email, password } = credentials;
+        const validatedCredentials = authFormSchema.safeParse(credentials);
 
-//         const user = await prisma.user.findUnique({
-//           where: {
-//             email,
-//           },
-//         });
+        if (!validatedCredentials.success) {
+          console.log('Invalid email and/or password');
+          return null;
+        }
 
-//         if (!user) {
-//           console.log('No user found');
-//           return null;
-//         }
+        const { email, password } = validatedCredentials.data;
 
-//         const passwordsMatch = await bcrypt.compare(
-//           password,
-//           user.hashedPassword,
-//         );
+        const user = await prisma.user.findUnique({
+          where: {
+            email,
+          },
+        });
 
-//         if (!passwordsMatch) {
-//           console.log('Invalid credentials');
-//           return null;
-//         }
+        if (!user) {
+          console.log('No user found');
+          return null;
+        }
 
-//         return user;
-//       },
-//     }),
-//   ],
-//   callbacks: {
-//     authorized: ({ auth, request }) => {
-//       // runs on every request with middleware
-//       const isLoggedIn = Boolean(auth?.user);
-//       const isTryingToAccessApp = request.nextUrl.pathname.includes('/app');
+        const passwordsMatch = await bcrypt.compare(
+          password,
+          user.hashedPassword,
+        );
 
-//       if (!isLoggedIn && isTryingToAccessApp) return false;
+        if (!passwordsMatch) {
+          console.log('Invalid credentials');
+          return null;
+        }
 
-//       if (isLoggedIn && isTryingToAccessApp) return true;
+        return user;
+      },
+    }),
+  ],
+  callbacks: {
+    authorized: ({ auth, request }) => {
+      // runs on every request with middleware
+      const isLoggedIn = Boolean(auth?.user);
+      const isTryingToAccessAuth = request.nextUrl.pathname.includes('/signin') || request.nextUrl.pathname.includes('/signup');
 
-//       if (isLoggedIn && !isTryingToAccessApp) return Response.redirect(new URL('/app/dashboard', request.nextUrl));
+      
+      if (isLoggedIn && isTryingToAccessAuth) return Response.redirect(new URL('/', request.nextUrl));
 
-//       if (!isLoggedIn && !isTryingToAccessApp) return true;
+      if (isLoggedIn) return true;
 
-//       return false;
-//     },
-//   },
-// } satisfies NextAuthConfig;
+      if (!isLoggedIn && isTryingToAccessAuth) return true;
+      
+      if (!isLoggedIn) return false;
 
-// export const { auth, signIn, signOut } = NextAuth(config);
+      return false;
+    },
+  },
+} satisfies NextAuthConfig;
+
+export const { auth, signIn, signOut } = NextAuth(config);

@@ -10,6 +10,11 @@ export default function DeleteAccountBtn({
   userEmail: AuthForm["email"];
 }) {
   return (
-    <Button onClick={async () => await deleteAccount(userEmail)}>Delete Account</Button>
+    <Button onClick={async () => {
+      const response = await deleteAccount(userEmail);
+      if (response?.errorCode) {
+        console.error({error: response});
+      }
+    }}>Delete Account</Button>
   );
 }

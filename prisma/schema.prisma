@@ -22,7 +22,6 @@ model User {
   deleted        Boolean   @default(false)
   deletedAt      DateTime?
   createdAt      DateTime  @default(now())
-  recreatedAt    DateTime?
   updatedAt      DateTime  @updatedAt
 }
 

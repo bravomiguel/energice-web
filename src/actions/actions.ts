@@ -14,47 +14,46 @@ export async function signUp(formData: unknown) {
 
   if (!validatedFormData.success) {
     return {
-      errors: validatedFormData.error.flatten().fieldErrors,
+      errorCode: validatedFormData.error.issues[0].code,
+      errorMessage: validatedFormData.error.issues[0].message,
     };
   }
 
-  try {
-    const deletedUser = await prisma.user.findUnique({
-      where: {
-        email: validatedFormData.data.email,
-        deleted: true,
-      },
-    });
+  const hashedPassword = await bcrypt.hash(validatedFormData.data.password, 10);
 
-    if (deletedUser) {
-      await prisma.user.update({
-        where: {
-          email: validatedFormData.data.email,
-        },
-        data: {
-          deleted: false,
-          recreatedAt: new Date(),
-        },
-      });
-    }
-  } catch (e) {
-    throw new Error('Failed to complete deleted user check');
+  const user = await prisma.user.findUnique({
+    where: {
+      email: validatedFormData.data.email
+    },
+  });
+
+  if (user && !user.deleted) {
+    return {
+      errorCode: 'already_signed_up',
+      errorMessage: "You've already signed up, please sign in",
+    };
   }
 
-  try {
-    const hashedPassword = await bcrypt.hash(
-      validatedFormData.data.password,
-      10,
-    );
+  if (user && user.deleted) {
+    await prisma.user.update({
+      where: {
+        email: validatedFormData.data.email,
+      },
+      data: {
+        hashedPassword,
+        deleted: false,
+        deletedAt: null,
+      },
+    });
+  }
 
+  if (!user) {
     await prisma.user.create({
       data: {
         email: validatedFormData.data.email,
         hashedPassword,
       },
     });
-  } catch (e) {
-    throw new Error('Failed to create user');
   }
 
   await signIn('credentials', validatedFormData.data);
@@ -65,7 +64,8 @@ export async function signInAction(formData: unknown) {
 
   if (!validatedFormData.success) {
     return {
-      errors: validatedFormData.error.flatten().fieldErrors,
+      errorCode: validatedFormData.error.issues[0].code,
+      errorMessage: validatedFormData.error.issues[0].message,
     };
   }
 
@@ -77,27 +77,26 @@ export async function signOutAction() {
 }
 
 export async function deleteAccount(email: unknown) {
-  const validatedEmail = authFormSchema.pick({ email: true }).safeParse(email);
+  const validatedEmail = authFormSchema
+    .pick({ email: true })
+    .safeParse({ email });
 
   if (!validatedEmail.success) {
     return {
-      errors: validatedEmail.error.flatten().fieldErrors,
+      errorCode: validatedEmail.error.issues[0].code,
+      errorMessage: validatedEmail.error.issues[0].message,
     };
   }
 
-  try {
-    await prisma.user.update({
-      where: {
-        email: validatedEmail.data.email,
-      },
-      data: {
-        deleted: true,
-        deletedAt: new Date(),
-      },
-    });
-  } catch (e) {
-    throw new Error('Failed to delete account');
-  }
+  await prisma.user.update({
+    where: {
+      email: validatedEmail.data.email,
+    },
+    data: {
+      deleted: true,
+      deletedAt: new Date(),
+    },
+  });
 
   await signOut({ redirectTo: '/signup' });
 }

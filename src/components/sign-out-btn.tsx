@@ -1,10 +1,8 @@
 'use client';
 
-import { signOutAction } from "@/actions/actions";
-import { Button } from "./ui/button";
+import { signOutAction } from '@/actions/actions';
+import { Button } from './ui/button';
 
 export default function SignOutBtn() {
-  return (
-    <Button onClick={async () => await signOutAction()}>Sign out</Button>
-  )
+  return <Button onClick={async () => await signOutAction()}>Sign out</Button>;
 }

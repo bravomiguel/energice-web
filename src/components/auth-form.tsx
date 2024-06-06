@@ -1,14 +1,13 @@
 'use client';
 
-import { z } from 'zod';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
+import { TAuthForm, authFormSchema } from '@/lib/validations';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-// import PetFormBtn from './pet-form-btn';
-import { useForm } from 'react-hook-form';
-import { TAuthForm, authFormSchema } from '@/lib/validations';
 import { Button } from './ui/button';
+import { signInAction, signUp } from '@/actions/actions';
 
 type AuthFormProps = {
   type: 'signUp' | 'signIn';
@@ -25,12 +24,12 @@ export default function PetForm({ type }: AuthFormProps) {
   });
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log({ data });
-    // if (type === 'signIn') {
-    //   await handleAddPet(petData);
-    // } else {
-    //   await handleEditPet(selectedPet!.id, petData);
-    // }
+    // console.log({ data });
+    if (type === 'signIn') {
+      await signInAction(data);
+    } else {
+      await signUp(data);
+    }
   });
 
   return (

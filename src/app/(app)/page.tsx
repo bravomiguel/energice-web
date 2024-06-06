@@ -1,3 +1,3 @@
 export default function Search() {
-  return <div>Search</div>;
+  return <main className="h-screen">Search</main>;
 }

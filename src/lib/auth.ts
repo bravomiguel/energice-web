@@ -7,6 +7,7 @@ import { authFormSchema } from './validations';
 const config = {
   pages: {
     signIn: '/signup',
+    // signOut: '/signIn',
   },
   // default settings below
   // session: {
@@ -17,7 +18,6 @@ const config = {
     credentials({
       async authorize(credentials) {
         // runs on signin
-        // const { email, password } = credentials;
         const validatedCredentials = authFormSchema.safeParse(credentials);
 
         if (!validatedCredentials.success) {
@@ -30,6 +30,7 @@ const config = {
         const user = await prisma.user.findUnique({
           where: {
             email,
+            deleted: false,
           },
         });
 
@@ -53,19 +54,33 @@ const config = {
     }),
   ],
   callbacks: {
-    authorized: ({ auth, request }) => {
+    authorized: async ({ auth, request }) => {
       // runs on every request with middleware
-      const isLoggedIn = Boolean(auth?.user);
-      const isTryingToAccessAuth = request.nextUrl.pathname.includes('/signin') || request.nextUrl.pathname.includes('/signup');
+      const isSignedIn = Boolean(auth?.user);
+      const isTryingToAccessAuth =
+        request.nextUrl.pathname.includes('/signin') ||
+        request.nextUrl.pathname.includes('/signup');
+      // const user = await prisma.user.findUnique({
+      //   where: { email: auth?.user?.email ?? undefined },
+      //   select: { firstName: true, isWaiverSigned: true },
+      // });
+      // const isMemberInfoComplete = Boolean(user?.firstName);
+      // const isWaiverSigned = Boolean(user?.isWaiverSigned);
 
-      
-      if (isLoggedIn && isTryingToAccessAuth) return Response.redirect(new URL('/', request.nextUrl));
+      // if (isSignedIn && !isMemberInfoComplete)
+      //   return Response.redirect(new URL('/member-info', request.nextUrl));
 
-      if (isLoggedIn) return true;
+      // if (isSignedIn && !isWaiverSigned)
+      //   return Response.redirect(new URL('/waiver', request.nextUrl));
 
-      if (!isLoggedIn && isTryingToAccessAuth) return true;
-      
-      if (!isLoggedIn) return false;
+      if (isSignedIn && isTryingToAccessAuth)
+        return Response.redirect(new URL('/', request.nextUrl));
+
+      if (isSignedIn) return true;
+
+      if (!isSignedIn && isTryingToAccessAuth) return true;
+
+      if (!isSignedIn) return false;
 
       return false;
     },

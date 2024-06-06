@@ -1,5 +1,20 @@
-export default function Profile() {
+import { redirect } from 'next/navigation';
+
+import { auth } from '@/lib/auth';
+import DeleteAccountBtn from "@/components/delete-account-btn";
+import SignOutBtn from "@/components/sign-out-btn";
+
+export default async function Profile() {
+  const session = await auth();
+  if (!session?.user) {
+    redirect("/signin");
+  }
+  const userEmail = session.user.email;
+
   return (
-    <div>Profile</div>
+    <main className="h-screen flex flex-col gap-4 py-4">
+      <SignOutBtn />
+      {!!userEmail && <DeleteAccountBtn userEmail={userEmail} />}
+    </main>
   )
 }

@@ -1,4 +1,4 @@
-export default function Session() {
+export default function Page() {
   return (
     <div>Session</div>
   )

@@ -17,7 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} text-sm text-zinc-900 bg-zinc-200 min-h-screen sm:flex sm:items-center sm:justify-center sm:bg-gray-400`}
+        className={`${inter.className} text-base text-zinc-900 bg-zinc-200 min-h-screen sm:flex sm:items-center sm:justify-center sm:bg-gray-400`}
       >
         <p className="hidden sm:block text-lg font-semibold">
           App only available on mobile

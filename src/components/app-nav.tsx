@@ -18,7 +18,6 @@ export default function AppNav() {
 
   return (
     <footer className="flex justify-between items-center border-b border-white/10 py-2 sticky bottom-0">
-      <nav>
         <ul className="flex gap-2 text-xs">
           {routes.map((route) => (
             <li key={route.path}>
@@ -34,7 +33,6 @@ export default function AppNav() {
             </li>
           ))}
         </ul>
-      </nav>
     </footer>
   );
 }

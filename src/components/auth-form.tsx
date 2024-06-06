@@ -2,9 +2,9 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { BiSolidHide, BiSolidShow } from 'react-icons/bi';
 
-import { TAuthForm, authFormSchema } from '@/lib/validations';
+import { authFormSchema } from '@/lib/validations';
+import { TAuthForm } from '@/lib/types';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Button } from './ui/button';
@@ -16,7 +16,7 @@ type AuthFormProps = {
   type: 'signUp' | 'signIn';
 };
 
-export default function PetForm({ type }: AuthFormProps) {
+export default function AuthForm({ type }: AuthFormProps) {
   const {
     register,
     handleSubmit,
@@ -61,7 +61,7 @@ export default function PetForm({ type }: AuthFormProps) {
   });
 
   return (
-    <form className="flex flex-col gap-10 px-6" onSubmit={onSubmit}>
+    <form className="flex flex-col gap-10" onSubmit={onSubmit}>
       <div className="space-y-3">
         <div className="space-y-1">
           <Label htmlFor="email">Email</Label>
@@ -69,10 +69,10 @@ export default function PetForm({ type }: AuthFormProps) {
             id="email"
             type="email"
             {...register('email')}
-            className="focus-visible:ring-2 focus-visible:indigo focus-visible:text-zinc-900 focus-visible:bg-zinc-100/60 text-zinc-50"
+            className="border-zinc-200 focus-visible:text-zinc-900 focus-visible:bg-zinc-100/60 text-zinc-50"
           />
           {errors.email && (
-            <p className="text-red-900 font-normal">{errors.email.message}</p>
+            <p className="text-red-900 text-sm">{errors.email.message}</p>
           )}
         </div>
 
@@ -83,7 +83,7 @@ export default function PetForm({ type }: AuthFormProps) {
               id="password"
               type={passwordShow ? 'text' : 'password'}
               {...register('password')}
-              className="focus-visible:ring-2 focus-visible:indigo focus-visible:text-zinc-900 focus-visible:bg-zinc-100/60 text-zinc-50"
+              className="border-zinc-200 focus-visible:indigo focus-visible:text-zinc-900 focus-visible:bg-zinc-100/60 text-zinc-50"
             />
             <ShowPasswordToggle
               passwordShow={passwordShow}
@@ -92,7 +92,7 @@ export default function PetForm({ type }: AuthFormProps) {
             />
           </div>
           {errors.password && (
-            <p className="text-red-900 font-normal">
+            <p className="text-red-900 text-sm">
               {errors.password.message}
             </p>
           )}
@@ -108,10 +108,10 @@ export default function PetForm({ type }: AuthFormProps) {
           {type === 'signUp' ? 'Sign up' : 'Sign in'}
         </Button>
         {authErrors.signIn && (
-          <p className="text-red-900 font-normal">{authErrors.signIn}</p>
+          <p className="text-red-900 text-sm">{authErrors.signIn}</p>
         )}
         {authErrors.signUp && (
-          <p className="text-red-900 font-normal">{authErrors.signUp}</p>
+          <p className="text-red-900 text-sm">{authErrors.signUp}</p>
         )}
       </div>
     </form>

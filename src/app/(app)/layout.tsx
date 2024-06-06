@@ -3,6 +3,7 @@ import { Toaster } from '@/components/ui/sonner';
 import UnitContextProvider from '@/contexts/unit-context-provider';
 import SessionContextProvider from '@/contexts/session-context-provider';
 import prisma from '@/lib/db';
+import AppHeader from '@/components/app-header';
 
 export default async function Layout({
   children,
@@ -14,13 +15,14 @@ export default async function Layout({
 
   return (
     <>
-      <div className="flex flex-col max-w-[1050px] mx-auto px-4 min-h-screen relative">
+      <div className="flex flex-col px-4 pb-4 min-h-screen">
+        <AppHeader />
         <UnitContextProvider data={units}>
           <SessionContextProvider data={sessions}>
             {children}
           </SessionContextProvider>
         </UnitContextProvider>
-        <AppNav />
+        {/* <AppNav /> */}
       </div>
       <Toaster position="top-right" />
     </>

@@ -60,18 +60,6 @@ const config = {
       const isTryingToAccessAuth =
         request.nextUrl.pathname.includes('/signin') ||
         request.nextUrl.pathname.includes('/signup');
-      // const user = await prisma.user.findUnique({
-      //   where: { email: auth?.user?.email ?? undefined },
-      //   select: { firstName: true, isWaiverSigned: true },
-      // });
-      // const isMemberInfoComplete = Boolean(user?.firstName);
-      // const isWaiverSigned = Boolean(user?.isWaiverSigned);
-
-      // if (isSignedIn && !isMemberInfoComplete)
-      //   return Response.redirect(new URL('/member-info', request.nextUrl));
-
-      // if (isSignedIn && !isWaiverSigned)
-      //   return Response.redirect(new URL('/waiver', request.nextUrl));
 
       if (isSignedIn && isTryingToAccessAuth)
         return Response.redirect(new URL('/', request.nextUrl));

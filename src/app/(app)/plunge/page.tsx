@@ -1,3 +1,3 @@
 export default function Page() {
-  return <div>HealthQuiz</div>;
+  return <div>PlungeInfo</div>;
 }

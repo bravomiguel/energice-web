@@ -1,7 +1,7 @@
 import AuthForm from '@/components/auth-form';
 import Link from 'next/link';
 
-const Page = () => {
+export default function Page () {
   return (
     <main className='w-full'>
       <AuthForm type="signUp" />
@@ -14,5 +14,3 @@ const Page = () => {
     </main>
   );
 };
-
-export default Page;

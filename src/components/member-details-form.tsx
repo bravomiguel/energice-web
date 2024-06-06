@@ -8,7 +8,7 @@ import { TMemberDetailsForm } from '@/lib/types';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Button } from './ui/button';
-// import { saveMemberDetails } from '@/actions/actions';
+import { addMemberDetails } from '@/actions/actions';
 
 export default function MemberDetailsForm() {
   const {
@@ -21,11 +21,11 @@ export default function MemberDetailsForm() {
   });
 
   const onSubmit = handleSubmit(async (data) => {
-    console.log({ data });
-    // const response = saveMemberDetails(data);
-    // if (response?.errorCode) {
-    //   console.error({error: response});
-    // }
+    const response = await addMemberDetails(data);
+    if (response?.errorCode) {
+      console.error({error: response});
+      // return;
+    }
   });
 
   return (

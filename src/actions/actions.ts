@@ -84,7 +84,7 @@ export async function signOutAction() {
 export async function deleteAccount(data: unknown) {
   const validatedEmail = authFormSchema
     .pick({ email: true })
-    .safeParse({ data });
+    .safeParse({ email: data });
 
   if (!validatedEmail.success) {
     return {

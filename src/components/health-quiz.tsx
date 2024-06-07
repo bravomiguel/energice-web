@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { useTransition } from 'react';
 
 import { initialHealthQuizData } from '@/lib/data';
 import { HealthQuizData } from '@/lib/types';
@@ -9,16 +10,22 @@ import { Button } from './ui/button';
 import H1 from './h1';
 import Subtitle from './subtitle';
 import BottomNav from './bottom-nav';
+import { saveHealthQuiz } from '@/actions/actions';
 
 export default function HealthQuiz() {
-  const [quizData, setQuizData] = useState<HealthQuizData[]>(
+  const [quizData, setQuizData] = useState<HealthQuizData>(
     initialHealthQuizData,
   );
   const isQuizComplete =
-    quizData.filter((question) => question.answer !== null).length === 10;
+    quizData.filter((question) => question.answer !== null).length ===
+    quizData.length;
 
-  const onSubmit = async () => {
-    
+  const [isSubmitting, startSubmitting] = useTransition();
+  const handleSubmit = async () => {
+    startSubmitting(async () => {
+      await saveHealthQuiz(quizData);
+    });
+    return;
   };
 
   return (
@@ -26,11 +33,15 @@ export default function HealthQuiz() {
       <div className="flex flex-col gap-1">
         <H1>Health Quiz</H1>
         <Subtitle>
-          2-min quiz to check if cold plunging suits your health needs.
+          1-min quiz to check if cold plunging suits your health needs.
         </Subtitle>
       </div>
       <QuestionSet quizData={quizData} setQuizData={setQuizData} />
-      <BtnSet isQuizComplete={isQuizComplete} onSubmit={onSubmit} />
+      <BtnSet
+        isQuizComplete={isQuizComplete}
+        onSubmit={handleSubmit}
+        isSubmitting={isSubmitting}
+      />
     </>
   );
 }
@@ -39,8 +50,8 @@ function QuestionSet({
   quizData,
   setQuizData,
 }: {
-  quizData: HealthQuizData[];
-  setQuizData: Dispatch<SetStateAction<HealthQuizData[]>>;
+  quizData: HealthQuizData;
+  setQuizData: Dispatch<SetStateAction<HealthQuizData>>;
 }) {
   return (
     <div className="flex flex-col gap-5">
@@ -88,9 +99,11 @@ function QuestionSet({
 function BtnSet({
   isQuizComplete,
   onSubmit,
+  isSubmitting,
 }: {
   isQuizComplete: boolean;
   onSubmit: () => Promise<void>;
+  isSubmitting: boolean;
 }) {
   const router = useRouter();
   return (
@@ -99,7 +112,7 @@ function BtnSet({
         Skip
       </Button>
       <Button
-        disabled={!isQuizComplete}
+        disabled={!isQuizComplete || isSubmitting}
         onClick={async () => await onSubmit()}
         className="w-full"
       >

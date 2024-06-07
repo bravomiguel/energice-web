@@ -4,7 +4,11 @@ import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 
 import prisma from '@/lib/db';
-import { authFormSchema, memberDetailsFormSchema } from '@/lib/validations';
+import {
+  authFormSchema,
+  healthQuizDataSchema,
+  memberDetailsFormSchema,
+} from '@/lib/validations';
 import { signIn, signOut } from '@/lib/auth';
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
@@ -150,15 +154,15 @@ export async function addMemberDetails(data: unknown) {
 
 // --- health quiz actions ---
 
-export async function addQuizData(data: unknown) {
-  // const validatedQuizData = quizDataFormSchema.safeParse(data);
+export async function saveHealthQuiz(data: unknown) {
+  const validatedQuizData = healthQuizDataSchema.safeParse(data);
 
-  // if (!validatedQuizData.success) {
-  //   return {
-  //     errorCode: validatedQuizData.error.issues[0].code,
-  //     errorMessage: validatedQuizData.error.issues[0].message,
-  //   };
-  // }
+  if (!validatedQuizData.success) {
+    return {
+      errorCode: validatedQuizData.error.issues[0].code,
+      errorMessage: validatedQuizData.error.issues[0].message,
+    };
+  }
 
   const session = await auth();
   const email = session?.user?.email;
@@ -166,10 +170,10 @@ export async function addQuizData(data: unknown) {
     redirect('/signin');
   }
 
-  // await prisma.user.update({
-  //   where: { email },
-  //   data: { quizData: JSON.stringify(validatedQuizData) },
-  // });
+  await prisma.user.update({
+    where: { email },
+    data: { healthQuiz: JSON.stringify(validatedQuizData.data) },
+  });
 
   redirect('/health-quiz/outcome');
 }

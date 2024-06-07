@@ -17,7 +17,8 @@ model User {
   firstName      String?
   lastName       String?
   dob            DateTime?
-  isWaiverSigned Boolean @default(false)
+  isWaiverSigned Boolean   @default(false)
+  healthQuiz     String?
   sessions       Session[]
   deleted        Boolean   @default(false)
   deletedAt      DateTime?

@@ -79,3 +79,11 @@ export const memberDetailsFormSchema = z.object({
     z.date(),
   ]),
 });
+
+export const healthQuizDataSchema = z.array(
+  z.object({
+    id: z.number(),
+    question: z.string().trim().min(1),
+    answer: z.union([z.null(), z.boolean()]),
+  }),
+);

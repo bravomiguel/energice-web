@@ -1,13 +1,11 @@
 import { unstable_noStore as noStore } from 'next/cache';
-import { useRouter } from 'next/navigation';
 
 import { getUser } from '@/actions/actions';
 import { FaCheckCircle } from 'react-icons/fa';
 import { IoWarningOutline } from 'react-icons/io5';
 import H1 from '@/components/h1';
 import Subtitle from '@/components/subtitle';
-import BottomNav from '@/components/bottom-nav';
-import { Button } from '@/components/ui/button';
+import HealthQuizOutcomeBtn from "@/components/health-quiz-outcome-btn";
 
 export default async function Page() {
   noStore();
@@ -21,7 +19,7 @@ export default async function Page() {
   return (
     <>
       <QuizOutcome isAnyQuestionYes={isAnyQuestionYes} />
-      <ContinueBtn />
+      <HealthQuizOutcomeBtn />
     </>
   );
 }
@@ -49,18 +47,5 @@ function QuizOutcome({ isAnyQuestionYes }: { isAnyQuestionYes: boolean }) {
         </>
       )}
     </div>
-  );
-}
-
-('use client');
-
-function ContinueBtn() {
-  const router = useRouter();
-  return (
-    <BottomNav className="flex w-full gap-3 justify-center items-center">
-      <Button className="w-full" onClick={() => router.push('/app/waiver')}>
-        Continue
-      </Button>
-    </BottomNav>
   );
 }

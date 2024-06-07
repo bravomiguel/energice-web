@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from 'next/navigation';
 import { IoIosArrowBack } from 'react-icons/io';
 
-const AppHeader = () => {
+const TopNav = () => {
   const router = useRouter();
   const activePathname = usePathname();
   const showArrowBack = ['/plunge'].find(
@@ -26,4 +26,4 @@ const AppHeader = () => {
   );
 };
 
-export default AppHeader;
+export default TopNav;

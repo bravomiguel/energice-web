@@ -3,14 +3,11 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/db';
+import { getUser } from '@/actions/actions';
 
 export default async function Home() {
   noStore();
-
-  const session = await auth();
-  const email = session?.user?.email ?? undefined;
-
-  const user = await prisma.user.findUnique({ where: { email } });
+  const user = await getUser();
 
   if (!user?.firstName) redirect('/member-details');
 

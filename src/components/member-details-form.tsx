@@ -9,6 +9,7 @@ import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Button } from './ui/button';
 import { addMemberDetails } from '@/actions/actions';
+import BottomNav from './bottom-nav';
 
 export default function MemberDetailsForm() {
   const {
@@ -23,14 +24,14 @@ export default function MemberDetailsForm() {
   const onSubmit = handleSubmit(async (data) => {
     const response = await addMemberDetails(data);
     if (response?.errorCode) {
-      console.error({error: response});
+      console.error({ error: response });
       // return;
     }
   });
 
   return (
     <form className="flex-1 flex flex-col" onSubmit={onSubmit}>
-      <div className="flex-1 flex flex-col gap-3">
+      <div className="flex-1 flex flex-col gap-5">
         <div className="space-y-1">
           <Label htmlFor="firstName">First Name</Label>
           <Input
@@ -40,9 +41,7 @@ export default function MemberDetailsForm() {
             className=""
           />
           {errors.firstName && (
-            <p className="text-red-500 text-sm">
-            {errors.firstName.message}
-          </p>
+            <p className="text-red-500 text-sm">{errors.firstName.message}</p>
           )}
         </div>
 
@@ -55,27 +54,20 @@ export default function MemberDetailsForm() {
             className=""
           />
           {errors.lastName && (
-            <p className="text-red-500 text-sm">
-              {errors.lastName.message}
-            </p>
+            <p className="text-red-500 text-sm">{errors.lastName.message}</p>
           )}
         </div>
 
         <div className="space-y-1">
           <Label htmlFor="dob">Date of Birth</Label>
-          <Input
-            id="dob"
-            type="date"
-            {...register('dob')}
-            className=""
-          />
+          <Input id="dob" type="date" {...register('dob')} className="" />
           {errors.dob && (
             <p className="text-red-500 text-sm">{errors.dob.message}</p>
           )}
         </div>
       </div>
 
-      <div className="sticky bottom-0">
+      <BottomNav>
         <Button
           type="submit"
           disabled={!isValid || isSubmitting}
@@ -83,7 +75,7 @@ export default function MemberDetailsForm() {
         >
           Submit
         </Button>
-      </div>
+      </BottomNav>
     </form>
   );
 }

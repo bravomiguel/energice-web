@@ -46,6 +46,9 @@ export async function signUp(data: unknown) {
       },
       data: {
         hashedPassword,
+        firstName: null,
+        lastName: null,
+        dob: null,
         deleted: false,
         deletedAt: null,
       },
@@ -106,6 +109,19 @@ export async function deleteAccount(data: unknown) {
   await signOut({ redirectTo: '/signup' });
 }
 
+export async function getUser() {
+  const session = await auth();
+  const email = session?.user?.email ?? undefined;
+
+  if (!email) {
+    redirect('/signin');
+  }
+
+  const user = await prisma.user.findUnique({ where: { email } });
+
+  return user;
+}
+
 // --- member details actions ---
 
 export async function addMemberDetails(data: unknown) {
@@ -130,4 +146,30 @@ export async function addMemberDetails(data: unknown) {
   });
 
   redirect('/health-quiz');
+}
+
+// --- health quiz actions ---
+
+export async function addQuizData(data: unknown) {
+  // const validatedQuizData = quizDataFormSchema.safeParse(data);
+
+  // if (!validatedQuizData.success) {
+  //   return {
+  //     errorCode: validatedQuizData.error.issues[0].code,
+  //     errorMessage: validatedQuizData.error.issues[0].message,
+  //   };
+  // }
+
+  const session = await auth();
+  const email = session?.user?.email;
+  if (!email) {
+    redirect('/signin');
+  }
+
+  // await prisma.user.update({
+  //   where: { email },
+  //   data: { quizData: JSON.stringify(validatedQuizData) },
+  // });
+
+  redirect('/health-quiz/outcome');
 }

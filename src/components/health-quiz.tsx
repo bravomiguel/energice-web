@@ -7,8 +7,6 @@ import { initialHealthQuizData } from '@/lib/data';
 import { HealthQuizData } from '@/lib/types';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { Button } from './ui/button';
-import H1 from './h1';
-import Subtitle from './subtitle';
 import BottomNav from './bottom-nav';
 import { saveHealthQuiz } from '@/actions/actions';
 
@@ -30,12 +28,6 @@ export default function HealthQuiz() {
 
   return (
     <>
-      <div className="flex flex-col gap-1">
-        <H1>Health Quiz</H1>
-        <Subtitle>
-          1-min quiz to check if cold plunging suits your health needs.
-        </Subtitle>
-      </div>
       <QuestionSet quizData={quizData} setQuizData={setQuizData} />
       <BtnSet
         isQuizComplete={isQuizComplete}
@@ -54,7 +46,7 @@ function QuestionSet({
   setQuizData: Dispatch<SetStateAction<HealthQuizData>>;
 }) {
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex-1 flex flex-col gap-5">
       {quizData.map(({ id, question, answer }) => (
         <div key={id} className="pb-5 border-b border-zinc-200">
           <p className="font-medium">
@@ -108,7 +100,7 @@ function BtnSet({
   const router = useRouter();
   return (
     <BottomNav className="flex w-full gap-3 justify-center items-center">
-      <Button variant="outline" onClick={() => router.push('/app/waiver')}>
+      <Button variant="outline" onClick={() => router.push('/waiver')}>
         Skip
       </Button>
       <Button

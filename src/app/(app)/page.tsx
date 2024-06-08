@@ -1,13 +1,12 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import { auth } from '@/lib/auth';
-import prisma from '@/lib/db';
-import { getUser } from '@/actions/actions';
+import { checkAuth, getUserById } from '@/lib/server-utils';
 
 export default async function Home() {
   noStore();
-  const user = await getUser();
+  const session = await checkAuth();
+  const user = await getUserById(session.user.id);
 
   if (!user?.firstName) redirect('/member-details');
 

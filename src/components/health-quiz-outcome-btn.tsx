@@ -8,7 +8,7 @@ export default function HealthQuizOutcomeBtn() {
   const router = useRouter();
   return (
     <BottomNav className="flex w-full gap-3 justify-center items-center">
-      <Button className="w-full" onClick={() => router.push('/app/waiver')}>
+      <Button className="w-full" onClick={() => router.push('/waiver')}>
         Continue
       </Button>
     </BottomNav>

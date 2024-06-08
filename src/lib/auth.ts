@@ -3,11 +3,11 @@ import credentials from 'next-auth/providers/credentials';
 import prisma from './db';
 import bcrypt from 'bcryptjs';
 import { authFormSchema } from './validations';
+import { getUserByEmail } from './server-utils';
 
 const config = {
   pages: {
     signIn: '/signup',
-    // signOut: '/signIn',
   },
   // default settings below
   // session: {
@@ -21,18 +21,12 @@ const config = {
         const validatedCredentials = authFormSchema.safeParse(credentials);
 
         if (!validatedCredentials.success) {
-          console.log('Invalid email and/or password');
           return null;
         }
 
         const { email, password } = validatedCredentials.data;
 
-        const user = await prisma.user.findUnique({
-          where: {
-            email,
-            deleted: false,
-          },
-        });
+        const user = await getUserByEmail(email);
 
         if (!user) {
           console.log('No user found');
@@ -72,7 +66,25 @@ const config = {
 
       return false;
     },
+    jwt: ({ token, user }) => {
+      if (user && user.id) {
+        // on sign in
+        token.userId = user.id;
+      }
+
+      return token;
+    },
+    session: ({ session, token }) => {
+      session.user.id = token.userId;
+
+      return session;
+    },
   },
 } satisfies NextAuthConfig;
 
-export const { auth, signIn, signOut } = NextAuth(config);
+export const {
+  auth,
+  signIn,
+  signOut,
+  handlers: { GET, POST },
+} = NextAuth(config);

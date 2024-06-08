@@ -37,8 +37,8 @@ export default function AuthForm({ type }: AuthFormProps) {
     if (type === 'signIn') {
       try {
         const response = await signInAction(data);
-        if (response?.errorCode) {
-          console.error({error: response});
+        if (response?.error) {
+          console.error({ error: response.error });
         }
       } catch (e) {
         console.error(e);
@@ -48,12 +48,12 @@ export default function AuthForm({ type }: AuthFormProps) {
       }
     } else {
       const response = await signUp(data);
-      if (response?.errorCode) {
-        console.error({error: response});
+      if (response?.error) {
+        console.error({ error: response.error });
         setAuthErrors((prev) => {
           return {
             ...prev,
-            signIn: response.errorMessage,
+            signUp: response.error,
           };
         });
       }
@@ -92,9 +92,7 @@ export default function AuthForm({ type }: AuthFormProps) {
             />
           </div>
           {errors.password && (
-            <p className="text-red-900 text-sm">
-              {errors.password.message}
-            </p>
+            <p className="text-red-900 text-sm">{errors.password.message}</p>
           )}
         </div>
       </div>

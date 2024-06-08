@@ -23,8 +23,8 @@ export default function MemberDetailsForm() {
 
   const onSubmit = handleSubmit(async (data) => {
     const response = await addMemberDetails(data);
-    if (response?.errorCode) {
-      console.error({ error: response });
+    if (response?.error) {
+      console.error({ error: response.error });
       // return;
     }
   });

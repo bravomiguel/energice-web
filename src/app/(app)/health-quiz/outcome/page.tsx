@@ -1,20 +1,23 @@
 import { unstable_noStore as noStore } from 'next/cache';
 
-import { getUser } from '@/actions/actions';
 import { FaCheckCircle } from 'react-icons/fa';
 import { IoWarningOutline } from 'react-icons/io5';
 import H1 from '@/components/h1';
 import Subtitle from '@/components/subtitle';
-import HealthQuizOutcomeBtn from "@/components/health-quiz-outcome-btn";
+import HealthQuizOutcomeBtn from '@/components/health-quiz-outcome-btn';
 import { HealthQuizData } from '@/lib/types';
+import { checkAuth, getUserById } from '@/lib/server-utils';
 
 export default async function Page() {
   noStore();
-  const user = await getUser();
-  const quizData: HealthQuizData | undefined = user?.healthQuiz && JSON.parse(user.healthQuiz);
-  const isAnyQuestionYes = quizData ? quizData.some(
-    (question) => question.answer === true,
-  ) : false;
+  const session = await checkAuth();
+  const user = await getUserById(session.user.id);
+
+  const quizData: HealthQuizData | undefined =
+    user?.healthQuiz && JSON.parse(user.healthQuiz);
+  const isAnyQuestionYes = quizData
+    ? quizData.some((question) => question.answer === true)
+    : false;
 
   return (
     <>

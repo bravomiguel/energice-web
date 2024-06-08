@@ -1,7 +1,9 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+// import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
+import { redirect } from 'next/navigation';
+// import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 import prisma from '@/lib/db';
 import {
@@ -10,8 +12,7 @@ import {
   memberDetailsFormSchema,
 } from '@/lib/validations';
 import { signIn, signOut } from '@/lib/auth';
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+import { checkAuth } from '@/lib/server-utils';
 
 // --- user actions ---
 
@@ -20,8 +21,7 @@ export async function signUp(data: unknown) {
 
   if (!validatedCredentials.success) {
     return {
-      errorCode: validatedCredentials.error.issues[0].code,
-      errorMessage: validatedCredentials.error.issues[0].message,
+      error: validatedCredentials.error.issues[0].message,
     };
   }
 
@@ -38,34 +38,45 @@ export async function signUp(data: unknown) {
 
   if (user && !user.deleted) {
     return {
-      errorCode: 'already_signed_up',
-      errorMessage: "You've already signed up, please sign in",
+      error: "You've already signed up, please sign in",
     };
   }
 
   if (user && user.deleted) {
-    await prisma.user.update({
-      where: {
-        email: validatedCredentials.data.email,
-      },
-      data: {
-        hashedPassword,
-        firstName: null,
-        lastName: null,
-        dob: null,
-        deleted: false,
-        deletedAt: null,
-      },
-    });
+    try {
+      await prisma.user.update({
+        where: {
+          email: validatedCredentials.data.email,
+        },
+        data: {
+          hashedPassword,
+          firstName: null,
+          lastName: null,
+          dob: null,
+          deleted: false,
+          deletedAt: null,
+        },
+      });
+    } catch (e) {
+      return {
+        error: 'Failed to recreate user',
+      };
+    }
   }
 
   if (!user) {
-    await prisma.user.create({
-      data: {
-        email: validatedCredentials.data.email,
-        hashedPassword,
-      },
-    });
+    try {
+      await prisma.user.create({
+        data: {
+          email: validatedCredentials.data.email,
+          hashedPassword,
+        },
+      });
+    } catch (e) {
+      return {
+        error: 'Failed to create user',
+      };
+    }
   }
 
   await signIn('credentials', validatedCredentials.data);
@@ -76,8 +87,7 @@ export async function signInAction(data: unknown) {
 
   if (!validatedCredentials.success) {
     return {
-      errorCode: validatedCredentials.error.issues[0].code,
-      errorMessage: validatedCredentials.error.issues[0].message,
+      error: validatedCredentials.error.issues[0].message,
     };
   }
 
@@ -88,66 +98,57 @@ export async function signOutAction() {
   await signOut({ redirectTo: '/signin' });
 }
 
-export async function deleteAccount(data: unknown) {
-  const validatedEmail = authFormSchema
-    .pick({ email: true })
-    .safeParse({ email: data });
+export async function deleteAccount() {
+  // authentication check
+  const session = await checkAuth();
+  console.log({session});
 
-  if (!validatedEmail.success) {
+  try {
+    const resp = await prisma.user.update({
+      where: {
+        id: session.user.id,
+      },
+      data: {
+        deleted: true,
+        deletedAt: new Date(),
+      },
+    });
+    console.log({resp});
+  } catch (e) {
+    console.log(e);
     return {
-      errorCode: validatedEmail.error.issues[0].code,
-      errorMessage: validatedEmail.error.issues[0].message,
+      error: 'Failed to delete user',
     };
   }
 
-  await prisma.user.update({
-    where: {
-      email: validatedEmail.data.email,
-    },
-    data: {
-      deleted: true,
-      deletedAt: new Date(),
-    },
-  });
-
   await signOut({ redirectTo: '/signup' });
-}
-
-export async function getUser() {
-  const session = await auth();
-  const email = session?.user?.email ?? undefined;
-
-  if (!email) {
-    redirect('/signin');
-  }
-
-  const user = await prisma.user.findUnique({ where: { email } });
-
-  return user;
 }
 
 // --- member details actions ---
 
 export async function addMemberDetails(data: unknown) {
+  // authentication check
+  const session = await checkAuth();
+
+  // validation check
   const validatedMemberDetails = memberDetailsFormSchema.safeParse(data);
 
   if (!validatedMemberDetails.success) {
     return {
-      errorCode: validatedMemberDetails.error.issues[0].code,
-      errorMessage: validatedMemberDetails.error.issues[0].message,
+      error: validatedMemberDetails.error.issues[0].message,
     };
   }
 
-  const session = await auth();
-  const email = session?.user?.email;
-  if (!email) {
-    redirect('/signin');
+  try {
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { ...validatedMemberDetails.data },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to save member details',
+    };
   }
-
-  await prisma.user.update({
-    where: { email },
-    data: { ...validatedMemberDetails.data },
-  });
 
   redirect('/health-quiz');
 }
@@ -155,25 +156,28 @@ export async function addMemberDetails(data: unknown) {
 // --- health quiz actions ---
 
 export async function saveHealthQuiz(data: unknown) {
+  // authentication check
+  const session = await checkAuth();
+
+  // validation check
   const validatedQuizData = healthQuizDataSchema.safeParse(data);
 
   if (!validatedQuizData.success) {
     return {
-      errorCode: validatedQuizData.error.issues[0].code,
-      errorMessage: validatedQuizData.error.issues[0].message,
+      error: validatedQuizData.error.issues[0].message,
     };
   }
 
-  const session = await auth();
-  const email = session?.user?.email;
-  if (!email) {
-    redirect('/signin');
+  try {
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { healthQuiz: JSON.stringify(validatedQuizData.data) },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to save health quiz answers',
+    };
   }
-
-  await prisma.user.update({
-    where: { email },
-    data: { healthQuiz: JSON.stringify(validatedQuizData.data) },
-  });
 
   redirect('/health-quiz/outcome');
 }

@@ -1,3 +1,16 @@
-export default function Page() {
+import { unstable_noStore as noStore } from 'next/cache';
+import { redirect } from 'next/navigation';
+
+import { checkAuth, getUserById } from '@/lib/server-utils';
+
+export default async function Page() {
+  noStore();
+
+  const session = await checkAuth();
+  const user = await getUserById(session.user.id);
+
+  if (!user?.firstName) redirect('/member-details');
+  if (!user.isWaiverSigned) redirect('/waiver');
+
   return <div>PlungeInfo</div>;
 }

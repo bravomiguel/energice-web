@@ -101,7 +101,6 @@ export async function signOutAction() {
 export async function deleteAccount() {
   // authentication check
   const session = await checkAuth();
-  console.log({session});
 
   try {
     const resp = await prisma.user.update({
@@ -113,7 +112,6 @@ export async function deleteAccount() {
         deletedAt: new Date(),
       },
     });
-    console.log({resp});
   } catch (e) {
     console.log(e);
     return {
@@ -180,4 +178,24 @@ export async function saveHealthQuiz(data: unknown) {
   }
 
   redirect('/health-quiz/outcome');
+}
+
+// --- waiver actions ---
+
+export async function signWaiver() {
+  // authentication check
+  const session = await checkAuth();
+
+  try {
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { isWaiverSigned: true },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to complete sign waiver operation',
+    };
+  }
+
+  redirect('/plunge');
 }

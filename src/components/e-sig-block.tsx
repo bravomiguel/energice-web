@@ -5,7 +5,9 @@ import {
   Dispatch,
   FormEvent,
   SetStateAction,
+  useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { Homemade_Apple } from 'next/font/google';
@@ -41,8 +43,18 @@ export default function ESigBlock({
     return fullNameRegex.test(fullName);
   }, [fullName]);
   const [signature, setSignature] = useState('');
-  const [isDisclosureVisible, setIsDisclosureVisible] = useState(false);
-  const [isDisclosureChecked, setIsDisclosureChecked] = useState(false);
+  const [isCheckboxVisible, setIsCheckboxVisible] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+
+  const checkboxRef = useRef<HTMLDivElement>(null);
+  // const scrollToBottom = () => {
+  //   checkboxRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // };
+  useEffect(() => {
+    if (isCheckboxVisible) {
+      checkboxRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [isCheckboxVisible]);
 
   const router = useRouter();
 
@@ -63,21 +75,24 @@ export default function ESigBlock({
           isFormOpen={isFormOpen}
           setIsFormOpen={setIsFormOpen}
           setSignature={setSignature}
-          setIsDisclosureVisible={setIsDisclosureVisible}
+          setIsCheckboxVisible={setIsCheckboxVisible}
           fullName={fullName}
           setFullName={setFullName}
           isValid={isValid}
         >
           {signature.length === 0 ? 'Sign' : 'Edit signature'}
         </ESigBtn>
-        {isDisclosureVisible && (
-          <DisclosureCheckBox setIsDisclosureChecked={setIsDisclosureChecked} />
+        {isCheckboxVisible && (
+          <DisclosureCheckBox
+            setIsChecked={setIsChecked}
+            checkboxRef={checkboxRef}
+          />
         )}
       </div>
       <BottomNav>
         <Button
           className="w-full"
-          disabled={!isDisclosureChecked}
+          disabled={!isChecked}
           onClick={() => {
             router.push('/plunge');
           }}
@@ -94,7 +109,7 @@ type ESigBtnProps = {
   setIsFormOpen: Dispatch<SetStateAction<boolean>>;
   children?: React.ReactNode;
   setSignature: Dispatch<SetStateAction<string>>;
-  setIsDisclosureVisible: Dispatch<SetStateAction<boolean>>;
+  setIsCheckboxVisible: Dispatch<SetStateAction<boolean>>;
   fullName: string;
   setFullName: Dispatch<SetStateAction<string>>;
   isValid: boolean;
@@ -105,7 +120,7 @@ function ESigBtn({
   setIsFormOpen,
   children,
   setSignature,
-  setIsDisclosureVisible,
+  setIsCheckboxVisible,
   fullName,
   setFullName,
   isValid,
@@ -131,7 +146,7 @@ function ESigBtn({
           onSubmit={(e: FormEvent<HTMLFormElement>): void => {
             e.preventDefault();
             setSignature(fullName);
-            setIsDisclosureVisible(true);
+            setIsCheckboxVisible(true);
             setIsFormOpen(false);
           }}
         >
@@ -154,11 +169,16 @@ function ESigBtn({
               type="text"
               value={fullName}
               disabled
-              className={`${homemadeApple.className}`}
+              className={`${homemadeApple.className} text-center h-16`}
             />
           </div>
 
-          <Button type="submit" disabled={!isValid} className="w-full">
+          <Button
+            type="submit"
+            variant="koldupBlue"
+            disabled={!isValid}
+            className="w-full"
+          >
             Adopt and Sign
           </Button>
         </form>
@@ -168,16 +188,21 @@ function ESigBtn({
 }
 
 function DisclosureCheckBox({
-  setIsDisclosureChecked,
+  setIsChecked,
+  checkboxRef,
 }: {
-  setIsDisclosureChecked: Dispatch<SetStateAction<boolean>>;
+  setIsChecked: Dispatch<SetStateAction<boolean>>;
+  checkboxRef: React.RefObject<HTMLDivElement>;
 }) {
   return (
-    <div className="flex items-center space-x-2">
-      <Checkbox id="disclosure" onCheckedChange={(checked) => {
-        const isChecked = checked === true ?? false;
-        setIsDisclosureChecked(isChecked);
-      }} />
+    <div className="flex items-center space-x-2" ref={checkboxRef}>
+      <Checkbox
+        id="disclosure"
+        onCheckedChange={(checked) => {
+          const isChecked = checked === true ?? false;
+          setIsChecked(isChecked);
+        }}
+      />
       <label
         htmlFor="disclosure"
         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"

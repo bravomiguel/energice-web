@@ -5,10 +5,11 @@ import H1 from '@/components/h1';
 import Subtitle from '@/components/subtitle';
 import WaiverTerms from '@/components/waiver-terms';
 import { checkAuth, getUserById } from '@/lib/server-utils';
+import ESigBlock from '@/components/e-sig-block';
 
 export default async function Page() {
   noStore();
-  
+
   const session = await checkAuth();
   const user = await getUserById(session.user.id);
 
@@ -23,9 +24,8 @@ export default async function Page() {
         </Subtitle>
       </div>
       <WaiverTerms firstName={user.firstName} lastName={user.lastName} />
-      {/* <ESigBlock /> */}
       {/* <ESigAgreementCheckBox /> */}
-      {/* <ContinueButton /> */}
+      <ESigBlock firstName={user.firstName} lastName={user.lastName} />
     </main>
   );
 }

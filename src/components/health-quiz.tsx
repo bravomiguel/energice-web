@@ -62,7 +62,7 @@ function QuestionSet({
                   })),
                 );
               }}
-              variant={answer === true ? 'tertiary' : 'outline'}
+              variant={answer === true ? 'koldupGreen' : 'outline'}
               className="w-full"
             >
               YES
@@ -76,7 +76,7 @@ function QuestionSet({
                   })),
                 );
               }}
-              variant={answer === false ? 'tertiary' : 'outline'}
+              variant={answer === false ? 'koldupGreen' : 'outline'}
               className="w-full"
             >
               NO

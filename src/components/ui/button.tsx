@@ -14,7 +14,8 @@ const buttonVariants = cva(
         outline:
           'border text-zinc-600 border-zinc-300 bg-transparent shadow-sm hover:bg-zinc-100 hover:text-zinc-900',
         secondary: 'bg-zinc-100 text-zinc-900 shadow-sm hover:bg-zinc-100/80',
-        tertiary: 'bg-green-koldup text-zinc-50 shadow hover:bg-green-koldup/90',
+        koldupGreen: 'bg-green-koldup text-zinc-50 shadow hover:bg-green-koldup/90',
+        koldupBlue: 'bg-blue-koldup text-zinc-50 shadow hover:bg-blue-koldup/90',
         ghost: 'hover:bg-zinc-100 hover:text-zinc-900',
         link: 'text-zinc-900 underline-offset-4 hover:underline',
       },

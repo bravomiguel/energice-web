@@ -13,6 +13,7 @@ import {
 } from '@/lib/validations';
 import { signIn, signOut } from '@/lib/auth';
 import { checkAuth } from '@/lib/server-utils';
+import { AuthError } from 'next-auth';
 
 // --- user actions ---
 
@@ -30,15 +31,22 @@ export async function signUp(data: unknown) {
     10,
   );
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email: validatedCredentials.data.email,
-    },
-  });
+  let user;
+  try {
+    user = await prisma.user.findUnique({
+      where: {
+        email: validatedCredentials.data.email,
+      },
+    });
+  } catch (e) {
+    return {
+      message: 'Find account check failed',
+    };
+  }
 
   if (user && !user.deleted) {
     return {
-      error: "You've already signed up, please sign in",
+      error: 'Email already exists',
     };
   }
 
@@ -59,7 +67,7 @@ export async function signUp(data: unknown) {
       });
     } catch (e) {
       return {
-        error: 'Failed to recreate user',
+        error: 'Failed to recreate account',
       };
     }
   }
@@ -74,12 +82,21 @@ export async function signUp(data: unknown) {
       });
     } catch (e) {
       return {
-        error: 'Failed to create user',
+        error: 'Failed to create account',
       };
     }
   }
 
-  await signIn('credentials', validatedCredentials.data);
+  try {
+    await signIn('credentials', validatedCredentials.data);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return {
+        message: 'Error, could not sign up',
+      };
+    }
+    throw error; // to deal with next.js redirect throwing error
+  }
 }
 
 export async function signInAction(data: unknown) {
@@ -91,7 +108,30 @@ export async function signInAction(data: unknown) {
     };
   }
 
-  await signIn('credentials', validatedCredentials.data);
+  try {
+    await signIn('credentials', validatedCredentials.data);
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case 'CredentialsSignin': {
+          return {
+            error: 'Invalid credentials',
+          };
+        }
+        case 'CallbackRouteError': {
+          return {
+            error: 'Invalid credentials',
+          };
+        }
+        default: {
+          return {
+            error: 'Error, could not sign in',
+          };
+        }
+      }
+    }
+    throw error; // to deal with next.js redirect throwing error
+  }
 }
 
 export async function signOutAction() {

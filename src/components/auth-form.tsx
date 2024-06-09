@@ -35,15 +35,11 @@ export default function AuthForm({ type }: AuthFormProps) {
   const onSubmit = handleSubmit(async (data) => {
     // console.log({ data });
     if (type === 'signIn') {
-      try {
-        const response = await signInAction(data);
-        if (response?.error) {
-          console.error({ error: response.error });
-        }
-      } catch (e) {
-        console.error(e);
+      const response = await signInAction(data);
+      if (response?.error) {
+        console.error({ error: response.error });
         setAuthErrors((prev) => {
-          return { ...prev, signIn: 'Invalid credentials' };
+          return { ...prev, signIn: response.error };
         });
       }
     } else {

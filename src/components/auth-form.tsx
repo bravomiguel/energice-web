@@ -11,6 +11,7 @@ import { Button } from './ui/button';
 import { signInAction, signUp } from '@/actions/actions';
 import { useState } from 'react';
 import ShowPasswordToggle from './show-password-toggle';
+import { useSearchParams } from 'next/navigation';
 
 type AuthFormProps = {
   type: 'signUp' | 'signIn';
@@ -26,6 +27,9 @@ export default function AuthForm({ type }: AuthFormProps) {
     mode: 'all',
   });
 
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl');
+
   const [passwordShow, setPasswordShow] = useState<boolean>(false);
   const [authErrors, setAuthErrors] = useState<{
     signIn: string | null;
@@ -35,7 +39,7 @@ export default function AuthForm({ type }: AuthFormProps) {
   const onSubmit = handleSubmit(async (data) => {
     // console.log({ data });
     if (type === 'signIn') {
-      const response = await signInAction(data);
+      const response = await signInAction({ ...data, callbackUrl });
       if (response?.error) {
         console.error({ error: response.error });
         setAuthErrors((prev) => {
@@ -43,7 +47,7 @@ export default function AuthForm({ type }: AuthFormProps) {
         });
       }
     } else {
-      const response = await signUp(data);
+      const response = await signUp({ ...data, callbackUrl });
       if (response?.error) {
         console.error({ error: response.error });
         setAuthErrors((prev) => {

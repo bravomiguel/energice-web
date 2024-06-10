@@ -12,5 +12,7 @@ export default async function Home() {
 
   if (!user.isWaiverSigned) redirect('/waiver');
 
+  if (user.authCallbackUrl) redirect(user.authCallbackUrl);
+
   return <main className="h-screen">Home</main>;
 }

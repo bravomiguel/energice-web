@@ -11,7 +11,7 @@ import Image from 'next/image';
 import BottomNav from '@/components/bottom-nav';
 import { Button } from '@/components/ui/button';
 
-export default async function Page() {
+export default async function Page({ params }: { params: { unitId: string } }) {
   noStore();
 
   const session = await checkAuth();
@@ -23,7 +23,8 @@ export default async function Page() {
   return (
     <main className="relative flex-1 flex flex-col gap-6">
       <div className="flex flex-col gap-4">
-        <H1>Texas Iron Gym</H1>
+        {/* <H1>Texas Iron Gym</H1> */}
+        <H1>{params.unitId}</H1>
         {/* <Subtitle>KoldUp Plunge</Subtitle> */}
         <PlungeStatus />
       </div>

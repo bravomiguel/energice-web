@@ -19,6 +19,7 @@ model User {
   dob            DateTime?
   isWaiverSigned Boolean   @default(false)
   healthQuiz     String?
+  authCallbackUrl String?
   sessions       Session[]
   deleted        Boolean   @default(false)
   deletedAt      DateTime?
@@ -47,10 +48,12 @@ model Session {
 }
 
 model Unit {
-  id           String    @id @default(cuid())
-  gym          String
-  lockDeviceId String
-  sessions     Session[]
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  gym             String
+  gymAddress      String
+  gymGMapsPlaceId String
+  lockDeviceId    String
+  sessions        Session[]
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }

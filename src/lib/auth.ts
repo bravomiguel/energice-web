@@ -1,13 +1,13 @@
 import NextAuth, { NextAuthConfig } from 'next-auth';
 import credentials from 'next-auth/providers/credentials';
-import prisma from './db';
 import bcrypt from 'bcryptjs';
+
 import { authFormSchema } from './validations';
 import { getUserByEmail } from './server-utils';
 
 const config = {
   pages: {
-    signIn: '/signup',
+    signIn: '/signin',
   },
   // default settings below
   // session: {

@@ -3,6 +3,7 @@
 // import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
 // import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 
 import prisma from '@/lib/db';
@@ -18,24 +19,23 @@ import { AuthError } from 'next-auth';
 // --- user actions ---
 
 export async function signUp(data: unknown) {
-  const validatedCredentials = authFormSchema.safeParse(data);
+  const validatedData = authFormSchema
+    .extend({ callbackUrl: z.union([z.null(), z.string().trim().url()]) })
+    .safeParse(data);
 
-  if (!validatedCredentials.success) {
+  if (!validatedData.success) {
     return {
-      error: validatedCredentials.error.issues[0].message,
+      error: validatedData.error.issues[0].message,
     };
   }
 
-  const hashedPassword = await bcrypt.hash(
-    validatedCredentials.data.password,
-    10,
-  );
+  const hashedPassword = await bcrypt.hash(validatedData.data.password, 10);
 
   let user;
   try {
     user = await prisma.user.findUnique({
       where: {
-        email: validatedCredentials.data.email,
+        email: validatedData.data.email,
       },
     });
   } catch (e) {
@@ -54,13 +54,14 @@ export async function signUp(data: unknown) {
     try {
       await prisma.user.update({
         where: {
-          email: validatedCredentials.data.email,
+          email: validatedData.data.email,
         },
         data: {
           hashedPassword,
           firstName: null,
           lastName: null,
           dob: null,
+          authCallbackUrl: validatedData.data.callbackUrl,
           deleted: false,
           deletedAt: null,
         },
@@ -76,7 +77,8 @@ export async function signUp(data: unknown) {
     try {
       await prisma.user.create({
         data: {
-          email: validatedCredentials.data.email,
+          email: validatedData.data.email,
+          authCallbackUrl: validatedData.data.callbackUrl,
           hashedPassword,
         },
       });
@@ -88,7 +90,10 @@ export async function signUp(data: unknown) {
   }
 
   try {
-    await signIn('credentials', validatedCredentials.data);
+    await signIn('credentials', {
+      email: validatedData.data.email,
+      password: validatedData.data.password,
+    });
   } catch (error) {
     if (error instanceof AuthError) {
       return {
@@ -100,16 +105,69 @@ export async function signUp(data: unknown) {
 }
 
 export async function signInAction(data: unknown) {
-  const validatedCredentials = authFormSchema.safeParse(data);
+  const validatedData = authFormSchema
+    .extend({ callbackUrl: z.union([z.null(), z.string().trim().url()]) })
+    .safeParse(data);
 
-  if (!validatedCredentials.success) {
+  if (!validatedData.success) {
     return {
-      error: validatedCredentials.error.issues[0].message,
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  let hashedPassword;
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        email: validatedData.data.email,
+        deleted: false,
+      },
+    });
+
+    if (!user?.hashedPassword)
+      return {
+        error: 'Invalid credentials.',
+      };
+
+    hashedPassword = user.hashedPassword;
+  } catch (e) {
+    return {
+      error: 'Invalid credentials.',
+    };
+  }
+
+  const passwordsMatch = await bcrypt.compare(
+    validatedData.data.password,
+    hashedPassword,
+  );
+
+  if (!passwordsMatch)
+    return {
+      error: 'Error, invalid credentials',
+    };
+
+  try {
+    await prisma.user.update({
+      where: {
+        email: validatedData.data.email,
+        hashedPassword,
+        deleted: false,
+      },
+      data: {
+        authCallbackUrl: validatedData.data.callbackUrl ?? null,
+      },
+    });
+  } catch (e) {
+    return {
+      error: 'Sign in failed, please try again',
     };
   }
 
   try {
-    await signIn('credentials', validatedCredentials.data);
+    await signIn('credentials', {
+      email: validatedData.data.email,
+      password: validatedData.data.password,
+    });
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
@@ -143,11 +201,17 @@ export async function deleteAccount() {
   const session = await checkAuth();
 
   try {
-    const resp = await prisma.user.update({
+    await prisma.user.update({
       where: {
         id: session.user.id,
       },
       data: {
+        firstName: null,
+        lastName: null,
+        dob: null,
+        isWaiverSigned: false,
+        healthQuiz: null,
+        authCallbackUrl: null,
         deleted: true,
         deletedAt: new Date(),
       },
@@ -237,5 +301,14 @@ export async function signWaiver() {
     };
   }
 
-  redirect('/plunge');
+  // get callback url
+  const data = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { authCallbackUrl: true },
+  });
+  const callbackUrl = data?.authCallbackUrl;
+
+  if (!callbackUrl) redirect('/');
+
+  redirect(callbackUrl);
 }

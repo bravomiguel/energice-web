@@ -11,20 +11,20 @@ datasource db {
 }
 
 model User {
-  id             String    @id @default(cuid())
-  email          String    @unique
-  hashedPassword String
-  firstName      String?
-  lastName       String?
-  dob            DateTime?
-  isWaiverSigned Boolean   @default(false)
-  healthQuiz     String?
+  id              String    @id @default(cuid())
+  email           String    @unique
+  hashedPassword  String
+  firstName       String?
+  lastName        String?
+  dob             DateTime?
+  isWaiverSigned  Boolean   @default(false)
+  healthQuiz      String?
   authCallbackUrl String?
-  sessions       Session[]
-  deleted        Boolean   @default(false)
-  deletedAt      DateTime?
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  sessions        Session[]
+  deleted         Boolean   @default(false)
+  deletedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model Session {
@@ -48,12 +48,13 @@ model Session {
 }
 
 model Unit {
-  id              String    @id @default(cuid())
-  gym             String
-  gymAddress      String
-  gymGMapsPlaceId String
-  lockDeviceId    String
-  sessions        Session[]
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id               String    @id @default(cuid())
+  imageUrl         String
+  hostName         String
+  hostAddress      String
+  hostGMapsPlaceId String
+  lockDeviceId     String
+  sessions         Session[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }

@@ -2,8 +2,11 @@ import 'server-only';
 import { redirect } from 'next/navigation';
 
 import { auth } from '@/lib/auth';
-import { User } from '@prisma/client';
+import { Unit, User } from '@prisma/client';
 import prisma from './db';
+import { Seam } from 'seam';
+
+// --- auth utils ---
 
 export async function checkAuth() {
   const session = await auth();
@@ -13,6 +16,8 @@ export async function checkAuth() {
 
   return session;
 }
+
+// --- user utils ---
 
 export async function getUserById(userId: User['id']) {
   const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -24,4 +29,20 @@ export async function getUserByEmail(userEmail: User['email']) {
     where: { email: userEmail, deleted: false },
   });
   return user;
+}
+
+// --- unit utils ---
+
+const seam = new Seam();
+
+export async function getUnitById(unitId: Unit['id']) {
+  const unit = await prisma.unit.findUnique({ where: { id: unitId } });
+  return unit;
+}
+
+export async function getLockByLockId(unitId: Unit['id']) {
+  const lock = await seam.locks.get({
+    device_id: unitId,
+  });
+  return lock;
 }

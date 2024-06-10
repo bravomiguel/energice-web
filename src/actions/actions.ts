@@ -15,6 +15,7 @@ import {
 import { signIn, signOut } from '@/lib/auth';
 import { checkAuth } from '@/lib/server-utils';
 import { AuthError } from 'next-auth';
+import { Seam } from 'seam';
 
 // --- user actions ---
 
@@ -311,4 +312,48 @@ export async function signWaiver() {
   if (!callbackUrl) redirect('/');
 
   redirect(callbackUrl);
+}
+
+// --- unit actions ---
+
+const seam = new Seam();
+
+export async function createLockCode(data: unknown) {
+  // auth check
+  await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      lockDeviceId: z.string().trim().min(1),
+      minsLaterEndTime: z.number().positive(),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { lockDeviceId, minsLaterEndTime } = validatedData.data;
+
+  const startTime = new Date();
+  const endTime = new Date(startTime.getTime() + minsLaterEndTime * 60 * 1000);
+  const code = String(Math.floor(1000 + Math.random() * 9000));
+
+  // create code action
+  try {
+    await seam.accessCodes.create({
+      device_id: lockDeviceId,
+      name: `code ${code}`,
+      starts_at: startTime.toISOString(),
+      ends_at: endTime.toISOString(),
+      code,
+    });
+  } catch (e) {
+    return {
+      error: "Failed to create code",
+    }
+  }
 }

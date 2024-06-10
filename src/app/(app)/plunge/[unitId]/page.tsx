@@ -1,54 +1,84 @@
 import { unstable_noStore as noStore } from 'next/cache';
-import { redirect } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
+import { Seam } from 'seam';
 import { GoGoal } from 'react-icons/go';
 import { BsThermometerSnow } from 'react-icons/bs';
 import { GoChecklist } from 'react-icons/go';
 import { IoWarningOutline } from 'react-icons/io5';
 
-import { checkAuth, getUserById } from '@/lib/server-utils';
+import {
+  checkAuth,
+  getLockByLockId,
+  getUnitById,
+  getUserById,
+} from '@/lib/server-utils';
 import H1 from '@/components/h1';
 import Image from 'next/image';
 import BottomNav from '@/components/bottom-nav';
 import { Button } from '@/components/ui/button';
+import { createLockCode } from '@/actions/actions';
+import UnlockPlungeBtn from '@/components/unlock-plunge-btn';
 
 export default async function Page({ params }: { params: { unitId: string } }) {
   noStore();
 
+  // auth check
   const session = await checkAuth();
   const user = await getUserById(session.user.id);
 
+  // onboarded check
   if (!user?.firstName) redirect('/member-details');
   if (!user.isWaiverSigned) redirect('/waiver');
+
+  // get unit
+  const unit = await getUnitById(params.unitId);
+  if (!unit) {
+    redirect('/');
+    // return;
+  }
+
+  // get unit lock
+  const lock = await getLockByLockId(unit.lockDeviceId);
+  const unitStatus = !lock.properties.online
+    ? 'Offline'
+    : lock.properties.door_open
+    ? 'In use'
+    : 'Ready';
+
+  // create new lock code
+  const response = await createLockCode({lockDeviceId: unit.lockDeviceId, minsLaterEndTime: 3});
+  if (response?.error) {
+    console.error({ error: response.error });
+  }
 
   return (
     <main className="relative flex-1 flex flex-col gap-6">
       <div className="flex flex-col gap-4">
-        {/* <H1>Texas Iron Gym</H1> */}
-        <H1>{params.unitId}</H1>
+        <H1>{unit.hostName}</H1>
         {/* <Subtitle>KoldUp Plunge</Subtitle> */}
-        <PlungeStatus />
+        <PlungeStatus unitStatus={unitStatus} />
       </div>
-      <PlungeImage />
+      <PlungeImage imageUrl={unit.imageUrl} />
       <PlungeDetails />
-      <PlungeBtnSet />
+      <PlungeBtnSet unitStatus={unitStatus} />
     </main>
   );
 }
 
-function PlungeStatus() {
+function PlungeStatus({ unitStatus }: { unitStatus: string }) {
   return (
     <div className="flex gap-1.5 ml-0.5 -mt-2 items-center -translate-y-0.5">
       <div className="h-2.5 w-2.5 rounded-full bg-green-300"></div>
-      <p className="text-xs text-gray-500">Ready</p>
+      <p className="text-xs text-zinc-500">{unitStatus}</p>
     </div>
   );
 }
 
-function PlungeImage() {
+function PlungeImage({ imageUrl }: { imageUrl: string }) {
   return (
-    <div className="w-full h-[25vh] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200">
+    <div className="w-full h-[25vh] rounded-lg overflow-hidden flex justify-center items-center bg-zinc-200">
       <Image
-        src="/koldup_plunge.jpeg"
+        src={imageUrl}
         alt="cold plunge image"
         // className="max-w-full max-h-full"
         width={300}
@@ -62,14 +92,14 @@ function PlungeDetails() {
   return (
     <div className="flex-1 flex flex-col gap-0">
       <div className="flex gap-3 items-center py-4 border-b">
-        <GoGoal className="h-7 w-7 mr-1 text-gray-500" />
+        <GoGoal className="h-7 w-7 mr-1 text-zinc-500" />
         <div className="flex gap-2 items-center">
           <p className="text-600">Set your target plunge time:</p>
           <input
             type="time"
             defaultValue="02:00"
             max={'08:00'}
-            className="rounded-lg bg-gray-200 font-bold text-lg px-2"
+            className="rounded-lg bg-zinc-200 font-bold text-lg px-2"
             // onChange={(e: React.FormEvent<HTMLInputElement>) => {
             //   const [minutes, seconds] = e.currentTarget.value
             //     .split(':')
@@ -82,27 +112,27 @@ function PlungeDetails() {
       </div>
 
       <div className="flex gap-3 items-center py-4 border-b">
-        <BsThermometerSnow className="ml-1 h-7 w-7 text-gray-500" />
+        <BsThermometerSnow className="ml-1 h-7 w-7 text-zinc-500" />
         <p className="text-600">42F-46F water temp</p>
       </div>
 
       <div className="flex gap-3 items-center py-4 border-b">
-        <GoChecklist className="ml-1 h-7 w-7 text-gray-500 self-start" />
+        <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 bg-gray-200 rounded-full text-xs flex items-center justify-center text-gray-700 font-extrabold">
+            <div className="w-5 h-5 bg-zinc-200 rounded-full text-xs flex items-center justify-center text-zinc-700 font-extrabold">
               1
             </div>
             <p className="text-600">Unlock the plunge to start session</p>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 bg-gray-200 rounded-full text-xs flex items-center justify-center text-gray-700 font-extrabold">
+            <div className="w-5 h-5 bg-zinc-200 rounded-full text-xs flex items-center justify-center text-zinc-700 font-extrabold">
               2
             </div>
             <p className="text-600">Open the lid and plunge in!</p>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 bg-gray-200 rounded-full text-xs flex items-center justify-center text-gray-700 font-extrabold">
+            <div className="w-5 h-5 bg-zinc-200 rounded-full text-xs flex items-center justify-center text-zinc-700 font-extrabold">
               3
             </div>
             <p className="text-600">{`Close the lid when you're done`}</p>
@@ -110,26 +140,21 @@ function PlungeDetails() {
         </div>
       </div>
 
-      <div className="w-full h-[25vh] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200">
+      <div className="w-full h-[25vh] rounded-lg overflow-hidden flex justify-center items-center bg-zinc-200">
         {`GIF "How it works" Explanation`}
       </div>
     </div>
   );
 }
 
-function PlungeBtnSet() {
+function PlungeBtnSet({ unitStatus }: { unitStatus: string }) {
   return (
     <BottomNav>
       <div className="flex gap-4">
         <div className="flex gap-1 items-center">
           <p className="text-4xl font-bold">$10</p>
         </div>
-        <Button
-          className="flex-1"
-          // onClick={() => router.push('/app/session')}
-        >
-          Unlock Plunge
-        </Button>
+        <UnlockPlungeBtn disabled={unitStatus !== "Ready"} />
       </div>
       <div className="flex gap-3 items-center pt-2">
         <IoWarningOutline className="ml-1 h-8 w-8 text-red-500 self-start" />

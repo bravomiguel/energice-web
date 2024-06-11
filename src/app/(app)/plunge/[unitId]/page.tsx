@@ -1,6 +1,5 @@
 import { unstable_noStore as noStore } from 'next/cache';
-import { redirect, useRouter } from 'next/navigation';
-import { Seam } from 'seam';
+import { redirect } from 'next/navigation';
 import { GoGoal } from 'react-icons/go';
 import { BsThermometerSnow } from 'react-icons/bs';
 import { GoChecklist } from 'react-icons/go';
@@ -15,7 +14,6 @@ import {
 import H1 from '@/components/h1';
 import Image from 'next/image';
 import BottomNav from '@/components/bottom-nav';
-import { Button } from '@/components/ui/button';
 import { createLockCode } from '@/actions/actions';
 import UnlockPlungeBtn from '@/components/unlock-plunge-btn';
 
@@ -33,8 +31,9 @@ export default async function Page({ params }: { params: { unitId: string } }) {
   // get unit
   const unit = await getUnitById(params.unitId);
   if (!unit) {
-    redirect('/');
-    // return;
+    // redirect('/');
+    console.error('Unit not found');
+    return;
   }
 
   // get unit lock
@@ -46,7 +45,10 @@ export default async function Page({ params }: { params: { unitId: string } }) {
     : 'Ready';
 
   // create new lock code
-  const response = await createLockCode({lockDeviceId: unit.lockDeviceId, minsLaterEndTime: 3});
+  const response = await createLockCode({
+    lockDeviceId: unit.lockDeviceId,
+    minsLaterEndTime: 3,
+  });
   if (response?.error) {
     console.error({ error: response.error });
   }
@@ -60,7 +62,7 @@ export default async function Page({ params }: { params: { unitId: string } }) {
       </div>
       <PlungeImage imageUrl={unit.imageUrl} />
       <PlungeDetails />
-      <PlungeBtnSet unitStatus={unitStatus} />
+      <PlungeBtnSet unitStatus={unitStatus} unitId={params.unitId} />
     </main>
   );
 }
@@ -147,14 +149,14 @@ function PlungeDetails() {
   );
 }
 
-function PlungeBtnSet({ unitStatus }: { unitStatus: string }) {
+function PlungeBtnSet({ unitStatus, unitId }: { unitStatus: string, unitId: string }) {
   return (
     <BottomNav>
       <div className="flex gap-4">
         <div className="flex gap-1 items-center">
           <p className="text-4xl font-bold">$10</p>
         </div>
-        <UnlockPlungeBtn disabled={unitStatus !== "Ready"} />
+        <UnlockPlungeBtn disabled={unitStatus !== 'Ready'} unitId={unitId} />
       </div>
       <div className="flex gap-3 items-center pt-2">
         <IoWarningOutline className="ml-1 h-8 w-8 text-red-500 self-start" />

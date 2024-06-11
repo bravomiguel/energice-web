@@ -3,13 +3,13 @@
 import { Button } from './ui/button';
 import { useRouter } from 'next/navigation';
 
-export default function UnlockPlungeBtn({ disabled }: { disabled: boolean }) {
+export default function UnlockPlungeBtn({ disabled, unitId }: { disabled: boolean, unitId: string }) {
   const router = useRouter();
   return (
     <Button
       disabled={disabled}
       className="flex-1"
-      onClick={() => router.push('/session')}
+      onClick={() => router.push(`/plunge/${unitId}/unlock`)}
     >
       Unlock Plunge
     </Button>

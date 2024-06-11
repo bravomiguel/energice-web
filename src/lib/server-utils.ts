@@ -40,9 +40,14 @@ export async function getUnitById(unitId: Unit['id']) {
   return unit;
 }
 
-export async function getLockByLockId(unitId: Unit['id']) {
+export async function getLockByLockId(deviceId: Unit['lockDeviceId']) {
   const lock = await seam.locks.get({
-    device_id: unitId,
+    device_id: deviceId,
   });
   return lock;
+}
+
+export async function getCodesbyLockId(deviceId: Unit['lockDeviceId']) {
+  const codes = await seam.accessCodes.list({ device_id: deviceId });
+  return codes;
 }

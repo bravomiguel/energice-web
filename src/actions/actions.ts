@@ -13,7 +13,7 @@ import {
   memberDetailsFormSchema,
 } from '@/lib/validations';
 import { signIn, signOut } from '@/lib/auth';
-import { checkAuth } from '@/lib/server-utils';
+import { checkAuth, getCodesbyLockId } from '@/lib/server-utils';
 import { AuthError } from 'next-auth';
 import { Seam } from 'seam';
 
@@ -319,14 +319,12 @@ export async function signWaiver() {
 const seam = new Seam();
 
 export async function createLockCode(data: unknown) {
-  // auth check
-  await checkAuth();
-
   // validation check
   const validatedData = z
     .object({
       lockDeviceId: z.string().trim().min(1),
       minsLaterEndTime: z.number().positive(),
+      authCheck: z.union([z.undefined(), z.boolean()]),
     })
     .safeParse(data);
 
@@ -336,13 +334,18 @@ export async function createLockCode(data: unknown) {
     };
   }
 
-  const { lockDeviceId, minsLaterEndTime } = validatedData.data;
+  const { lockDeviceId, minsLaterEndTime, authCheck } = validatedData.data;
 
+  // auth check
+  if (authCheck === true || authCheck === undefined) {
+    await checkAuth();
+  }
+
+  // create code action
   const startTime = new Date();
   const endTime = new Date(startTime.getTime() + minsLaterEndTime * 60 * 1000);
   const code = String(Math.floor(1000 + Math.random() * 9000));
 
-  // create code action
   try {
     await seam.accessCodes.create({
       device_id: lockDeviceId,
@@ -353,7 +356,62 @@ export async function createLockCode(data: unknown) {
     });
   } catch (e) {
     return {
-      error: "Failed to create code",
-    }
+      error: 'Failed to create code',
+    };
   }
+}
+
+export async function getLatestActiveCode(data: unknown) {
+  // auth check
+  await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      lockDeviceId: z.string().trim().min(1)
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      data: null,
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { lockDeviceId } = validatedData.data;
+
+  // get active codes
+  let activeTimeBoundCodes;
+  try {
+    const codes = await getCodesbyLockId(lockDeviceId);
+
+    activeTimeBoundCodes = codes
+      .filter((code: any) => code.status === 'set')
+      .filter((code) => code.type === 'time_bound');
+
+    if (activeTimeBoundCodes.length === 0) {
+      // await createLockCode({
+      //   lockDeviceId,
+      //   minsLaterEndTime: 3,
+      //   authCheck: false,
+      // });
+
+      return {
+        data: null,
+        error: 'No active codes',
+      };
+    }
+  } catch (e) {
+    return {
+      data: null,
+      error: 'Failed to get codes',
+    };
+  }
+
+  // return newest active code
+  return {
+    data: activeTimeBoundCodes.at(-1),
+    error: null,
+  };
 }

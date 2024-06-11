@@ -11,21 +11,18 @@ import {
   useState,
 } from 'react';
 import { Homemade_Apple } from 'next/font/google';
-// import { flushSync } from 'react-dom';
+import { Label } from '@radix-ui/react-label';
+import { DialogTrigger } from '@radix-ui/react-dialog';
+import { User } from '@prisma/client';
+import Link from 'next/link';
 
 import { Button } from './ui/button';
-import { DialogTrigger } from '@radix-ui/react-dialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import H1 from './h1';
 import Subtitle from './subtitle';
-import { Label } from '@radix-ui/react-label';
 import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
-import { User } from '@prisma/client';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
 import BottomNav from './bottom-nav';
-import { useRouter } from 'next/navigation';
 import { signWaiver } from '@/actions/actions';
 
 const homemadeApple = Homemade_Apple({ weight: '400', subsets: ['latin'] });
@@ -54,8 +51,6 @@ export default function ESigBlock({
       checkboxRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [isCheckboxVisible]);
-
-  const router = useRouter();
 
   return (
     <>

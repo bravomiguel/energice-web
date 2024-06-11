@@ -3,7 +3,8 @@ import { redirect } from 'next/navigation';
 import { GoGoal } from 'react-icons/go';
 import { BsThermometerSnow } from 'react-icons/bs';
 import { GoChecklist } from 'react-icons/go';
-import { IoWarningOutline } from 'react-icons/io5';
+import { IoWarningOutline, IoLocationOutline } from 'react-icons/io5';
+import { LiaExternalLinkAltSolid } from 'react-icons/lia';
 
 import {
   checkAuth,
@@ -16,6 +17,10 @@ import Image from 'next/image';
 import BottomNav from '@/components/bottom-nav';
 import { createLockCode } from '@/actions/actions';
 import UnlockPlungeBtn from '@/components/unlock-plunge-btn';
+import { Unit } from '@prisma/client';
+import Subtitle from '@/components/subtitle';
+import Link from 'next/link';
+import { cn } from '@/lib/utils';
 
 export default async function Page({ params }: { params: { unitId: string } }) {
   noStore();
@@ -45,38 +50,63 @@ export default async function Page({ params }: { params: { unitId: string } }) {
     : 'Ready';
 
   // create new lock code
-  const response = await createLockCode({
-    lockDeviceId: unit.lockDeviceId,
-    minsLaterEndTime: 3,
-  });
-  if (response?.error) {
-    console.error({ error: response.error });
-  }
+  // const response = await createLockCode({
+  //   lockDeviceId: unit.lockDeviceId,
+  //   minsLaterEndTime: 3,
+  // });
+  // if (response?.error) {
+  //   console.error({ error: response.error });
+  // }
+
+  const hostGMapsUrl = `https://www.google.com/maps/search/?api=1&query=${unit.hostAddress
+    .toLowerCase()
+    .replace(' ', '+')}/&query_place_id=${unit.hostGMapsPlaceId}`;
 
   return (
     <main className="relative flex-1 flex flex-col gap-6">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-1">
         <H1>{unit.hostName}</H1>
-        {/* <Subtitle>KoldUp Plunge</Subtitle> */}
-        <PlungeStatus unitStatus={unitStatus} />
+        <Link
+          href={hostGMapsUrl}
+          target="_blank"
+          className="flex gap-1 items-center text-zinc-500"
+        >
+          <IoLocationOutline className="w-4 h-4" />
+          <Subtitle className="text-sm max-w-10/12 truncate">
+            {unit.hostAddress}
+          </Subtitle>
+          <LiaExternalLinkAltSolid className="w-4 h-4" />
+        </Link>
       </div>
-      <PlungeImage imageUrl={unit.imageUrl} />
+      <div className="space-y-1">
+        <PlungeStatus unitStatus={unitStatus} />
+        <PlungeImage imageUrl={unit.imageUrl} />
+      </div>
       <PlungeDetails />
       <PlungeBtnSet unitStatus={unitStatus} unitId={params.unitId} />
     </main>
   );
 }
 
-function PlungeStatus({ unitStatus }: { unitStatus: string }) {
+function PlungeStatus({
+  unitStatus,
+}: {
+  unitStatus: 'Offline' | 'In use' | 'Ready';
+}) {
   return (
     <div className="flex gap-1.5 ml-0.5 -mt-2 items-center -translate-y-0.5">
-      <div className="h-2.5 w-2.5 rounded-full bg-green-300"></div>
-      <p className="text-xs text-zinc-500">{unitStatus}</p>
+      <div
+        className={cn('h-2.5 w-2.5 rounded-full bg-green-400', {
+          'bg-zinc-400': unitStatus === 'Offline',
+          'bg-amber-400': unitStatus === 'In use',
+        })}
+      ></div>
+      <p className="text-xs font-medium text-zinc-500">{unitStatus}</p>
     </div>
   );
 }
 
-function PlungeImage({ imageUrl }: { imageUrl: string }) {
+function PlungeImage({ imageUrl }: { imageUrl: Unit['imageUrl'] }) {
   return (
     <div className="w-full h-[25vh] rounded-lg overflow-hidden flex justify-center items-center bg-zinc-200">
       <Image
@@ -96,7 +126,7 @@ function PlungeDetails() {
       <div className="flex gap-3 items-center py-4 border-b">
         <GoGoal className="h-7 w-7 mr-1 text-zinc-500" />
         <div className="flex gap-2 items-center">
-          <p className="text-600">Set your target plunge time:</p>
+          <p>Set your target plunge time:</p>
           <input
             type="time"
             defaultValue="02:00"
@@ -115,7 +145,7 @@ function PlungeDetails() {
 
       <div className="flex gap-3 items-center py-4 border-b">
         <BsThermometerSnow className="ml-1 h-7 w-7 text-zinc-500" />
-        <p className="text-600">42F-46F water temp</p>
+        <p>42F-46F water temp</p>
       </div>
 
       <div className="flex gap-3 items-center py-4 border-b">
@@ -125,19 +155,19 @@ function PlungeDetails() {
             <div className="w-5 h-5 bg-zinc-200 rounded-full text-xs flex items-center justify-center text-zinc-700 font-extrabold">
               1
             </div>
-            <p className="text-600">Unlock the plunge to start session</p>
+            <p>Unlock the plunge to start session</p>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-5 h-5 bg-zinc-200 rounded-full text-xs flex items-center justify-center text-zinc-700 font-extrabold">
               2
             </div>
-            <p className="text-600">Open the lid and plunge in!</p>
+            <p>Open the lid and plunge in!</p>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-5 h-5 bg-zinc-200 rounded-full text-xs flex items-center justify-center text-zinc-700 font-extrabold">
               3
             </div>
-            <p className="text-600">{`Close the lid when you're done`}</p>
+            <p>{`Close the lid when you're done`}</p>
           </div>
         </div>
       </div>
@@ -149,7 +179,13 @@ function PlungeDetails() {
   );
 }
 
-function PlungeBtnSet({ unitStatus, unitId }: { unitStatus: string, unitId: string }) {
+function PlungeBtnSet({
+  unitStatus,
+  unitId,
+}: {
+  unitStatus: string;
+  unitId: string;
+}) {
   return (
     <BottomNav>
       <div className="flex gap-4">

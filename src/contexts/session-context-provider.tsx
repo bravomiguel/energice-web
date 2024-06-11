@@ -5,7 +5,7 @@ import { createContext, useContext, useOptimistic, useState } from 'react';
 // import { addPet, checkoutPet, editPet } from '@/actions/actions';
 // import { toast } from 'sonner';
 import { Session } from '@prisma/client';
-import { SessionEssentials } from '@/lib/types';
+// import { SessionEssentials } from '@/lib/types';
 
 type SessionContextProviderProps = {
   data: Session[];
@@ -14,10 +14,10 @@ type SessionContextProviderProps = {
 
 type TSessionContext = {
   sessions: Session[];
-  selectedSessionId: Session['id'] | null;
-  selectedSession: Session | undefined;
+  activeSessionId: Session['id'] | null;
+  activeSession: Session | undefined;
   numberOfSessions: number;
-  handleAddSession: (newSession: SessionEssentials) => Promise<void>;
+  // handleAddSession: (newSession: SessionEssentials) => Promise<void>;
 };
 
 export const SessionContext = createContext<TSessionContext | null>(null);
@@ -27,31 +27,31 @@ export default function SessionContextProvider({
   children,
 }: SessionContextProviderProps) {
   // const [sessions, setSessions] = useState(data);
-  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
-  const selectedSession = sessions.find((session) => session.id === selectedSessionId);
+  const activeSession = sessions.find((session) => session.id === activeSessionId);
   const numberOfSessions = sessions.length;
 
-  const handleChangeSelectedSessionId = (id: Session['id']) => {
-    setSelectedSessionId(id);
+  const handleChangeActiveSessionId = (id: Session['id']) => {
+    setActiveSessionId(id);
   };
 
-  const handleAddSession = async (newSession: SessionEssentials) => {
-    // const error = await addSession(newSession);
-    // if (error) {
-    //   toast.warning(error.message);
-    //   return;
-    // }
-  };
+  // const handleAddSession = async (newSession: SessionEssentials) => {
+  //   // const error = await addSession(newSession);
+  //   // if (error) {
+  //   //   toast.warning(error.message);
+  //   //   return;
+  //   // }
+  // };
 
   return (
     <SessionContext.Provider
       value={{
         sessions,
-        selectedSessionId,
-        selectedSession,
+        activeSessionId,
+        activeSession,
         numberOfSessions,
-        handleAddSession,
+        // handleAddSession,
       }}
     >
       {children}
@@ -59,7 +59,7 @@ export default function SessionContextProvider({
   );
 }
 
-export function useUnitContext() {
+export function useSessionContext() {
   const context = useContext(SessionContext);
 
   if (!context) {

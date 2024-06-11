@@ -35,6 +35,11 @@ export async function getUserByEmail(userEmail: User['email']) {
 
 const seam = new Seam();
 
+export async function getAllUnits() {
+  const units = await prisma.unit.findMany();
+  return units;
+}
+
 export async function getUnitById(unitId: Unit['id']) {
   const unit = await prisma.unit.findUnique({ where: { id: unitId } });
   return unit;
@@ -50,4 +55,21 @@ export async function getLockByLockId(deviceId: Unit['lockDeviceId']) {
 export async function getCodesbyLockId(deviceId: Unit['lockDeviceId']) {
   const codes = await seam.accessCodes.list({ device_id: deviceId });
   return codes;
+}
+
+// --- session utils ---
+
+export async function getSessionsByUserId(userId: User['id']) {
+  const sessions = await prisma.session.findMany({ where: { userId } });
+  return sessions;
+}
+
+export async function checkActivePlungeSession(
+  userId: User['id'],
+  unitId: Unit['id'],
+) {
+  const activePlungeSession = await prisma.session.findFirst({
+    where: { userId, unitId, isActive: true },
+  });
+  if (activePlungeSession) redirect(`/session/${activePlungeSession.id}`);
 }

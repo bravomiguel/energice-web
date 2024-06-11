@@ -3,24 +3,29 @@ import UnitContextProvider from '@/contexts/unit-context-provider';
 import SessionContextProvider from '@/contexts/session-context-provider';
 import prisma from '@/lib/db';
 import TopNav from '@/components/top-nav';
+import {
+  checkAuth,
+  getAllUnits,
+  getSessionsByUserId,
+} from '@/lib/server-utils';
 
 export default async function Layout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const units = await prisma.unit.findMany();
-  const sessions = await prisma.session.findMany();
+  const session = await checkAuth();
+
+  const units = await getAllUnits();
+  const sessions = await getSessionsByUserId(session.user.id);
 
   return (
     <>
       <div className="relative flex flex-col px-4 min-h-screen">
-        <TopNav />
-        <UnitContextProvider data={units}>
-          <SessionContextProvider data={sessions}>
-            {children}
-          </SessionContextProvider>
-        </UnitContextProvider>
+        <SessionContextProvider data={sessions}>
+          <TopNav />
+          <UnitContextProvider data={units}>{children}</UnitContextProvider>
+        </SessionContextProvider>
       </div>
       <Toaster position="top-right" />
     </>

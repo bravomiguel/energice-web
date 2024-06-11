@@ -1,7 +1,11 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { IoMdInformationCircleOutline } from 'react-icons/io';
 
-import { getUnitById } from '@/lib/server-utils';
+import {
+  checkActivePlungeSession,
+  checkAuth,
+  getUnitById,
+} from '@/lib/server-utils';
 import { getLatestActiveCode } from '@/actions/actions';
 import H1 from '@/components/h1';
 import { Button } from '@/components/ui/button';
@@ -10,6 +14,8 @@ import Subtitle from '@/components/subtitle';
 import { cn } from '@/lib/utils';
 import { Unit } from '@prisma/client';
 import UnlockPlungeBtn from '@/components/unlock-plunge-btn';
+import prisma from '@/lib/db';
+import { redirect } from 'next/navigation';
 
 export default async function Page({
   params,
@@ -17,6 +23,11 @@ export default async function Page({
   params: { unitId: Unit['id'] };
 }) {
   noStore();
+  // auth check
+  const session = await checkAuth();
+
+  // session active check
+  await checkActivePlungeSession(session.user.id, params.unitId);
 
   // get unit
   const unit = await getUnitById(params.unitId);

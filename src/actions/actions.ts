@@ -500,5 +500,8 @@ export async function unlockAction(data: unknown) {
   }
 
   // fire "create new session" server action
-  await createActiveSession({ unitId });
+  const newSessionId = await createActiveSession({ unitId });
+  if (newSessionId?.data) {
+    redirect(`/session/${newSessionId.data}`)
+  }
 }

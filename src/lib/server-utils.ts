@@ -5,6 +5,7 @@ import { auth } from '@/lib/auth';
 import { Unit, User } from '@prisma/client';
 import prisma from './db';
 import { Seam } from 'seam';
+import { isWithinTimeLimit } from './utils';
 
 // --- auth utils ---
 
@@ -66,10 +67,18 @@ export async function getSessionsByUserId(userId: User['id']) {
 
 export async function checkActivePlungeSession(
   userId: User['id'],
-  unitId: Unit['id'],
 ) {
   const activePlungeSession = await prisma.session.findFirst({
-    where: { userId, unitId, isActive: true },
+    where: { userId, isActive: true },
   });
-  if (activePlungeSession) redirect(`/session/${activePlungeSession.id}`);
+  if (activePlungeSession) {
+    if (isWithinTimeLimit(activePlungeSession.createdAt, 11)) {
+      redirect(`/session/${activePlungeSession.id}`);
+    } else {
+      await prisma.session.update({
+        where: { id: activePlungeSession.id },
+        data: { isActive: false },
+      });
+    }
+  }
 }

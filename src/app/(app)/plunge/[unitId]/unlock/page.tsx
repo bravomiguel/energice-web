@@ -1,5 +1,6 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { IoMdInformationCircleOutline } from 'react-icons/io';
+import { Unit } from '@prisma/client';
 
 import {
   checkActivePlungeSession,
@@ -12,10 +13,7 @@ import { Button } from '@/components/ui/button';
 import BottomNav from '@/components/bottom-nav';
 import Subtitle from '@/components/subtitle';
 import { cn } from '@/lib/utils';
-import { Unit } from '@prisma/client';
 import UnlockPlungeBtn from '@/components/unlock-plunge-btn';
-import prisma from '@/lib/db';
-import { redirect } from 'next/navigation';
 
 export default async function Page({
   params,
@@ -27,7 +25,7 @@ export default async function Page({
   const session = await checkAuth();
 
   // session active check
-  await checkActivePlungeSession(session.user.id, params.unitId);
+  await checkActivePlungeSession(session.user.id);
 
   // get unit
   const unit = await getUnitById(params.unitId);
@@ -73,7 +71,7 @@ export default async function Page({
             ) : (
               <>
                 <IoMdInformationCircleOutline className="w-4 h-4" />
-                {`No code available`}
+                {`No access code available`}
               </>
             )}
           </Subtitle>
@@ -123,14 +121,15 @@ export default async function Page({
 
       <BottomNav className="space-y-2">
         <Subtitle className="text-zinc-600">Access issues?</Subtitle>
-        {/* <Button className="w-full">Unlock via app</Button> */}
-        <UnlockPlungeBtn
-          className="w-full"
-          unitId={unit.id}
-          lockDeviceId={unit.lockDeviceId}
-        >
-          Unlock via app
-        </UnlockPlungeBtn>
+        {activeCode && (
+          <UnlockPlungeBtn
+            className="w-full"
+            unitId={unit.id}
+            lockDeviceId={unit.lockDeviceId}
+          >
+            Unlock via app
+          </UnlockPlungeBtn>
+        )}
         <Button variant="outline" className="w-full">
           Report issue
         </Button>

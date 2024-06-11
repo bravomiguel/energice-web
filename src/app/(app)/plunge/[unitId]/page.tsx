@@ -7,6 +7,7 @@ import { IoWarningOutline, IoLocationOutline } from 'react-icons/io5';
 import { LiaExternalLinkAltSolid } from 'react-icons/lia';
 
 import {
+  checkActivePlungeSession,
   checkAuth,
   getLockByLockId,
   getUnitById,
@@ -22,7 +23,11 @@ import Subtitle from '@/components/subtitle';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
-export default async function Page({ params }: { params: { unitId: Unit['id'] } }) {
+export default async function Page({
+  params,
+}: {
+  params: { unitId: Unit['id'] };
+}) {
   noStore();
 
   // auth check
@@ -33,12 +38,15 @@ export default async function Page({ params }: { params: { unitId: Unit['id'] } 
   if (!user?.firstName) redirect('/member-details');
   if (!user.isWaiverSigned) redirect('/waiver');
 
+  // active plunge session check
+  await checkActivePlungeSession(session.user.id);
+
   // get unit
   const unit = await getUnitById(params.unitId);
   if (!unit) {
-    // redirect('/');
-    console.error('Unit not found');
-    return;
+    redirect('/');
+    // console.error('Unit not found');
+    // return;
   }
 
   // get unit lock

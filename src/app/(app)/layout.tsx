@@ -14,7 +14,7 @@ export default async function Layout({
 
   return (
     <>
-      <div className="flex flex-col px-4 min-h-screen">
+      <div className="relative flex flex-col px-4 min-h-screen">
         <TopNav />
         <UnitContextProvider data={units}>
           <SessionContextProvider data={sessions}>

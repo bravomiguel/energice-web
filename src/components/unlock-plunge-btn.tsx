@@ -1,17 +1,38 @@
 'use client';
 
-import { Button } from './ui/button';
-import { useRouter } from 'next/navigation';
+import { Unit } from '@prisma/client';
 
-export default function UnlockPlungeBtn({ disabled, unitId }: { disabled: boolean, unitId: string }) {
-  const router = useRouter();
+import { Button, ButtonProps } from './ui/button';
+import { cn } from '@/lib/utils';
+import { unlockAction } from '@/actions/actions';
+import { useTransition } from 'react';
+
+export default function UnlockPlungeBtn({
+  unitId,
+  lockDeviceId,
+  children,
+  className,
+  variant,
+}: {
+  unitId: Unit['id'];
+  lockDeviceId: Unit['lockDeviceId'];
+  children: React.ReactNode;
+  className?: string;
+  variant?: ButtonProps['variant'];
+}) {
+  const [isPending, startTransition] = useTransition();
   return (
     <Button
-      disabled={disabled}
-      className="flex-1"
-      onClick={() => router.push(`/plunge/${unitId}/unlock`)}
+      variant={variant}
+      className={cn(className)}
+      onClick={async () => {
+        startTransition(async () => {
+          await unlockAction({ unitId, lockDeviceId });
+        });
+      }}
+      disabled={isPending}
     >
-      Unlock Plunge
+      {children}
     </Button>
   );
 }

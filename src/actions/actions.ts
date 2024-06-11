@@ -314,17 +314,60 @@ export async function signWaiver() {
   redirect(callbackUrl);
 }
 
+// --- session actions ---
+
+export async function createActiveSession(data: unknown) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      unitId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      data: null,
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { unitId } = validatedData.data;
+
+  // create new active session
+  let newSession;
+  try {
+    newSession = await prisma.session.create({
+      data: { userId: session.user.id, unitId, isActive: true },
+    });
+  } catch (e) {
+    return {
+      data: null,
+      error: 'Failed to create new active session',
+    };
+  }
+
+  return {
+    data: newSession.id,
+    error: null,
+  };
+}
+
 // --- unit actions ---
 
 const seam = new Seam();
 
 export async function createLockCode(data: unknown) {
+  // auth check
+  await checkAuth();
+
   // validation check
   const validatedData = z
     .object({
       lockDeviceId: z.string().trim().min(1),
       minsLaterEndTime: z.number().positive(),
-      authCheck: z.union([z.undefined(), z.boolean()]),
     })
     .safeParse(data);
 
@@ -334,12 +377,7 @@ export async function createLockCode(data: unknown) {
     };
   }
 
-  const { lockDeviceId, minsLaterEndTime, authCheck } = validatedData.data;
-
-  // auth check
-  if (authCheck === true || authCheck === undefined) {
-    await checkAuth();
-  }
+  const { lockDeviceId, minsLaterEndTime } = validatedData.data;
 
   // create code action
   const startTime = new Date();
@@ -368,7 +406,7 @@ export async function getLatestActiveCode(data: unknown) {
   // validation check
   const validatedData = z
     .object({
-      lockDeviceId: z.string().trim().min(1)
+      lockDeviceId: z.string().trim().min(1),
     })
     .safeParse(data);
 
@@ -394,7 +432,6 @@ export async function getLatestActiveCode(data: unknown) {
       // await createLockCode({
       //   lockDeviceId,
       //   minsLaterEndTime: 3,
-      //   authCheck: false,
       // });
 
       return {
@@ -414,4 +451,54 @@ export async function getLatestActiveCode(data: unknown) {
     data: activeTimeBoundCodes.at(-1),
     error: null,
   };
+}
+
+export async function unlockAction(data: unknown) {
+  // auth check
+  await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      unitId: z.string().trim().min(1),
+      lockDeviceId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      data: null,
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { lockDeviceId, unitId } = validatedData.data;
+
+  // unlock action
+  try {
+    const actionResponse = await seam.locks.unlockDoor(
+      { device_id: lockDeviceId },
+      {
+        waitForActionAttempt: {
+          pollingInterval: 1000,
+          timeout: 60000,
+        },
+      },
+    );
+
+    await seam.actionAttempts.get({
+      action_attempt_id: actionResponse.action_attempt_id,
+    });
+    // if (verifyResponse.status === 'success') {
+    //   console.log('Unlocking successful.');
+    // }
+  } catch (e) {
+    return {
+      data: null,
+      error: 'Unlocking unsuccessful, please try again',
+    };
+  }
+
+  // fire "create new session" server action
+  await createActiveSession({ unitId });
 }

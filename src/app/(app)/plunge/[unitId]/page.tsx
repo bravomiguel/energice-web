@@ -15,14 +15,14 @@ import {
 import H1 from '@/components/h1';
 import Image from 'next/image';
 import BottomNav from '@/components/bottom-nav';
-import { createLockCode } from '@/actions/actions';
-import UnlockPlungeBtn from '@/components/unlock-plunge-btn';
+// import { createLockCode } from '@/actions/actions';
+import StartPlungeBtn from '@/components/start-plunge-btn';
 import { Unit } from '@prisma/client';
 import Subtitle from '@/components/subtitle';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
-export default async function Page({ params }: { params: { unitId: string } }) {
+export default async function Page({ params }: { params: { unitId: Unit['id'] } }) {
   noStore();
 
   // auth check
@@ -192,7 +192,7 @@ function PlungeBtnSet({
         <div className="flex gap-1 items-center">
           <p className="text-4xl font-bold">$10</p>
         </div>
-        <UnlockPlungeBtn disabled={unitStatus !== 'Ready'} unitId={unitId} />
+        <StartPlungeBtn disabled={unitStatus !== 'Ready'} unitId={unitId} />
       </div>
       <div className="flex gap-3 items-center pt-2">
         <IoWarningOutline className="ml-1 h-8 w-8 text-red-500 self-start" />

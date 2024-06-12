@@ -27,3 +27,28 @@ export function getTimeDiffSecs(date1: Date | null, date2: Date | null) {
   if (!date1 || !date2) return null;
   return Math.floor(Math.abs(date1.getTime() - date2.getTime()) / 1000);
 }
+
+export function repeatUntilTrueOrTimeout(func: () => Promise<boolean>, interval: number, maxTime: number) {
+  return new Promise((resolve, reject) => {
+      const endTime = Date.now() + maxTime;
+
+      const intervalId = setInterval(async () => {
+          if (Date.now() > endTime) {
+              clearInterval(intervalId);
+              reject(new Error('Max time reached'));
+              return;
+          }
+
+          try {
+              const result = await func();
+              if (result === true) {
+                  clearInterval(intervalId);
+                  resolve(true);
+              }
+          } catch (error) {
+              clearInterval(intervalId);
+              reject(error);
+          }
+      }, interval);
+  });
+}

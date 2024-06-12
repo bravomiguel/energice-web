@@ -91,7 +91,7 @@ export default async function Page({
         <PlungeImage imageUrl={unit.imageUrl} />
       </div>
       <PlungeDetails />
-      <PlungeBtnSet unitStatus={unitStatus} unitId={params.unitId} />
+      <PlungeBtnSet unitStatus={unitStatus} unitId={params.unitId} lockDeviceId={unit.lockDeviceId} />
     </main>
   );
 }
@@ -196,9 +196,11 @@ function PlungeDetails() {
 function PlungeBtnSet({
   unitStatus,
   unitId,
+  lockDeviceId,
 }: {
   unitStatus: string;
   unitId: string;
+  lockDeviceId: string;
 }) {
   return (
     <BottomNav>
@@ -206,7 +208,7 @@ function PlungeBtnSet({
         <div className="flex gap-1 items-center">
           <p className="text-4xl font-bold">$10</p>
         </div>
-        <StartPlungeBtn disabled={unitStatus !== 'Ready'} unitId={unitId} />
+        <StartPlungeBtn disabled={unitStatus !== 'Ready'} unitId={unitId} lockDeviceId={lockDeviceId} />
       </div>
       <div className="flex gap-3 items-center pt-2">
         <IoWarningOutline className="ml-1 h-8 w-8 text-red-500 self-start" />

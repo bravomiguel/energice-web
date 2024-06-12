@@ -16,6 +16,7 @@ import { signIn, signOut } from '@/lib/auth';
 import { checkAuth, getCodesbyLockId } from '@/lib/server-utils';
 import { AuthError } from 'next-auth';
 import { Seam } from 'seam';
+import { repeatUntilTrueOrTimeout } from '@/lib/utils';
 
 // --- user actions ---
 
@@ -421,19 +422,49 @@ export async function getLatestActiveCode(data: unknown) {
 
   // get active codes
   let activeTimeBoundCodes;
-  try {
-    const codes = await getCodesbyLockId(lockDeviceId);
+  let codes;
+  codes = await getCodesbyLockId(lockDeviceId);
+  activeTimeBoundCodes = codes
+    .filter((code: any) => code.status === 'set')
+    .filter((code) => code.type === 'time_bound');
 
+  // if no active codes, keep checking for few secs
+  if (activeTimeBoundCodes.length === 0) {
+    try {
+      await repeatUntilTrueOrTimeout(
+        async () => {
+          codes = await getCodesbyLockId(lockDeviceId);
+          activeTimeBoundCodes = codes
+            .filter((code: any) => code.status === 'set')
+            .filter((code) => code.type === 'time_bound');
+
+          const anyActiveCodes = activeTimeBoundCodes.length > 0;
+
+          console.log('Checking for active codes...');
+
+          return new Promise((resolve) => {
+            resolve(anyActiveCodes);
+          });
+        },
+        1000,
+        5000,
+      );
+    } catch (e) {
+      return {
+        data: null,
+        error: 'Failed to get codes',
+      };
+    }
+  }
+
+  // try one more time and move on.
+  try {
+    codes = await getCodesbyLockId(lockDeviceId);
     activeTimeBoundCodes = codes
       .filter((code: any) => code.status === 'set')
       .filter((code) => code.type === 'time_bound');
 
     if (activeTimeBoundCodes.length === 0) {
-      // await createLockCode({
-      //   lockDeviceId,
-      //   minsLaterEndTime: 3,
-      // });
-
       return {
         data: null,
         error: 'No active codes',
@@ -502,6 +533,6 @@ export async function unlockAction(data: unknown) {
   // fire "create new session" server action
   const newSessionId = await createActiveSession({ unitId });
   if (newSessionId?.data) {
-    redirect(`/session/${newSessionId.data}`)
+    redirect(`/session/${newSessionId.data}`);
   }
 }

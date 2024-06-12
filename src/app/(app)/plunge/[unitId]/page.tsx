@@ -156,7 +156,7 @@ function PlungeDetails() {
         <p>42F-46F water temp</p>
       </div>
 
-      <div className="flex gap-3 items-center py-4 border-b">
+      {/* <div className="flex gap-3 items-center py-4 border-b">
         <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1.5">
@@ -178,10 +178,16 @@ function PlungeDetails() {
             <p>{`Close the lid when you're done`}</p>
           </div>
         </div>
-      </div>
+      </div> */}
 
-      <div className="w-full h-[25vh] rounded-lg overflow-hidden flex justify-center items-center bg-zinc-200">
-        {`GIF "How it works" Explanation`}
+      <div className="flex flex-col gap-3 py-4 border-b">
+        <div className="flex gap-3 items-center">
+          <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
+          <p>How it works:</p>
+        </div>
+        <div className="w-full h-[25vh] rounded-lg overflow-hidden flex justify-center items-center bg-zinc-200">
+          {`GIF "How it works" Explanation`}
+        </div>
       </div>
     </div>
   );

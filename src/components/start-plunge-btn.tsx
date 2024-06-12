@@ -11,7 +11,7 @@ export default function StartPlungeBtn({ disabled, unitId }: { disabled: boolean
       className="flex-1"
       onClick={() => router.push(`/plunge/${unitId}/unlock`)}
     >
-      Unlock Plunge
+      Start Plunge
     </Button>
   );
 }

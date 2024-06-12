@@ -1,7 +1,11 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import { checkActivePlungeSession, checkAuth, getUserById } from '@/lib/server-utils';
+import {
+  checkActivePlungeSession,
+  checkAuth,
+  getUserById,
+} from '@/lib/server-utils';
 import prisma from '@/lib/db';
 
 export default async function Home() {
@@ -16,7 +20,12 @@ export default async function Home() {
   if (!user.isWaiverSigned) redirect('/waiver');
 
   // active plunge session check
-  await checkActivePlungeSession(session.user.id);
+  const activePlungeSession = await checkActivePlungeSession(session.user.id);
+  if (activePlungeSession.status === 'started') {
+    redirect(`/session/${activePlungeSession.data?.id}`);
+  } else if (activePlungeSession.status === 'active') {
+    redirect(`/plunge/${activePlungeSession.data?.unitId}/unlock`);
+  }
 
   // callback redirect check
   if (user.authCallbackUrl) {

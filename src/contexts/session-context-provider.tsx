@@ -15,6 +15,7 @@ type SessionContextProviderProps = {
 type TSessionContext = {
   sessions: Session[];
   activeSessionId: Session['id'] | null;
+  handleChangeActiveSessionId: (id: Session['id']) => void;
   activeSession: Session | undefined;
   numberOfSessions: number;
   // handleAddSession: (newSession: SessionEssentials) => Promise<void>;
@@ -49,6 +50,7 @@ export default function SessionContextProvider({
       value={{
         sessions,
         activeSessionId,
+        handleChangeActiveSessionId,
         activeSession,
         numberOfSessions,
         // handleAddSession,

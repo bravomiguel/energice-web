@@ -5,6 +5,13 @@ import bcrypt from 'bcryptjs';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 // import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { AuthError } from 'next-auth';
+import {
+  Seam,
+  isSeamActionAttemptFailedError,
+  isSeamActionAttemptTimeoutError,
+} from 'seam';
+import { Session, Unit } from '@prisma/client';
 
 import prisma from '@/lib/db';
 import {
@@ -13,14 +20,19 @@ import {
   memberDetailsFormSchema,
 } from '@/lib/validations';
 import { signIn, signOut } from '@/lib/auth';
-import { checkAuth, getCodesbyLockId } from '@/lib/server-utils';
-import { AuthError } from 'next-auth';
-import { Seam } from 'seam';
-import { repeatUntilTrueOrTimeout } from '@/lib/utils';
+import {
+  checkActivePlungeSession,
+  checkAuth,
+  getCodesbyLockId,
+  getSessionById,
+  getUnitById,
+} from '@/lib/server-utils';
+import { getTimeDiffSecs } from '@/lib/utils';
+import { HealthQuizData, TAuthForm, TMemberDetailsForm } from '@/lib/types';
 
 // --- user actions ---
 
-export async function signUp(data: unknown) {
+export async function signUp(data: TAuthForm & { callbackUrl: string | null }) {
   const validatedData = authFormSchema
     .extend({ callbackUrl: z.union([z.null(), z.string().trim().url()]) })
     .safeParse(data);
@@ -106,7 +118,9 @@ export async function signUp(data: unknown) {
   }
 }
 
-export async function signInAction(data: unknown) {
+export async function signInAction(
+  data: TAuthForm & { callbackUrl: string | null },
+) {
   const validatedData = authFormSchema
     .extend({ callbackUrl: z.union([z.null(), z.string().trim().url()]) })
     .safeParse(data);
@@ -230,7 +244,7 @@ export async function deleteAccount() {
 
 // --- member details actions ---
 
-export async function addMemberDetails(data: unknown) {
+export async function addMemberDetails(data: TMemberDetailsForm) {
   // authentication check
   const session = await checkAuth();
 
@@ -259,7 +273,7 @@ export async function addMemberDetails(data: unknown) {
 
 // --- health quiz actions ---
 
-export async function saveHealthQuiz(data: unknown) {
+export async function saveHealthQuiz(data: HealthQuizData) {
   // authentication check
   const session = await checkAuth();
 
@@ -315,52 +329,14 @@ export async function signWaiver() {
   redirect(callbackUrl);
 }
 
-// --- session actions ---
-
-export async function createActiveSession(data: unknown) {
-  // auth check
-  const session = await checkAuth();
-
-  // validation check
-  const validatedData = z
-    .object({
-      unitId: z.string().trim().min(1),
-    })
-    .safeParse(data);
-
-  if (!validatedData.success) {
-    return {
-      data: null,
-      error: validatedData.error.issues[0].message,
-    };
-  }
-
-  const { unitId } = validatedData.data;
-
-  // create new active session
-  let newSession;
-  try {
-    newSession = await prisma.session.create({
-      data: { userId: session.user.id, unitId, isActive: true },
-    });
-  } catch (e) {
-    return {
-      data: null,
-      error: 'Failed to create new active session',
-    };
-  }
-
-  return {
-    data: newSession.id,
-    error: null,
-  };
-}
-
 // --- unit actions ---
 
 const seam = new Seam();
 
-export async function createLockCode(data: unknown) {
+export async function createLockCode(data: {
+  lockDeviceId: Unit['lockDeviceId'];
+  minsLaterEndTime: number;
+}) {
   // auth check
   await checkAuth();
 
@@ -400,14 +376,14 @@ export async function createLockCode(data: unknown) {
   }
 }
 
-export async function getLatestActiveCode(data: unknown) {
+export async function getLatestEligibleCode(data: { unitId: Unit['id'] }) {
   // auth check
   await checkAuth();
 
   // validation check
   const validatedData = z
     .object({
-      lockDeviceId: z.string().trim().min(1),
+      unitId: z.string().trim().min(1),
     })
     .safeParse(data);
 
@@ -418,56 +394,45 @@ export async function getLatestActiveCode(data: unknown) {
     };
   }
 
-  const { lockDeviceId } = validatedData.data;
+  const { unitId } = validatedData.data;
 
-  // get active codes
-  let activeTimeBoundCodes;
-  let codes;
-  codes = await getCodesbyLockId(lockDeviceId);
-  activeTimeBoundCodes = codes
-    .filter((code: any) => code.status === 'set')
-    .filter((code) => code.type === 'time_bound');
-
-  // if no active codes, keep checking for few secs
-  if (activeTimeBoundCodes.length === 0) {
-    try {
-      await repeatUntilTrueOrTimeout(
-        async () => {
-          codes = await getCodesbyLockId(lockDeviceId);
-          activeTimeBoundCodes = codes
-            .filter((code: any) => code.status === 'set')
-            .filter((code) => code.type === 'time_bound');
-
-          const anyActiveCodes = activeTimeBoundCodes.length > 0;
-
-          console.log('Checking for active codes...');
-
-          return new Promise((resolve) => {
-            resolve(anyActiveCodes);
-          });
-        },
-        1000,
-        5000,
-      );
-    } catch (e) {
+  let lockDeviceId;
+  // get unit's lock id
+  try {
+    const unit = await getUnitById(unitId);
+    if (!unit)
       return {
         data: null,
-        error: 'Failed to get codes',
+        error: 'Unit does not exist',
       };
-    }
+    lockDeviceId = unit.lockDeviceId;
+  } catch (e) {
+    return {
+      data: null,
+      error: 'Failed to find unit',
+    };
   }
 
-  // try one more time and move on.
+  // get eligible codes
+  let eligibleCodes;
   try {
-    codes = await getCodesbyLockId(lockDeviceId);
-    activeTimeBoundCodes = codes
+    const codes = await getCodesbyLockId(lockDeviceId);
+    eligibleCodes = codes
       .filter((code: any) => code.status === 'set')
-      .filter((code) => code.type === 'time_bound');
+      .filter((code) => code.type === 'time_bound')
+      .filter((code) => {
+        if (!code.ends_at) return false;
+        const now = new Date();
+        const endsAt = new Date(code.ends_at);
+        const timeDiffSecs = getTimeDiffSecs(now, endsAt);
+        if (!timeDiffSecs) return false;
+        return timeDiffSecs >= 60;
+      });
 
-    if (activeTimeBoundCodes.length === 0) {
+    if (eligibleCodes.length === 0) {
       return {
         data: null,
-        error: 'No active codes',
+        error: 'No code available',
       };
     }
   } catch (e) {
@@ -477,33 +442,60 @@ export async function getLatestActiveCode(data: unknown) {
     };
   }
 
-  // return newest active code
+  // return latest eligible code
   return {
-    data: activeTimeBoundCodes.at(-1),
+    data: eligibleCodes.at(-1),
     error: null,
   };
 }
 
-export async function unlockAction(data: unknown) {
+export async function unlockAction(data: { unitId: Unit['id'] }) {
   // auth check
-  await checkAuth();
+  const session = await checkAuth();
 
   // validation check
   const validatedData = z
     .object({
       unitId: z.string().trim().min(1),
-      lockDeviceId: z.string().trim().min(1),
     })
     .safeParse(data);
 
   if (!validatedData.success) {
     return {
-      data: null,
       error: validatedData.error.issues[0].message,
     };
   }
 
-  const { lockDeviceId, unitId } = validatedData.data;
+  const { unitId } = validatedData.data;
+
+  // active session check, for this unit
+  const activePlungeSession = await checkActivePlungeSession(session.user.id);
+  if (!activePlungeSession.data) {
+    return {
+      error: 'No active session found',
+    };
+  }
+
+  if (activePlungeSession.data?.unitId !== unitId) {
+    return {
+      error: 'Not authorized to unlock this plunge',
+    };
+  }
+
+  // get unit's lock id
+  let lockDeviceId;
+  try {
+    const unit = await getUnitById(unitId);
+    if (!unit)
+      return {
+        error: 'Unit does not exist',
+      };
+    lockDeviceId = unit.lockDeviceId;
+  } catch (e) {
+    return {
+      error: 'Failed to find unit',
+    };
+  }
 
   // unlock action
   try {
@@ -520,19 +512,140 @@ export async function unlockAction(data: unknown) {
     await seam.actionAttempts.get({
       action_attempt_id: actionResponse.action_attempt_id,
     });
-    // if (verifyResponse.status === 'success') {
-    //   console.log('Unlocking successful.');
-    // }
   } catch (e) {
+    if (isSeamActionAttemptFailedError(e)) {
+      // console.log('Locking unsuccessful');
+      return {
+        error: 'Unlocking unsuccessful, try again',
+      };
+    }
+    if (isSeamActionAttemptTimeoutError(e)) {
+      // console.log('Lock action took too long to resolve.');
+      return {
+        error: 'Locking took too long',
+      };
+    }
     return {
-      data: null,
       error: 'Unlocking unsuccessful, please try again',
     };
   }
+}
 
-  // fire "create new session" server action
-  const newSessionId = await createActiveSession({ unitId });
-  if (newSessionId?.data) {
-    redirect(`/session/${newSessionId.data}`);
+// --- session actions ---
+
+export async function createActiveSession(data: {
+  unitId: Unit['id'];
+  assignCode?: boolean;
+}) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      unitId: z.string().trim().min(1),
+      assignCode: z.union([z.undefined(), z.boolean()]),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      // data: null,
+      error: validatedData.error.issues[0].message,
+    };
   }
+
+  const { unitId, assignCode } = validatedData.data;
+
+  // get access code, if relevant
+  let codeData;
+  if (assignCode) {
+    const response = await getLatestEligibleCode({ unitId });
+    codeData = response?.data;
+  }
+
+  // prep initial data for new session
+  let initialData;
+  if (codeData) {
+    initialData = {
+      userId: session.user.id,
+      unitId,
+      isActive: true,
+      accessCodeId: codeData.access_code_id,
+      accessCode: codeData.code,
+      accessCodeEndsAt: codeData.ends_at ? new Date(codeData.ends_at) : null,
+    };
+  } else {
+    initialData = {
+      userId: session.user.id,
+      unitId,
+      isActive: true,
+    };
+  }
+
+  // create new active session
+  let newSession;
+  try {
+    newSession = await prisma.session.create({
+      data: initialData,
+    });
+  } catch (e) {
+    return {
+      // data: null,
+      error: 'Failed to create new active session',
+    };
+  }
+
+  redirect(`/plunge/${unitId}/unlock`);
+}
+
+export async function startActiveSession(data: { sessionId: Session['id'] }) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      sessionId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    console.log({ error: validatedData.error.issues[0].message });
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { sessionId } = validatedData.data;
+
+  // authorization check
+  const plungeSession = await getSessionById(sessionId);
+
+  if (!plungeSession) {
+    return {
+      error: 'Session not found',
+    };
+  }
+  if (plungeSession.userId !== session.user.id) {
+    return {
+      error: 'Not authorized',
+    };
+  }
+
+  // update start date
+  try {
+    const now = new Date();
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: { sessionStart: now },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to start session',
+    };
+  }
+
+  // redirect to session screen
+  redirect(`/session/${sessionId}`);
 }

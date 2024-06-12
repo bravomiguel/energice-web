@@ -2,7 +2,7 @@ import 'server-only';
 import { redirect } from 'next/navigation';
 
 import { auth } from '@/lib/auth';
-import { Unit, User } from '@prisma/client';
+import { Session, Unit, User } from '@prisma/client';
 import prisma from './db';
 import { Seam } from 'seam';
 import { isWithinTimeLimit } from './utils';
@@ -60,25 +60,63 @@ export async function getCodesbyLockId(deviceId: Unit['lockDeviceId']) {
 
 // --- session utils ---
 
+export async function getSessionById(sessionId: Session['id']) {
+  const session = await prisma.session.findUnique({ where: { id: sessionId } });
+  return session;
+}
+
 export async function getSessionsByUserId(userId: User['id']) {
   const sessions = await prisma.session.findMany({ where: { userId } });
   return sessions;
 }
 
-export async function checkActivePlungeSession(
-  userId: User['id'],
-) {
+export async function checkActivePlungeSession(userId: User['id']): Promise<{
+  data: Session | null;
+  status: 'started' | 'active' | 'no_active';
+}> {
   const activePlungeSession = await prisma.session.findFirst({
     where: { userId, isActive: true },
   });
   if (activePlungeSession) {
-    if (isWithinTimeLimit(activePlungeSession.createdAt, 11)) {
-      redirect(`/session/${activePlungeSession.id}`);
+    if (activePlungeSession.sessionStart) {
+      if (isWithinTimeLimit(activePlungeSession.sessionStart, 10)) {
+        // redirect(`/session/${activePlungeSession.id}`);
+        return {
+          data: activePlungeSession,
+          status: 'started',
+        };
+      } else {
+        await prisma.session.update({
+          where: { id: activePlungeSession.id },
+          data: { isActive: false },
+        });
+
+        return {
+          data: activePlungeSession,
+          status: 'no_active',
+        };
+      }
+    } else if (isWithinTimeLimit(activePlungeSession.createdAt, 12)) {
+      // redirect(`/plunge/${activePlungeSession.unitId}/unlock`);
+      return {
+        data: activePlungeSession,
+        status: 'active',
+      };
     } else {
       await prisma.session.update({
         where: { id: activePlungeSession.id },
         data: { isActive: false },
       });
+
+      return {
+        data: activePlungeSession,
+        status: 'no_active',
+      };
     }
   }
+
+  return {
+    data: null,
+    status: 'no_active',
+  };
 }

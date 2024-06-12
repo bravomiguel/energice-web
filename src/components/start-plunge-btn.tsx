@@ -1,6 +1,6 @@
 'use client';
 
-import { createLockCode } from '@/actions/actions';
+import { createActiveSession, createLockCode } from '@/actions/actions';
 import { Button } from './ui/button';
 import { useRouter } from 'next/navigation';
 
@@ -27,7 +27,14 @@ export default function StartPlungeBtn({
         // if (response?.error) {
         //   console.error({ error: response.error });
         // }
-        router.push(`/plunge/${unitId}/unlock`);
+        // router.push(`/plunge/${unitId}/unlock`);
+        const response = await createActiveSession({
+          unitId,
+          assignCode: true,
+        });
+        if (response?.error) {
+          console.error({ error: response.error });
+        }
       }}
     >
       Start Plunge

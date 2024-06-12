@@ -28,20 +28,23 @@ model User {
 }
 
 model Session {
-  id              String   @id @default(cuid())
-  isActive        Boolean  @default(false)
-  sessionStart    DateTime?
-  sessionEnd      DateTime?
-  penaltyCharged  Boolean  @default(false)
-  plungeStart     DateTime?
-  plungeEnd       DateTime?
-  User            User     @relation(fields: [userId], references: [id])
-  userId          String
-  Unit            Unit     @relation(fields: [unitId], references: [id])
-  unitId          String
-  price           Decimal?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id               String    @id @default(cuid())
+  isActive         Boolean   @default(false)
+  accessCodeId     String?
+  accessCode       String?
+  accessCodeEndsAt DateTime?
+  sessionStart     DateTime?
+  sessionEnd       DateTime?
+  penaltyCharged   Boolean   @default(false)
+  plungeStart      DateTime?
+  plungeEnd        DateTime?
+  User             User      @relation(fields: [userId], references: [id])
+  userId           String
+  Unit             Unit      @relation(fields: [unitId], references: [id])
+  unitId           String
+  price            Decimal?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
 }
 
 model Unit {

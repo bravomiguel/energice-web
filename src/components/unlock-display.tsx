@@ -5,39 +5,49 @@ import CodeExpiryCountdown from './code-expiry-countdown';
 import UnlockPlungeBtn from './unlock-plunge-btn';
 import Subtitle from './subtitle';
 import { IoMdInformationCircleOutline } from 'react-icons/io';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useTransition } from 'react';
 import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
+import { useSessionContext } from '@/contexts/session-context-provider';
+import LoadingSpinner from './loading-spinner';
+import { Session } from '@prisma/client';
 
 export default function UnlockDisplay({
   code,
+  activeSessionId,
   secsLeft,
   unitId,
-  lockDeviceId,
   className,
 }: {
-  code: string | null;
+  code: Session['accessCode'];
+  activeSessionId: Session['id'];
   secsLeft: number | null;
-  unitId: string;
-  lockDeviceId: string;
+  unitId: Session['unitId'];
   className?: string;
 }) {
   // const code = 3108;
   // const secsLeft = 5;
-  const [countdownSecs, setCountdownSecs] = useState<number | null>(secsLeft);
-  const isCodeAvailable = code && countdownSecs && countdownSecs > 0;
+  const [codeExpirySecs, setCodeExpirySecs] = useState<number | null>(secsLeft);
+  const isCodeAvailable = code && codeExpirySecs && codeExpirySecs > 0;
+
+  const { handleChangeActiveSessionId } = useSessionContext();
+  useEffect(() => {
+    if (activeSessionId) handleChangeActiveSessionId(activeSessionId);
+  }, [activeSessionId, handleChangeActiveSessionId]);
+
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      if (countdownSecs && countdownSecs > 0) {
-        setCountdownSecs(countdownSecs - 1);
+      if (codeExpirySecs && codeExpirySecs > 0) {
+        setCodeExpirySecs(codeExpirySecs - 1);
       } else {
         clearInterval(intervalId);
       }
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [countdownSecs]);
+  }, [codeExpirySecs]);
 
   return (
     <>
@@ -49,7 +59,7 @@ export default function UnlockDisplay({
             ) : (
               <>
                 <IoMdInformationCircleOutline className="w-4 h-4" />
-                {countdownSecs === 0
+                {codeExpirySecs === 0
                   ? 'Access code expired'
                   : 'No access code available'}
               </>
@@ -65,8 +75,8 @@ export default function UnlockDisplay({
               <>
                 <p className="text-5xl">{code}</p>
                 <CodeExpiryCountdown
-                  countdownSecs={countdownSecs}
-                  setCountdownSecs={setCountdownSecs}
+                  countdownSecs={codeExpirySecs}
+                  setCountdownSecs={setCodeExpirySecs}
                 />
               </>
             ) : (
@@ -80,7 +90,9 @@ export default function UnlockDisplay({
                 <UnlockPlungeBtn
                   variant="koldupGreen"
                   unitId={unitId}
-                  lockDeviceId={lockDeviceId}
+                  sessionId={activeSessionId}
+                  isPending={isPending}
+                  startTransition={startTransition}
                 >
                   Unlock
                 </UnlockPlungeBtn>
@@ -95,6 +107,15 @@ export default function UnlockDisplay({
               {`GIF "How it works" Explanation`}
             </div>
           </div>
+        ) : isPending ? (
+          <LoadingSpinner
+            className="flex-1 flex flex-col items-center justify-center text-sm w-44 mx-auto gap-2 text-zinc-500 text-center"
+            size={40}
+            color="text-indigo-700"
+            message1="May take a few secs to complete..."
+            message2="You can start as soon as you hear the lid open..."
+            message3="Can take a while to register the unlock..."
+          />
         ) : null}
       </div>
       <BottomNav className="space-y-2">
@@ -103,7 +124,9 @@ export default function UnlockDisplay({
           <UnlockPlungeBtn
             className="w-full"
             unitId={unitId}
-            lockDeviceId={lockDeviceId}
+            sessionId={activeSessionId}
+            isPending={isPending}
+            startTransition={startTransition}
           >
             Unlock via app
           </UnlockPlungeBtn>

@@ -11,8 +11,8 @@ export async function sleep(ms: number) {
 
 export function isWithinTimeLimit(dateTime: Date, timeLimitMins: number) {
   const now = new Date();
-  const fifteenMinutesAgo = new Date(now.getTime() - timeLimitMins * 60 * 1000);
-  return dateTime > fifteenMinutesAgo;
+  const timeLimit = new Date(now.getTime() - timeLimitMins * 60 * 1000);
+  return dateTime > timeLimit;
 }
 
 export function formatSecsToMins(seconds: number) {
@@ -23,32 +23,7 @@ export function formatSecsToMins(seconds: number) {
   return `${formattedMinutes}:${formattedSeconds}`;
 }
 
-export function getTimeDiffSecs(date1: Date | null, date2: Date | null) {
-  if (!date1 || !date2) return null;
-  return Math.floor(Math.abs(date1.getTime() - date2.getTime()) / 1000);
-}
-
-export function repeatUntilTrueOrTimeout(func: () => Promise<boolean>, interval: number, maxTime: number) {
-  return new Promise((resolve, reject) => {
-      const endTime = Date.now() + maxTime;
-
-      const intervalId = setInterval(async () => {
-          if (Date.now() > endTime) {
-              clearInterval(intervalId);
-              reject(new Error('Max time reached'));
-              return;
-          }
-
-          try {
-              const result = await func();
-              if (result === true) {
-                  clearInterval(intervalId);
-                  resolve(true);
-              }
-          } catch (error) {
-              clearInterval(intervalId);
-              reject(error);
-          }
-      }, interval);
-  });
+export function getTimeDiffSecs(startDate: Date | null, endDate: Date | null) {
+  if (!startDate || !endDate) return null;
+  return Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
 }

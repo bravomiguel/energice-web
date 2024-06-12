@@ -24,7 +24,7 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils';
 
 export default async function Page({
-  params,
+  params: { unitId },
 }: {
   params: { unitId: Unit['id'] };
 }) {
@@ -39,10 +39,15 @@ export default async function Page({
   if (!user.isWaiverSigned) redirect('/waiver');
 
   // active plunge session check
-  await checkActivePlungeSession(session.user.id);
+  const activePlungeSession = await checkActivePlungeSession(session.user.id);
+  if (activePlungeSession.status === 'started') {
+    redirect(`/session/${activePlungeSession.data?.id}`);
+  } else if (activePlungeSession.status === 'active') {
+    redirect(`/plunge/${activePlungeSession.data?.unitId}/unlock`);
+  }
 
   // get unit
-  const unit = await getUnitById(params.unitId);
+  const unit = await getUnitById(unitId);
   if (!unit) {
     redirect('/');
     // console.error('Unit not found');
@@ -91,7 +96,11 @@ export default async function Page({
         <PlungeImage imageUrl={unit.imageUrl} />
       </div>
       <PlungeDetails />
-      <PlungeBtnSet unitStatus={unitStatus} unitId={params.unitId} lockDeviceId={unit.lockDeviceId} />
+      <PlungeBtnSet
+        unitStatus={unitStatus}
+        unitId={unitId}
+        lockDeviceId={unit.lockDeviceId}
+      />
     </main>
   );
 }
@@ -208,7 +217,11 @@ function PlungeBtnSet({
         <div className="flex gap-1 items-center">
           <p className="text-4xl font-bold">$10</p>
         </div>
-        <StartPlungeBtn disabled={unitStatus !== 'Ready'} unitId={unitId} lockDeviceId={lockDeviceId} />
+        <StartPlungeBtn
+          disabled={unitStatus !== 'Ready'}
+          unitId={unitId}
+          lockDeviceId={lockDeviceId}
+        />
       </div>
       <div className="flex gap-3 items-center pt-2">
         <IoWarningOutline className="ml-1 h-8 w-8 text-red-500 self-start" />

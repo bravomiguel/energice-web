@@ -1,33 +1,43 @@
 'use client';
 
-import { Unit } from '@prisma/client';
+import { Session, Unit } from '@prisma/client';
 
 import { Button, ButtonProps } from './ui/button';
 import { cn } from '@/lib/utils';
-import { unlockAction } from '@/actions/actions';
-import { useTransition } from 'react';
+import { startActiveSession, unlockAction } from '@/actions/actions';
+import { TransitionStartFunction } from 'react';
 
 export default function UnlockPlungeBtn({
   unitId,
-  lockDeviceId,
+  sessionId,
+  isPending,
+  startTransition,
   children,
   className,
   variant,
 }: {
   unitId: Unit['id'];
-  lockDeviceId: Unit['lockDeviceId'];
+  sessionId: Session['id'];
+  isPending: boolean;
+  startTransition: TransitionStartFunction;
   children: React.ReactNode;
   className?: string;
   variant?: ButtonProps['variant'];
 }) {
-  const [isPending, startTransition] = useTransition();
   return (
     <Button
       variant={variant}
       className={cn(className)}
       onClick={async () => {
         startTransition(async () => {
-          await unlockAction({ unitId, lockDeviceId });
+          const unlockResponse = await unlockAction({ unitId });
+          if (unlockResponse?.error) {
+            console.error({ error: unlockResponse.error });
+          }
+          const startSessionResp = await startActiveSession({ sessionId });
+          if (startSessionResp.error) {
+            console.error({ error: startSessionResp.error });
+          }
         });
       }}
       disabled={isPending}

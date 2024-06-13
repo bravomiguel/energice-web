@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { GoGoal } from 'react-icons/go';
 import { BsThermometerSnow } from 'react-icons/bs';
 import { GoChecklist } from 'react-icons/go';
-import { IoWarningOutline, IoLocationOutline } from 'react-icons/io5';
+import { IoLocationOutline } from 'react-icons/io5';
 import { LiaExternalLinkAltSolid } from 'react-icons/lia';
 
 import {
@@ -23,6 +23,8 @@ import Subtitle from '@/components/subtitle';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import PenaltyChargeWarning from '@/components/penalty-charge-warning';
+import { Button } from '@/components/ui/button';
+import { IoMdInformationCircleOutline } from 'react-icons/io';
 
 export default async function Page({
   params: { unitId },
@@ -143,21 +145,27 @@ function PlungeDetails() {
     <div className="flex-1 flex flex-col gap-0">
       <div className="flex gap-3 items-center py-4 border-b">
         <GoGoal className="h-7 w-7 mr-1 text-zinc-500" />
-        <div className="flex gap-2 items-center">
-          <p>Set your target plunge time:</p>
-          <input
-            type="time"
-            defaultValue="02:00"
-            max={'08:00'}
-            className="rounded-lg bg-zinc-200 font-bold text-lg px-2"
-            // onChange={(e: React.FormEvent<HTMLInputElement>) => {
-            //   const [minutes, seconds] = e.currentTarget.value
-            //     .split(':')
-            //     .map(Number);
-            //   // console.log({ totalSeconds: minutes * 60 + seconds });
-            //   setTargetPlungeSecs(minutes * 60 + seconds);
-            // }}
-          />
+        <div className="flex gap-2 w-full">
+          <p className='w-full self-center'>Set your plunge time:</p>
+          <div className="flex justify-between items-start w-full gap-2">
+            <input
+              type="time"
+              defaultValue="02:00"
+              max={'08:00'}
+              className="rounded-lg bg-zinc-200 font-bold text-lg px-2 w-28 h-8"
+              // onChange={(e: React.FormEvent<HTMLInputElement>) => {
+              //   const [minutes, seconds] = e.currentTarget.value
+              //     .split(':')
+              //     .map(Number);
+              //   // console.log({ totalSeconds: minutes * 60 + seconds });
+              //   setTargetPlungeSecs(minutes * 60 + seconds);
+              // }}
+            />
+
+            <Button size="sm" className="p-2 bg-indigo-600 hover:bg-indigo-600/90">
+              <IoMdInformationCircleOutline className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </div>
 

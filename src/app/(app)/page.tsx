@@ -16,6 +16,7 @@ export default async function Home() {
   const user = await getUserById(session.user.id);
 
   // onboarded check
+  // redirect to email confirmation page, if user hasn't confirmed email
   if (!user?.firstName) redirect('/member-details');
   if (!user.isWaiverSigned) redirect('/waiver');
 
@@ -29,6 +30,7 @@ export default async function Home() {
 
   // callback redirect check
   if (user.authCallbackUrl) {
+    // clear callback from db
     await prisma.user.update({
       where: { id: session.user.id },
       data: { authCallbackUrl: null },

@@ -30,7 +30,7 @@ export default async function Page({
   if (activePlungeSession.status === 'no_active') redirect(`/`);
   if (!activePlungeSession.data) redirect('/');
 
-  console.log({ activePlungeSession });
+  // console.log({ activePlungeSession });
 
   return (
     <main className='flex-1 flex flex-col gap-10"'>

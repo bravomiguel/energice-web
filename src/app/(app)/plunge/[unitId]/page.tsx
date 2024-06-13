@@ -22,6 +22,7 @@ import { Unit } from '@prisma/client';
 import Subtitle from '@/components/subtitle';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import PenaltyChargeWarning from '@/components/penalty-charge-warning';
 
 export default async function Page({
   params: { unitId },
@@ -165,30 +166,6 @@ function PlungeDetails() {
         <p>42F-46F water temp</p>
       </div>
 
-      {/* <div className="flex gap-3 items-center py-4 border-b">
-        <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 bg-zinc-200 rounded-full text-xs flex items-center justify-center text-zinc-700 font-extrabold">
-              1
-            </div>
-            <p>Unlock the plunge to start session</p>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 bg-zinc-200 rounded-full text-xs flex items-center justify-center text-zinc-700 font-extrabold">
-              2
-            </div>
-            <p>Open the lid and plunge in!</p>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="w-5 h-5 bg-zinc-200 rounded-full text-xs flex items-center justify-center text-zinc-700 font-extrabold">
-              3
-            </div>
-            <p>{`Close the lid when you're done`}</p>
-          </div>
-        </div>
-      </div> */}
-
       <div className="flex flex-col gap-3 py-4 border-b">
         <div className="flex gap-3 items-center">
           <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
@@ -223,13 +200,7 @@ function PlungeBtnSet({
           lockDeviceId={lockDeviceId}
         />
       </div>
-      <div className="flex gap-3 items-center pt-2">
-        <IoWarningOutline className="ml-1 h-8 w-8 text-red-500 self-start" />
-        <p className="text-600 text-red-500 font-semibold w-fit pr-2 text-xs">
-          {`Make sure to close the lid when you're done to avoid an extra
-    $10 charge`}
-        </p>
-      </div>
+      <PenaltyChargeWarning />
     </BottomNav>
   );
 }

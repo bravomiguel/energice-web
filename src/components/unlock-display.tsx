@@ -67,8 +67,8 @@ export default function UnlockDisplay({
           </Subtitle>
           <div
             className={cn(
-              'relative rounded-md border-2 font-medium border-indigo-800 bg-transparent text-center p-5 h-24 w-full flex items-center justify-center',
-              { 'border-green-koldup justify-between': !isCodeAvailable },
+              'relative rounded-md border-4 font-medium border-indigo-800 bg-transparent text-center p-5 h-24 w-full flex items-center justify-center',
+              { 'border-green-koldup justify-between border-2': !isCodeAvailable },
             )}
           >
             {isCodeAvailable ? (

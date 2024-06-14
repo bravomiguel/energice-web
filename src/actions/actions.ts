@@ -1,10 +1,8 @@
 'use server';
 
-// import { revalidatePath } from 'next/cache';
 import bcrypt from 'bcryptjs';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-// import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import { AuthError } from 'next-auth';
 import {
   Seam,
@@ -18,6 +16,7 @@ import {
   authFormSchema,
   healthQuizDataSchema,
   memberDetailsFormSchema,
+  plungeTimerSecsSchema,
 } from '@/lib/validations';
 import { signIn, signOut } from '@/lib/auth';
 import {
@@ -29,10 +28,12 @@ import {
 } from '@/lib/server-utils';
 import { getTimeDiffSecs } from '@/lib/utils';
 import { HealthQuizData, TAuthForm, TMemberDetailsForm } from '@/lib/types';
+import { ONBOARDING_URLS } from '@/lib/constants';
 
 // --- user actions ---
 
 export async function signUp(data: TAuthForm & { callbackUrl: string | null }) {
+  // validation check
   const validatedData = authFormSchema
     .extend({ callbackUrl: z.union([z.null(), z.string().trim().url()]) })
     .safeParse(data);
@@ -43,13 +44,16 @@ export async function signUp(data: TAuthForm & { callbackUrl: string | null }) {
     };
   }
 
-  const hashedPassword = await bcrypt.hash(validatedData.data.password, 10);
+  const { email, password, callbackUrl: authCallbackUrl } = validatedData.data;
 
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  // existing account check
   let user;
   try {
     user = await prisma.user.findUnique({
       where: {
-        email: validatedData.data.email,
+        email,
       },
     });
   } catch (e) {
@@ -64,18 +68,22 @@ export async function signUp(data: TAuthForm & { callbackUrl: string | null }) {
     };
   }
 
+  // update callback url (so long as not part of onboarding)
+  const isCallbackUrlOnboarding =
+    authCallbackUrl && ONBOARDING_URLS.includes(authCallbackUrl);
+
   if (user && user.deleted) {
     try {
       await prisma.user.update({
         where: {
-          email: validatedData.data.email,
+          email,
         },
         data: {
           hashedPassword,
           firstName: null,
           lastName: null,
           dob: null,
-          authCallbackUrl: validatedData.data.callbackUrl,
+          authCallbackUrl: !isCallbackUrlOnboarding ? authCallbackUrl : null,
           deleted: false,
           deletedAt: null,
         },
@@ -87,12 +95,13 @@ export async function signUp(data: TAuthForm & { callbackUrl: string | null }) {
     }
   }
 
+  // create account
   if (!user) {
     try {
       await prisma.user.create({
         data: {
-          email: validatedData.data.email,
-          authCallbackUrl: validatedData.data.callbackUrl,
+          email,
+          authCallbackUrl: !isCallbackUrlOnboarding ? authCallbackUrl : null,
           hashedPassword,
         },
       });
@@ -103,10 +112,11 @@ export async function signUp(data: TAuthForm & { callbackUrl: string | null }) {
     }
   }
 
+  // signin
   try {
     await signIn('credentials', {
-      email: validatedData.data.email,
-      password: validatedData.data.password,
+      email,
+      password,
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -121,6 +131,7 @@ export async function signUp(data: TAuthForm & { callbackUrl: string | null }) {
 export async function signInAction(
   data: TAuthForm & { callbackUrl: string | null },
 ) {
+  // validation check
   const validatedData = authFormSchema
     .extend({ callbackUrl: z.union([z.null(), z.string().trim().url()]) })
     .safeParse(data);
@@ -131,11 +142,14 @@ export async function signInAction(
     };
   }
 
+  const { email, password, callbackUrl: authCallbackUrl } = validatedData.data;
+
+  // password check
   let hashedPassword;
   try {
     const user = await prisma.user.findUnique({
       where: {
-        email: validatedData.data.email,
+        email,
         deleted: false,
       },
     });
@@ -152,37 +166,40 @@ export async function signInAction(
     };
   }
 
-  const passwordsMatch = await bcrypt.compare(
-    validatedData.data.password,
-    hashedPassword,
-  );
+  const passwordsMatch = await bcrypt.compare(password, hashedPassword);
 
   if (!passwordsMatch)
     return {
       error: 'Error, invalid credentials',
     };
 
-  try {
-    await prisma.user.update({
-      where: {
-        email: validatedData.data.email,
-        hashedPassword,
-        deleted: false,
-      },
-      data: {
-        authCallbackUrl: validatedData.data.callbackUrl ?? null,
-      },
-    });
-  } catch (e) {
-    return {
-      error: 'Sign in failed, please try again',
-    };
+  // update callback url (so long as not part of onboarding)
+  const isCallbackUrlOnboarding =
+    authCallbackUrl && ONBOARDING_URLS.includes(authCallbackUrl);
+
+  if (!isCallbackUrlOnboarding) {
+    try {
+      await prisma.user.update({
+        where: {
+          email: validatedData.data.email,
+          hashedPassword,
+          deleted: false,
+        },
+        data: {
+          authCallbackUrl,
+        },
+      });
+    } catch (e) {
+      return {
+        error: 'Sign in failed, please try again',
+      };
+    }
   }
 
   try {
     await signIn('credentials', {
-      email: validatedData.data.email,
-      password: validatedData.data.password,
+      email,
+      password,
     });
   } catch (error) {
     if (error instanceof AuthError) {
@@ -257,6 +274,7 @@ export async function addMemberDetails(data: TMemberDetailsForm) {
     };
   }
 
+  // update user record with member details
   try {
     await prisma.user.update({
       where: { id: session.user.id },
@@ -317,13 +335,12 @@ export async function signWaiver() {
     };
   }
 
-  // get callback url
+  // redirect to callback url, if available
   const data = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: { authCallbackUrl: true },
   });
   const callbackUrl = data?.authCallbackUrl;
-
   if (!callbackUrl) redirect('/');
 
   redirect(callbackUrl);
@@ -535,6 +552,7 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
 
 export async function createActiveSession(data: {
   unitId: Unit['id'];
+  plungeTimerSecs: Session['plungeTimerSecs'];
   assignCode?: boolean;
 }) {
   // auth check
@@ -544,6 +562,7 @@ export async function createActiveSession(data: {
   const validatedData = z
     .object({
       unitId: z.string().trim().min(1),
+      plungeTimerSecs: plungeTimerSecsSchema,
       assignCode: z.union([z.undefined(), z.boolean()]),
     })
     .safeParse(data);
@@ -555,7 +574,7 @@ export async function createActiveSession(data: {
     };
   }
 
-  const { unitId, assignCode } = validatedData.data;
+  const { unitId, assignCode, plungeTimerSecs } = validatedData.data;
 
   // get access code, if relevant
   let codeData;
@@ -565,21 +584,23 @@ export async function createActiveSession(data: {
   }
 
   // prep initial data for new session
-  let initialData;
-  if (codeData) {
-    initialData = {
+  let initialData: Pick<
+    Session,
+    'userId' | 'unitId' | 'isActive' | 'plungeTimerSecs'
+  > &
+    Partial<Pick<Session, 'accessCodeId' | 'accessCode' | 'accessCodeEndsAt'>> =
+    {
       userId: session.user.id,
       unitId,
       isActive: true,
+      plungeTimerSecs,
+    };
+  if (codeData) {
+    initialData = {
+      ...initialData,
       accessCodeId: codeData.access_code_id,
       accessCode: codeData.code,
       accessCodeEndsAt: codeData.ends_at ? new Date(codeData.ends_at) : null,
-    };
-  } else {
-    initialData = {
-      userId: session.user.id,
-      unitId,
-      isActive: true,
     };
   }
 

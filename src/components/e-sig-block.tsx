@@ -37,7 +37,7 @@ export default function ESigBlock({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [fullName, setFullName] = useState(`${firstName} ${lastName}`);
   const isValid = useMemo(() => {
-    const fullNameRegex = /^[a-zA-Z]{2,} [a-zA-Z]{2,}$/;
+    const fullNameRegex = /^[a-zA-Z]{2,} [a-zA-Z]+(?: [a-zA-Z]*)*$/;
     return fullNameRegex.test(fullName);
   }, [fullName]);
   const [signature, setSignature] = useState('');

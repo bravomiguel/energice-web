@@ -1,1 +1,10 @@
-export const DEFAULT_PET_IMAGE = 'https://bytegrad.com/course-assets/react-nextjs/pet-placeholder.png';
+export const ONBOARDING_URLS = [
+  '/confirm-email',
+  '/member-details',
+  '/health-quiz',
+  '/waiver',
+].map((pathName) => {
+  if (!process.env.CANONICAL_URL)
+    return `http://localhost:${process.env.PORT}${pathName}`;
+  return `${process.env.CANONICAL_URL}${pathName}`;
+});

@@ -28,7 +28,6 @@ export default async function Home() {
     redirect(`/plunge/${activePlungeSession.data?.unitId}/unlock`);
   }
 
-  // callback redirect check
   if (user.authCallbackUrl) {
     // clear callback from db
     await prisma.user.update({

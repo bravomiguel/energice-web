@@ -24,7 +24,7 @@ export default function PlungeDetails({
         <div className="flex gap-3 items-center py-4 border-b">
           <GoGoal className="h-7 w-7 mr-1 text-zinc-500" />
           <div className="flex gap-2 w-full">
-            <p className="w-full self-center">Set your plunge time:</p>
+            <p className="w-full self-center">Set your plunge timer:</p>
             <div className="flex justify-between items-start w-full gap-2">
               <input
                 type="time"

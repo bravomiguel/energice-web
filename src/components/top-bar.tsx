@@ -35,7 +35,7 @@ export default function TopBar() {
 
       const storedSessionStartSecs = localStorage.getItem('sessionStartSecs');
       if (!storedSessionStartSecs && !sessionStartSecs) {
-        localStorage.setItem('sessionStartSecs', JSON.stringify(10));
+        localStorage.setItem('sessionStartSecs', JSON.stringify(15));
       }
 
       if (!sessionStartSecs) {

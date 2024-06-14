@@ -2,7 +2,11 @@ import { unstable_noStore as noStore } from 'next/cache';
 import { Session } from '@prisma/client';
 
 import H1 from '@/components/h1';
-import { checkActivePlungeSession, checkAuth } from '@/lib/server-utils';
+import {
+  checkActivePlungeSession,
+  checkAuth,
+  getSessionById,
+} from '@/lib/server-utils';
 import { redirect } from 'next/navigation';
 import SessionDisplay from '@/components/session-display';
 
@@ -32,10 +36,15 @@ export default async function Page({
   // if (!activePlungeSession.data) redirect('/');
 
   // console.log({ activePlungeSession });
+  const activePlungeSession = await getSessionById(sessionId);
+  if (!activePlungeSession) redirect('/');
 
   return (
-    <main className='relative flex-1 flex flex-col gap-6'>
-      <SessionDisplay className="flex-1 flex flex-col items-center gap-10" />
+    <main className="relative flex-1 flex flex-col gap-6">
+      <SessionDisplay
+        sessionData={activePlungeSession}
+        className="flex-1 flex flex-col items-center gap-10"
+      />
     </main>
   );
 }

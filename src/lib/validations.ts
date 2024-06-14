@@ -93,13 +93,12 @@ export const plungeTimerSecsSchema = z.union([
     .string()
     .trim()
     .min(1, { message: 'Cannot be left blank' })
+    .regex(/^(0[0-9]|[1-5][0-9]):([0-5][0-9])$/, {message: "Invalid time format"})
     .transform((val, ctx) => {
-      // const dob = new Date(val);
-
       const [minutes, seconds] = val.split(':').map(Number);
       const timerSecs = minutes * 60 + seconds;
 
-      if (!timerSecs) {
+      if (!timerSecs && timerSecs !== 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Not a valid time',
@@ -121,7 +120,7 @@ export const plungeTimerSecsSchema = z.union([
         {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Max timer is 8 mins',
+            message: 'Max time is 8 mins',
           });
           return z.NEVER;
         }

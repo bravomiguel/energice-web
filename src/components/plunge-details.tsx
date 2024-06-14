@@ -9,6 +9,8 @@ import BottomNav from './bottom-nav';
 import PenaltyChargeWarning from './penalty-charge-warning';
 import { createActiveSession } from '@/actions/actions';
 import { useState } from 'react';
+import { plungeTimerSecsSchema } from '@/lib/validations';
+import { formatSecsToMins } from '@/lib/utils';
 
 export default function PlungeDetails({
   unitStatus,
@@ -18,9 +20,29 @@ export default function PlungeDetails({
   unitId: string;
 }) {
   const [plungeTimerSecs, setPlungeTimerSecs] = useState(120);
+  const [validationError, setValidationError] = useState<string | null>(null);
+  const isValid = validationError === null;
+
+  const handleTimerInput = (e: React.FormEvent<HTMLInputElement>) => {
+    // validation check
+    const validatedData = plungeTimerSecsSchema.safeParse(
+      e.currentTarget.value,
+    );
+    if (!validatedData.success) {
+      const errorMessage = validatedData.error.issues[0].message;
+      setValidationError(errorMessage ? errorMessage : 'Invalid timer input');
+      return;
+    }
+
+    const timerSecs = validatedData.data;
+
+    setValidationError(null);
+    setPlungeTimerSecs(timerSecs);
+  };
+
   return (
     <>
-      <div className="flex-1 flex flex-col gap-0">
+      <div className="flex-1 flex flex-col">
         <div className="flex gap-3 items-center py-4 border-b">
           <GoGoal className="h-7 w-7 mr-1 text-zinc-500" />
           <div className="flex gap-2 w-full">
@@ -28,16 +50,10 @@ export default function PlungeDetails({
             <div className="flex justify-between items-start w-full gap-2">
               <input
                 type="time"
-                defaultValue="02:00"
-                max={'08:00'}
+                defaultValue={formatSecsToMins(plungeTimerSecs)}
+                // max={'08:00'}
                 className="rounded-lg bg-zinc-200 font-bold text-lg px-2 w-28 h-8"
-                // onChange={(e: React.FormEvent<HTMLInputElement>) => {
-                //   const [minutes, seconds] = e.currentTarget.value
-                //     .split(':')
-                //     .map(Number);
-                //   // console.log({ totalSeconds: minutes * 60 + seconds });
-                //   setTargetPlungeSecs(minutes * 60 + seconds);
-                // }}
+                onChange={handleTimerInput}
               />
 
               <Button
@@ -71,11 +87,12 @@ export default function PlungeDetails({
             <p className="text-4xl font-bold">$10</p>
           </div>
           <Button
-            disabled={unitStatus !== "Ready"}
+            disabled={unitStatus !== 'Ready' || !isValid}
             className="flex-1"
             onClick={async () => {
               const response = await createActiveSession({
                 unitId,
+                plungeTimerSecs,
                 assignCode: true,
               });
               if (response?.error) {

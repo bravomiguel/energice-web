@@ -25,6 +25,7 @@ import { cn } from '@/lib/utils';
 import PenaltyChargeWarning from '@/components/penalty-charge-warning';
 import { Button } from '@/components/ui/button';
 import { IoMdInformationCircleOutline } from 'react-icons/io';
+import PlungeDetails from '@/components/plunge-details';
 
 export default async function Page({
   params: { unitId },
@@ -98,12 +99,7 @@ export default async function Page({
         <PlungeStatus unitStatus={unitStatus} />
         <PlungeImage imageUrl={unit.imageUrl} />
       </div>
-      <PlungeDetails />
-      <PlungeBtnSet
-        unitStatus={unitStatus}
-        unitId={unitId}
-        lockDeviceId={unit.lockDeviceId}
-      />
+      <PlungeDetails unitId={unitId} unitStatus={unitStatus} />
     </main>
   );
 }
@@ -137,78 +133,5 @@ function PlungeImage({ imageUrl }: { imageUrl: Unit['imageUrl'] }) {
         height={50}
       />
     </div>
-  );
-}
-
-function PlungeDetails() {
-  return (
-    <div className="flex-1 flex flex-col gap-0">
-      <div className="flex gap-3 items-center py-4 border-b">
-        <GoGoal className="h-7 w-7 mr-1 text-zinc-500" />
-        <div className="flex gap-2 w-full">
-          <p className='w-full self-center'>Set your plunge time:</p>
-          <div className="flex justify-between items-start w-full gap-2">
-            <input
-              type="time"
-              defaultValue="02:00"
-              max={'08:00'}
-              className="rounded-lg bg-zinc-200 font-bold text-lg px-2 w-28 h-8"
-              // onChange={(e: React.FormEvent<HTMLInputElement>) => {
-              //   const [minutes, seconds] = e.currentTarget.value
-              //     .split(':')
-              //     .map(Number);
-              //   // console.log({ totalSeconds: minutes * 60 + seconds });
-              //   setTargetPlungeSecs(minutes * 60 + seconds);
-              // }}
-            />
-
-            <Button size="sm" className="p-2 bg-indigo-600 hover:bg-indigo-600/90">
-              <IoMdInformationCircleOutline className="w-5 h-5" />
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex gap-3 items-center py-4 border-b">
-        <BsThermometerSnow className="ml-1 h-7 w-7 text-zinc-500" />
-        <p>42F-46F water temp</p>
-      </div>
-
-      <div className="flex flex-col gap-3 py-4 border-b">
-        <div className="flex gap-3 items-center">
-          <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
-          <p>How it works:</p>
-        </div>
-        <div className="w-full h-[25vh] rounded-lg overflow-hidden flex justify-center items-center bg-zinc-200">
-          {`GIF "How it works" Explanation`}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PlungeBtnSet({
-  unitStatus,
-  unitId,
-  lockDeviceId,
-}: {
-  unitStatus: string;
-  unitId: string;
-  lockDeviceId: string;
-}) {
-  return (
-    <BottomNav>
-      <div className="flex gap-4">
-        <div className="flex gap-1 items-center">
-          <p className="text-4xl font-bold">$10</p>
-        </div>
-        <StartPlungeBtn
-          disabled={unitStatus !== 'Ready'}
-          unitId={unitId}
-          lockDeviceId={lockDeviceId}
-        />
-      </div>
-      <PenaltyChargeWarning />
-    </BottomNav>
   );
 }

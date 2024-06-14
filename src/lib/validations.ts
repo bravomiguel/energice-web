@@ -87,3 +87,47 @@ export const healthQuizDataSchema = z.array(
     answer: z.union([z.null(), z.boolean()]),
   }),
 );
+
+export const plungeTimerSecsSchema = z.union([
+  z
+    .string()
+    .trim()
+    .min(1, { message: 'Cannot be left blank' })
+    .transform((val, ctx) => {
+      // const dob = new Date(val);
+
+      const [minutes, seconds] = val.split(':').map(Number);
+      const timerSecs = minutes * 60 + seconds;
+
+      if (!timerSecs) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Not a valid time',
+        });
+        return z.NEVER;
+      }
+
+      if (timerSecs === 0) {
+        {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Cannot be zero',
+          });
+          return z.NEVER;
+        }
+      }
+
+      if (timerSecs > 60 * 7) {
+        {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Cannot be over 7 mins',
+          });
+          return z.NEVER;
+        }
+      }
+
+      return timerSecs;
+    }),
+  z.number(),
+]);

@@ -36,6 +36,7 @@ model Session {
   sessionStart     DateTime?
   sessionEnd       DateTime?
   penaltyCharged   Boolean   @default(false)
+  plungeTimerSecs  Int
   plungeStart      DateTime?
   plungeEnd        DateTime?
   User             User      @relation(fields: [userId], references: [id])

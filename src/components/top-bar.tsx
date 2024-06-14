@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { IoIosArrowBack } from 'react-icons/io';
 import { Button } from './ui/button';
 
-const TopNav = () => {
+export default function TopBar() {
   const router = useRouter();
   const activePathname = usePathname();
   const showArrowBack = ['/plunge'].find(
@@ -113,5 +113,3 @@ const TopNav = () => {
     </header>
   );
 };
-
-export default TopNav;

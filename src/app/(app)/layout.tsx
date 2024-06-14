@@ -1,8 +1,7 @@
 import { Toaster } from '@/components/ui/sonner';
 import UnitContextProvider from '@/contexts/unit-context-provider';
 import SessionContextProvider from '@/contexts/session-context-provider';
-import prisma from '@/lib/db';
-import TopNav from '@/components/top-nav';
+import TopBar from '@/components/top-bar';
 import {
   checkAuth,
   getAllUnits,
@@ -14,6 +13,7 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
+  // auth check
   const session = await checkAuth();
 
   const units = await getAllUnits();
@@ -23,7 +23,7 @@ export default async function Layout({
     <>
       <div className="relative flex flex-col px-4 min-h-screen">
         <SessionContextProvider data={sessions}>
-          <TopNav />
+          <TopBar />
           <UnitContextProvider data={units}>{children}</UnitContextProvider>
         </SessionContextProvider>
       </div>

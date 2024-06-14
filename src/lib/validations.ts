@@ -110,7 +110,7 @@ export const plungeTimerSecsSchema = z.union([
         {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Cannot be zero',
+            message: 'Timer cannot be zero',
           });
           return z.NEVER;
         }
@@ -120,7 +120,7 @@ export const plungeTimerSecsSchema = z.union([
         {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Max time is 8 mins',
+            message: 'Max timer is 8 mins',
           });
           return z.NEVER;
         }

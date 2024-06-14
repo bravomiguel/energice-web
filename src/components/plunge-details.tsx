@@ -13,6 +13,8 @@ import { plungeTimerSecsSchema } from '@/lib/validations';
 import { formatSecsToMins } from '@/lib/utils';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
+import { IoWarningOutline } from 'react-icons/io5';
+import { PiWarningCircle } from 'react-icons/pi';
 
 export default function PlungeDetails({
   unitStatus,
@@ -21,9 +23,15 @@ export default function PlungeDetails({
   unitStatus: string;
   unitId: string;
 }) {
-  const [plungeTimerSecs, setPlungeTimerSecs] = useState(120);
+  const [plungeTimerSecs, setPlungeTimerSecs] = useState(90);
   const [validationError, setValidationError] = useState<string | null>(null);
   const isValid = validationError === null;
+  const warningMessage =
+    plungeTimerSecs >= 300
+      ? '+5 mins is for advanced practitioners'
+      : plungeTimerSecs > 120 && plungeTimerSecs < 300
+      ? 'Beginners advised to do <2 mins'
+      : null;
 
   const handleTimerInput = (e: React.FormEvent<HTMLInputElement>) => {
     // validation check
@@ -62,16 +70,22 @@ export default function PlungeDetails({
                 type="time"
                 defaultValue={formatSecsToMins(plungeTimerSecs)}
                 // max={'08:00'}
-                className="rounded-lg bg-zinc-200 font-bold text-lg pl-2 w-28 h-8"
+                className="rounded-lg bg-zinc-200 font-semibold focus-visible:font-semibold text-lg pl-2 w-28 h-8"
                 onChange={handleTimerInput}
               />
             </div>
 
-            {validationError && (
-              <p className="text-red-500 text-sm text-right">
-                {validationError}
-              </p>
-            )}
+            {validationError ? (
+              <div className="text-red-500 flex justify-end items-center gap-1 text-sm">
+                <PiWarningCircle className="h-5 w-5 self-start" />
+                <p className="w-full">{validationError}</p>
+              </div>
+            ) : warningMessage ? (
+              <div className="text-amber-500 flex justify-end items-center gap-1 text-sm">
+                <IoWarningOutline className="h-5 w-5 self-start" />
+                <p className="w-full">{warningMessage}</p>
+              </div>
+            ) : null}
           </div>
 
           <Button

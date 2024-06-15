@@ -9,6 +9,7 @@ import {
 } from '@/lib/server-utils';
 import { redirect } from 'next/navigation';
 import SessionDisplay from '@/components/session-display';
+import { getTimeDiffSecs } from '@/lib/utils';
 
 export default async function Page({
   params: { sessionId },
@@ -24,25 +25,32 @@ export default async function Page({
   // redirected unless they've paid, within last 10-15 mins
 
   // session active check
-  // const activePlungeSession = await checkActivePlungeSession(session.user.id);
-  // if (activePlungeSession.status === 'started') {
-  //   if (activePlungeSession.data?.id !== sessionId)
-  //     redirect(`/session/${activePlungeSession.data?.id}`);
-  // }
-  // if (activePlungeSession.status === 'active') {
-  //   redirect(`/plunge/${activePlungeSession.data?.unitId}/unlock`);
-  // }
-  // if (activePlungeSession.status === 'no_active') redirect(`/`);
-  // if (!activePlungeSession.data) redirect('/');
+  const activePlungeSession = await checkActivePlungeSession(session.user.id);
+  if (activePlungeSession.status === 'started') {
+    if (activePlungeSession.data?.id !== sessionId)
+      redirect(`/session/${activePlungeSession.data?.id}`);
+  }
+  if (activePlungeSession.status === 'active') {
+    redirect(`/plunge/${activePlungeSession.data?.unitId}/unlock`);
+  }
+  if (activePlungeSession.status === 'no_active') redirect(`/`);
+  if (!activePlungeSession.data || !activePlungeSession.data.sessionStart)
+    redirect('/');
 
-  // console.log({ activePlungeSession });
-  const activePlungeSession = await getSessionById(sessionId);
-  if (!activePlungeSession) redirect('/');
+  // calculate session seconds left, before passing it to client
+  const now = new Date();
+  const sessionEnd = new Date(
+    activePlungeSession.data.sessionStart.getTime() + (10 * 60 * 1000) + (3 * 1000),
+  );
+  const sessionSecsLeft = getTimeDiffSecs(now, sessionEnd);
+
+  if (!sessionSecsLeft) redirect('/');
 
   return (
     <main className="relative flex-1 flex flex-col gap-6">
       <SessionDisplay
-        sessionData={activePlungeSession}
+        sessionData={activePlungeSession.data}
+        sessionSecs={sessionSecsLeft}
         className="flex-1 flex flex-col items-center gap-10"
       />
     </main>

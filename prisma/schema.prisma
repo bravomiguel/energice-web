@@ -33,12 +33,11 @@ model Session {
   accessCodeId     String?
   accessCode       String?
   accessCodeEndsAt DateTime?
+  plungeTimerSecs  Int
   sessionStart     DateTime?
   sessionEnd       DateTime?
-  penaltyCharged   Boolean   @default(false)
-  plungeTimerSecs  Int
-  plungeStart      DateTime?
-  plungeEnd        DateTime?
+  hasPenalty       Boolean   @default(false)
+  totalPlungeSecs  Int?
   User             User      @relation(fields: [userId], references: [id])
   userId           String
   Unit             Unit      @relation(fields: [unitId], references: [id])

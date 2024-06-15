@@ -1,10 +1,7 @@
-import BottomNav from '@/components/bottom-nav';
 import H1 from '@/components/h1';
-import PenaltyChargeWarning from '@/components/penalty-charge-warning';
+import SessionEndContinueBtn from '@/components/session-end-continue-btn';
 import Subtitle from '@/components/subtitle';
-import { Button } from '@/components/ui/button';
 import { formatSecsToMins } from '@/lib/utils';
-import { IoWarningOutline } from 'react-icons/io5';
 
 export default function Page() {
   return (
@@ -21,10 +18,7 @@ export default function Page() {
           Enjoy feeling great for the rest of the day 🚀
         </Subtitle>
       </div>
-      <BottomNav className="space-y-3">
-        <PenaltyChargeWarning />
-        <Button className="w-full">Continue</Button>
-      </BottomNav>
+      <SessionEndContinueBtn />
     </main>
   );
 }

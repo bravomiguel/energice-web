@@ -656,10 +656,10 @@ export async function startActiveSession(data: { sessionId: Session['id'] }) {
 
   // update start date
   try {
-    const now = new Date();
+    const sessionStart = new Date();
     await prisma.session.update({
       where: { id: sessionId },
-      data: { sessionStart: now },
+      data: { sessionStart },
     });
   } catch (e) {
     return {
@@ -669,4 +669,61 @@ export async function startActiveSession(data: { sessionId: Session['id'] }) {
 
   // redirect to session screen
   redirect(`/session/${sessionId}`);
+}
+
+export async function endActiveSession(data: {
+  sessionId: Session['id'];
+  totalPlungeSecs: Session['totalPlungeSecs'];
+  hasPenalty: Session['hasPenalty'];
+}) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      sessionId: z.string().trim().min(1),
+      totalPlungeSecs: z.number(),
+      hasPenalty: z.boolean(),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    console.log({ error: validatedData.error.issues[0].message });
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { sessionId, totalPlungeSecs, hasPenalty } = validatedData.data;
+
+  // authorization check
+  const plungeSession = await getSessionById(sessionId);
+
+  if (!plungeSession) {
+    return {
+      error: 'Session not found',
+    };
+  }
+  if (plungeSession.userId !== session.user.id) {
+    return {
+      error: 'Not authorized',
+    };
+  }
+
+  // update session in db
+  try {
+    const sessionEnd = new Date();
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: { sessionEnd, totalPlungeSecs, hasPenalty, isActive: false },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to end session',
+    };
+  }
+
+  // redirect to session screen
+  redirect(`/session/${sessionId}/end`);
 }

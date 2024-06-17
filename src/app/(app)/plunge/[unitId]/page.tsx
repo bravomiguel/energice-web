@@ -1,8 +1,5 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { GoGoal } from 'react-icons/go';
-import { BsThermometerSnow } from 'react-icons/bs';
-import { GoChecklist } from 'react-icons/go';
 import { IoLocationOutline } from 'react-icons/io5';
 import { LiaExternalLinkAltSolid } from 'react-icons/lia';
 
@@ -15,9 +12,7 @@ import {
 } from '@/lib/server-utils';
 import H1 from '@/components/h1';
 import Image from 'next/image';
-import BottomNav from '@/components/bottom-nav';
 // import { createLockCode } from '@/actions/actions';
-import StartPlungeBtn from '@/components/start-plunge-btn';
 import { Unit } from '@prisma/client';
 import Subtitle from '@/components/subtitle';
 import Link from 'next/link';

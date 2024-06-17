@@ -28,7 +28,7 @@ export default function PlungeDetails({
   const isValid = validationError === null;
   const warningMessage =
     plungeTimerSecs >= 300
-      ? '+5 mins is for advanced practitioners'
+      ? '>5 mins is for advanced practitioners'
       : plungeTimerSecs > 120 && plungeTimerSecs < 300
       ? 'Beginners advised to do <2 mins'
       : null;

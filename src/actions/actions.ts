@@ -30,6 +30,10 @@ import { getTimeDiffSecs } from '@/lib/utils';
 import { HealthQuizData, TAuthForm, TMemberDetailsForm } from '@/lib/types';
 import { ONBOARDING_URLS } from '@/lib/constants';
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+const seam = new Seam();
+
 // --- user actions ---
 
 export async function signUp(data: TAuthForm & { callbackUrl: string | null }) {
@@ -347,8 +351,6 @@ export async function signWaiver() {
 }
 
 // --- unit actions ---
-
-const seam = new Seam();
 
 export async function createLockCode(data: {
   lockDeviceId: Unit['lockDeviceId'];
@@ -726,4 +728,27 @@ export async function endActiveSession(data: {
 
   // redirect to session screen
   redirect(`/session/${sessionId}/end`);
+}
+
+// --- payment actions ---
+
+export async function createCheckoutSession() {
+  // authentication check
+  const session = await checkAuth();
+
+  const checkoutSession = await stripe.checkout.sessions.create({
+    customer_email: session.user.email,
+    line_items: [
+      {
+        price: 'price_1PRzfQHR9Et3lW0UBz0TFUYj',
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: `${process.env.CANONICAL_URL}/payment?success=true`,
+    cancel_url: `${process.env.CANONICAL_URL}/payment?cancelled=true`,
+  });
+
+  // redirect user
+  redirect(checkoutSession.url);
 }

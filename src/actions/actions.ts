@@ -345,7 +345,14 @@ export async function signWaiver() {
     select: { authCallbackUrl: true },
   });
   const callbackUrl = data?.authCallbackUrl;
+
   if (!callbackUrl) redirect('/');
+
+  // clear callback from db, before redirecting
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { authCallbackUrl: null },
+  });
 
   redirect(callbackUrl);
 }

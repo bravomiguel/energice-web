@@ -18,7 +18,7 @@ import {
   memberDetailsFormSchema,
   plungeTimerSecsSchema,
 } from '@/lib/validations';
-import { signIn, signOut } from '@/lib/auth';
+import { signIn, signOut } from '@/lib/auth-no-edge';
 import {
   checkActivePlungeSession,
   checkAuth,

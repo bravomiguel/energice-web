@@ -1,7 +1,7 @@
 import 'server-only';
 import { redirect } from 'next/navigation';
 
-import { auth } from '@/lib/auth';
+import { auth } from '@/lib/auth-no-edge';
 import { Session, Unit, User } from '@prisma/client';
 import prisma from './db';
 import { Seam } from 'seam';

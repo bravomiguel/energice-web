@@ -1,5 +1,8 @@
+'use client';
+
 import H1 from '@/components/h1';
 import LogoFullText from '@/components/logo-full-text';
+import { Suspense } from 'react';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -10,7 +13,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           Take the plunge.
         </H1>
       </div>
-      {children}
+      <Suspense>{children}</Suspense>
     </div>
   );
 }

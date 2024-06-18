@@ -72,7 +72,7 @@ export default function UnitDetails({
                 type="time"
                 defaultValue={formatSecsToMins(plungeTimerSecs)}
                 // max={'08:00'}
-                className="rounded-lg bg-zinc-200 font-semibold focus-visible:font-semibold text-lg pl-2 w-28 h-8"
+                className="rounded-lg bg-zinc-200 font-semibold focus-visible:font-semibold text-lg pl-2 w-fit h-8"
                 onChange={handleTimerInput}
               />
             </div>

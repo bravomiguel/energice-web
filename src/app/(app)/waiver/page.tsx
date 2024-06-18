@@ -10,10 +10,12 @@ import ESigBlock from '@/components/e-sig-block';
 export default async function Page() {
   noStore();
 
+  // auth check
   const session = await checkAuth();
   const user = await getUserById(session.user.id);
 
-  if (!user?.firstName && !user?.lastName) redirect('/member-details');
+  // onboarding check
+  if (user?.isWaiverSigned || !user) redirect('/');
 
   return (
     <main className="relative flex-1 flex flex-col gap-6">

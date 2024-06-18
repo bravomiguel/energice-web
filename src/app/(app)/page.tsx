@@ -12,7 +12,7 @@ export default async function Home() {
   const user = await getUserById(session.user.id);
 
   // onboarded check
-  // redirect to email confirmation page, if user hasn't confirmed email
+  if (!user?.isEmailConfirmed) redirect('/confirm-email');
   if (!user?.firstName) redirect('/member-details');
   if (!user.isWaiverSigned) redirect('/waiver');
 

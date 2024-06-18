@@ -130,3 +130,11 @@ export const plungeTimerSecsSchema = z.union([
     }),
   z.number(),
 ]);
+
+export const emailConfirmCodeSchema = z
+.object({
+  eConfCode: z
+    .string()
+    .trim()
+    .length(6, { message: 'Code is 6 digits long' }),
+})

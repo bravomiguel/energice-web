@@ -9,7 +9,8 @@ import {
   isSeamActionAttemptFailedError,
   isSeamActionAttemptTimeoutError,
 } from 'seam';
-import { Session, Unit } from '@prisma/client';
+import { Session, Unit, User } from '@prisma/client';
+import { Resend } from 'resend';
 
 import prisma from '@/lib/db';
 import {
@@ -29,10 +30,12 @@ import {
 import { getTimeDiffSecs } from '@/lib/utils';
 import { HealthQuizData, TAuthForm, TMemberDetailsForm } from '@/lib/types';
 import { ONBOARDING_URLS } from '@/lib/constants';
+import confirmEmail from '../../emails/confirm-email';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-
 const seam = new Seam();
+const resend = new Resend(process.env.RESEND_API_KEY);
+// const recipient = process.env.RECIPIENT_ACCOUNT ?? 'delivered@resend.dev';
 
 // --- user actions ---
 
@@ -243,6 +246,9 @@ export async function deleteAccount() {
         id: session.user.id,
       },
       data: {
+        eConfCode: null,
+        eConfCodeAt: null,
+        isEmailConfirmed: false,
         firstName: null,
         lastName: null,
         dob: null,
@@ -781,4 +787,116 @@ export async function createCheckoutSession(data: {
 
   // redirect user
   redirect(checkoutSession.url);
+}
+
+// --- email confirmation actions ---
+
+export async function sendConfirmEmail() {
+  // auth check
+  const session = await checkAuth();
+  if (!session.user?.email) redirect('/');
+
+  // generate 6 digit code
+  const eConfCode = String(Math.floor(100000 + Math.random() * 900000));
+  const eConfCodeAt = new Date();
+
+  // add code to user record
+  try {
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { eConfCode, eConfCodeAt },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to create code',
+    };
+  }
+
+  try {
+    await resend.emails.send({
+      from: 'Miguel <hello@koldup.com>',
+      to: [session.user.email],
+      subject: 'KoldUp - Confirm your email',
+      react: confirmEmail({ eConfCode }),
+    });
+    // return { success: true, dataResend, recipient };
+  } catch (error) {
+    return { error: 'Failed to send email' };
+  }
+}
+
+export async function checkEmailConfirmCode(data: { eConfCode: User['eConfCode'] }) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      eConfCode: z
+        .string()
+        .trim()
+        .length(6, { message: 'Code is 6 digits long' }),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { eConfCode } = validatedData.data;
+
+  // get user data
+  let user;
+  try {
+    user = await prisma.user.findUnique({ where: { id: session.user.id } });
+  } catch (e) {
+    return {
+      error: 'Code check failed, please try again',
+    };
+  }
+
+  // check user exists (possibly redundant check)
+  if (!user) {
+    redirect('/signup');
+  }
+
+  // check confirmation code exists
+  if (!user.eConfCode) {
+    return {
+      error: 'No confirmation code found, please hit resend',
+    };
+  }
+
+  // check code has not expired
+  const now = new Date();
+  const secsSinceCodeCreated = getTimeDiffSecs(user.eConfCodeAt, now);
+  const hasCodeExpired = secsSinceCodeCreated && secsSinceCodeCreated > 10 * 60;
+  if (hasCodeExpired) {
+    return {
+      error: 'Code has expired, please hit resend',
+    };
+  }
+
+  // check code provided by user
+  if (eConfCode !== user.eConfCode) {
+    return {
+      error: 'Code is not correct, please try again',
+    };
+  }
+
+  // set user email to confirmed
+  try {
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { isEmailConfirmed: true },
+    });
+  } catch (e) {
+    return {
+      error: 'Code check failed, please try again.',
+    };
+  }
+
+  redirect('/member-details');
 }

@@ -1,8 +1,8 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
 
+import EmailConfirmForm from '@/components/email-confirm-form';
 import H1 from '@/components/h1';
-import MemberDetailsForm from '@/components/member-details-form';
 import Subtitle from '@/components/subtitle';
 import { checkAuth, getUserById } from '@/lib/server-utils';
 
@@ -14,15 +14,15 @@ export default async function Page() {
   const user = await getUserById(session.user.id);
 
   // onboarding check
-  if (user?.firstName) redirect('/');
+  if (user?.isEmailConfirmed) redirect('/');
 
   return (
     <main className="relative flex-1 flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <H1>Member details</H1>
-        <Subtitle>Tell us some basic info about you</Subtitle>
+      <div className='flex flex-col gap-1'>
+        <H1>Confirm your email</H1>
+        <Subtitle>Get your email confirmation code, and enter it below</Subtitle>
       </div>
-      <MemberDetailsForm />
+      <EmailConfirmForm />
     </main>
   );
 }

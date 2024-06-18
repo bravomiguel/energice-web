@@ -31,6 +31,7 @@ export default async function Page({
   const user = await getUserById(session.user.id);
 
   // onboarded check
+  if (!user?.isEmailConfirmed) redirect('/confirm-email');
   if (!user?.firstName) redirect('/member-details');
   if (!user.isWaiverSigned) redirect('/waiver');
 

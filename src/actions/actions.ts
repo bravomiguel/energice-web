@@ -497,7 +497,7 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
   // valid session check (i.e. paid for, and within time limit)
   const { data: plungeSession, status: plungeStatus } =
     await checkPlungeSession(session.user.id);
-  if (plungeStatus === "none_valid") {
+  if (plungeStatus === 'none_valid') {
     return {
       error: 'No valid session found',
     };
@@ -563,8 +563,9 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
 export async function createSession(data: {
   unitId: Unit['id'];
   plungeTimerSecs: Session['plungeTimerSecs'];
-  assignCode?: boolean;
+  // assignCode?: boolean;
 }) {
+  console.log({data});
   // auth check
   const session = await checkAuth();
 
@@ -573,48 +574,50 @@ export async function createSession(data: {
     .object({
       unitId: z.string().trim().min(1),
       plungeTimerSecs: plungeTimerSecsSchema,
-      assignCode: z.union([z.undefined(), z.boolean()]),
+      // assignCode: z.union([z.undefined(), z.boolean()]),
     })
     .safeParse(data);
 
   if (!validatedData.success) {
+    console.log({error: validatedData.error.issues[0].message});
     return {
       error: validatedData.error.issues[0].message,
     };
   }
 
-  const { unitId, assignCode, plungeTimerSecs } = validatedData.data;
+  const { unitId, plungeTimerSecs } = validatedData.data;
 
   // get access code, if relevant
-  let codeData;
-  if (assignCode) {
-    const response = await getLatestEligibleCode({ unitId });
-    codeData = response?.data;
-  }
+  // let codeData;
+  // if (assignCode) {
+  //   const response = await getLatestEligibleCode({ unitId });
+  //   codeData = response?.data;
+  // }
 
   // prep initial data for new session
-  let initialData: Pick<Session, 'userId' | 'unitId' | 'plungeTimerSecs'> &
-    Partial<Pick<Session, 'accessCodeId' | 'accessCode' | 'accessCodeEndsAt'>> =
-    {
-      userId: session.user.id,
-      unitId,
-      plungeTimerSecs,
-    };
-  if (codeData) {
-    initialData = {
-      ...initialData,
-      accessCodeId: codeData.access_code_id,
-      accessCode: codeData.code,
-      accessCodeEndsAt: codeData.ends_at ? new Date(codeData.ends_at) : null,
-    };
-  }
+  // let initialData: Pick<Session, 'userId' | 'unitId' | 'plungeTimerSecs'> &
+  //   Partial<Pick<Session, 'accessCodeId' | 'accessCode' | 'accessCodeEndsAt'>> =
+  //   {
+  //     userId: session.user.id,
+  //     unitId,
+  //     plungeTimerSecs,
+  //   };
+  // if (codeData) {
+  //   initialData = {
+  //     ...initialData,
+  //     accessCodeId: codeData.access_code_id,
+  //     accessCode: codeData.code,
+  //     accessCodeEndsAt: codeData.ends_at ? new Date(codeData.ends_at) : null,
+  //   };
+  // }
 
   // create new session
   let newSession;
   try {
     newSession = await prisma.session.create({
-      data: initialData,
+      data: { userId: session.user.id, unitId, plungeTimerSecs },
     });
+    console.log({newSession});
   } catch (e) {
     return {
       error: 'Failed to create new session',
@@ -720,7 +723,7 @@ export async function endSession(data: {
     const sessionEnd = new Date();
     await prisma.session.update({
       where: { id: sessionId },
-      data: { sessionEnd, totalPlungeSecs},
+      data: { sessionEnd, totalPlungeSecs },
     });
   } catch (e) {
     return {
@@ -738,6 +741,7 @@ export async function createCheckoutSession(data: {
   unitId: Unit['id'];
   sessionId: Session['id'];
 }) {
+  console.log({data});
   // authentication check
   const session = await checkAuth();
 
@@ -750,7 +754,7 @@ export async function createCheckoutSession(data: {
     .safeParse(data);
 
   if (!validatedData.success) {
-    // console.log({ error: validatedData.error.issues[0].message });
+    console.log({ error: validatedData.error.issues[0].message });
     return {
       error: validatedData.error.issues[0].message,
     };
@@ -779,6 +783,8 @@ export async function createCheckoutSession(data: {
       error: 'Checkout failed, please try again',
     };
   }
+  console.log({checkoutSession});
+  console.log(checkoutSession.url);
 
   // redirect user
   redirect(checkoutSession.url);

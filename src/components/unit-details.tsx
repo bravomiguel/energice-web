@@ -129,7 +129,6 @@ export default function UnitDetails({
                 const response = await createSession({
                   unitId,
                   plungeTimerSecs,
-                  assignCode: true,
                 });
                 if (response?.error) {
                   console.error({ error: response.error });

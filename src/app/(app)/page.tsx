@@ -1,11 +1,7 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import {
-  checkActivePlungeSession,
-  checkAuth,
-  getUserById,
-} from '@/lib/server-utils';
+import { checkPlungeSession, checkAuth, getUserById } from '@/lib/server-utils';
 import prisma from '@/lib/db';
 
 export default async function Home() {
@@ -20,12 +16,15 @@ export default async function Home() {
   if (!user?.firstName) redirect('/member-details');
   if (!user.isWaiverSigned) redirect('/waiver');
 
-  // active plunge session check
-  const activePlungeSession = await checkActivePlungeSession(session.user.id);
-  if (activePlungeSession.status === 'started') {
-    redirect(`/session/${activePlungeSession.data?.id}`);
-  } else if (activePlungeSession.status === 'active') {
-    redirect(`/plunge/${activePlungeSession.data?.unitId}/unlock`);
+  // valid session check (i.e. paid for, and within time limit)
+  const { data: plungeSession, status: plungeSessionStatus } =
+    await checkPlungeSession(session.user.id);
+  // redirect to session screen, if session is valid and has already started
+  if (plungeSession && plungeSessionStatus === 'valid_started') {
+    redirect(`/session/${plungeSession.id}`);
+  } else if (plungeSession && plungeSessionStatus === 'valid_not_started') {
+    // redirect to session unlock screen, if session not started yet
+    redirect(`/session/${plungeSession.id}/unlock`);
   }
 
   if (user.authCallbackUrl) {
@@ -36,6 +35,9 @@ export default async function Home() {
     });
     redirect(user.authCallbackUrl);
   }
+
+  // redirect to texas iron gym unit (as currently, it's the only unit)
+  redirect("/unit/clxjlkwqk0000rzk6ia6wzips");
 
   return <main className="h-screen">Home</main>;
 }

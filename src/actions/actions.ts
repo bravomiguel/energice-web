@@ -20,8 +20,8 @@ import {
 } from '@/lib/validations';
 import { signIn, signOut } from '@/lib/auth-no-edge';
 import {
-  checkActivePlungeSession,
   checkAuth,
+  checkPlungeSession,
   getCodesbyLockId,
   getSessionById,
   getUnitById,
@@ -494,15 +494,16 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
 
   const { unitId } = validatedData.data;
 
-  // active session check, for this unit
-  const activePlungeSession = await checkActivePlungeSession(session.user.id);
-  if (!activePlungeSession.data) {
+  // valid session check (i.e. paid for, and within time limit)
+  const { data: plungeSession, status: plungeStatus } =
+    await checkPlungeSession(session.user.id);
+  if (plungeStatus === "none_valid") {
     return {
-      error: 'No active session found',
+      error: 'No valid session found',
     };
   }
 
-  if (activePlungeSession.data?.unitId !== unitId) {
+  if (plungeSession && plungeSession.unitId !== unitId) {
     return {
       error: 'Not authorized to unlock this plunge',
     };
@@ -559,7 +560,7 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
 
 // --- session actions ---
 
-export async function createActiveSession(data: {
+export async function createSession(data: {
   unitId: Unit['id'];
   plungeTimerSecs: Session['plungeTimerSecs'];
   assignCode?: boolean;
@@ -578,7 +579,6 @@ export async function createActiveSession(data: {
 
   if (!validatedData.success) {
     return {
-      // data: null,
       error: validatedData.error.issues[0].message,
     };
   }
@@ -593,15 +593,11 @@ export async function createActiveSession(data: {
   }
 
   // prep initial data for new session
-  let initialData: Pick<
-    Session,
-    'userId' | 'unitId' | 'isActive' | 'plungeTimerSecs'
-  > &
+  let initialData: Pick<Session, 'userId' | 'unitId' | 'plungeTimerSecs'> &
     Partial<Pick<Session, 'accessCodeId' | 'accessCode' | 'accessCodeEndsAt'>> =
     {
       userId: session.user.id,
       unitId,
-      isActive: true,
       plungeTimerSecs,
     };
   if (codeData) {
@@ -613,7 +609,7 @@ export async function createActiveSession(data: {
     };
   }
 
-  // create new active session
+  // create new session
   let newSession;
   try {
     newSession = await prisma.session.create({
@@ -621,12 +617,13 @@ export async function createActiveSession(data: {
     });
   } catch (e) {
     return {
-      // data: null,
-      error: 'Failed to create new active session',
+      error: 'Failed to create new session',
     };
   }
 
-  redirect(`/plunge/${unitId}/unlock`);
+  // create checkout session
+  await createCheckoutSession({ unitId, sessionId: newSession.id });
+  // redirect(`/unit/${unitId}/unlock`);
 }
 
 export async function startActiveSession(data: { sessionId: Session['id'] }) {
@@ -680,10 +677,9 @@ export async function startActiveSession(data: { sessionId: Session['id'] }) {
   redirect(`/session/${sessionId}`);
 }
 
-export async function endActiveSession(data: {
+export async function endSession(data: {
   sessionId: Session['id'];
   totalPlungeSecs: Session['totalPlungeSecs'];
-  hasPenalty: Session['hasPenalty'];
 }) {
   // auth check
   const session = await checkAuth();
@@ -693,7 +689,6 @@ export async function endActiveSession(data: {
     .object({
       sessionId: z.string().trim().min(1),
       totalPlungeSecs: z.number(),
-      hasPenalty: z.boolean(),
     })
     .safeParse(data);
 
@@ -704,7 +699,7 @@ export async function endActiveSession(data: {
     };
   }
 
-  const { sessionId, totalPlungeSecs, hasPenalty } = validatedData.data;
+  const { sessionId, totalPlungeSecs } = validatedData.data;
 
   // authorization check
   const plungeSession = await getSessionById(sessionId);
@@ -725,7 +720,7 @@ export async function endActiveSession(data: {
     const sessionEnd = new Date();
     await prisma.session.update({
       where: { id: sessionId },
-      data: { sessionEnd, totalPlungeSecs, hasPenalty, isActive: false },
+      data: { sessionEnd, totalPlungeSecs},
     });
   } catch (e) {
     return {
@@ -739,22 +734,51 @@ export async function endActiveSession(data: {
 
 // --- payment actions ---
 
-export async function createCheckoutSession() {
+export async function createCheckoutSession(data: {
+  unitId: Unit['id'];
+  sessionId: Session['id'];
+}) {
   // authentication check
   const session = await checkAuth();
 
-  const checkoutSession = await stripe.checkout.sessions.create({
-    customer_email: session.user.email,
-    line_items: [
-      {
-        price: 'price_1PRzfQHR9Et3lW0UBz0TFUYj',
-        quantity: 1,
-      },
-    ],
-    mode: 'payment',
-    success_url: `${process.env.CANONICAL_URL}/payment?success=true`,
-    cancel_url: `${process.env.CANONICAL_URL}/payment?cancelled=true`,
-  });
+  // validation check
+  const validatedData = z
+    .object({
+      unitId: z.string().trim().min(1),
+      sessionId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    // console.log({ error: validatedData.error.issues[0].message });
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { unitId, sessionId } = validatedData.data;
+
+  // create checkout session
+  let checkoutSession;
+  try {
+    checkoutSession = await stripe.checkout.sessions.create({
+      customer_email: session.user.email,
+      line_items: [
+        {
+          price: process.env.STRIPE_PRODUCT_PRICE_ID,
+          quantity: 1,
+        },
+      ],
+      mode: 'payment',
+      success_url: `${process.env.CANONICAL_URL}/session/${sessionId}/unlock`,
+      cancel_url: `${process.env.CANONICAL_URL}/unit/${unitId}`,
+      metadata: { session_id: sessionId },
+    });
+  } catch (e) {
+    return {
+      error: 'Checkout failed, please try again',
+    };
+  }
 
   // redirect user
   redirect(checkoutSession.url);

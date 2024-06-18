@@ -1,10 +1,12 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 import { IoLocationOutline } from 'react-icons/io5';
 import { LiaExternalLinkAltSolid } from 'react-icons/lia';
+import { Unit } from '@prisma/client';
 
 import {
-  checkActivePlungeSession,
+  checkPlungeSession,
   checkAuth,
   getLockByLockId,
   getUnitById,
@@ -13,14 +15,9 @@ import {
 import H1 from '@/components/h1';
 import Image from 'next/image';
 // import { createLockCode } from '@/actions/actions';
-import { Unit } from '@prisma/client';
 import Subtitle from '@/components/subtitle';
-import Link from 'next/link';
+import UnitDetails from '@/components/unit-details';
 import { cn } from '@/lib/utils';
-import PenaltyChargeWarning from '@/components/penalty-charge-warning';
-import { Button } from '@/components/ui/button';
-import { IoMdInformationCircleOutline } from 'react-icons/io';
-import PlungeDetails from '@/components/plunge-details';
 
 export default async function Page({
   params: { unitId },
@@ -37,12 +34,15 @@ export default async function Page({
   if (!user?.firstName) redirect('/member-details');
   if (!user.isWaiverSigned) redirect('/waiver');
 
-  // active plunge session check
-  const activePlungeSession = await checkActivePlungeSession(session.user.id);
-  if (activePlungeSession.status === 'started') {
-    redirect(`/session/${activePlungeSession.data?.id}`);
-  } else if (activePlungeSession.status === 'active') {
-    redirect(`/plunge/${activePlungeSession.data?.unitId}/unlock`);
+  // valid session check (i.e. paid for, and within time limit)
+  const { data: plungeSession, status: plungeSessionStatus } =
+    await checkPlungeSession(session.user.id);
+  // redirect to session screen, if session is valid and has already started
+  if (plungeSession && plungeSessionStatus === 'valid_started') {
+    redirect(`/session/${plungeSession.id}`);
+  } else if (plungeSession && plungeSessionStatus === 'valid_not_started') {
+    // redirect to session unlock screen, if session not started yet
+    redirect(`/session/${plungeSession.id}/unlock`);
   }
 
   // get unit
@@ -60,15 +60,6 @@ export default async function Page({
     : lock.properties.door_open
     ? 'In use'
     : 'Ready';
-
-  // create new lock code
-  // const response = await createLockCode({
-  //   lockDeviceId: unit.lockDeviceId,
-  //   minsLaterEndTime: 3,
-  // });
-  // if (response?.error) {
-  //   console.error({ error: response.error });
-  // }
 
   const hostGMapsUrl = `https://www.google.com/maps/search/?api=1&query=${unit.hostAddress
     .toLowerCase()
@@ -94,7 +85,7 @@ export default async function Page({
         <PlungeStatus unitStatus={unitStatus} />
         <PlungeImage imageUrl={unit.imageUrl} />
       </div>
-      <PlungeDetails unitId={unitId} unitStatus={unitStatus} />
+      <UnitDetails unitId={unitId} unitStatus={unitStatus} />
     </main>
   );
 }

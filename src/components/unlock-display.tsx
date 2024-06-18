@@ -68,7 +68,10 @@ export default function UnlockDisplay({
           <div
             className={cn(
               'relative rounded-md border-4 font-medium border-indigo-800 bg-transparent text-center p-5 h-24 w-full flex items-center justify-center',
-              { 'border-green-koldup justify-between border-2': !isCodeAvailable },
+              {
+                'border-green-koldup justify-between border-2':
+                  !isCodeAvailable,
+              },
             )}
           >
             {isCodeAvailable ? (
@@ -112,9 +115,12 @@ export default function UnlockDisplay({
             className="flex-1 flex flex-col items-center justify-center text-sm w-44 mx-auto gap-2 text-zinc-500 text-center"
             size={40}
             color="text-indigo-700"
-            message1="May take a few secs to complete..."
-            message2="You can start as soon as you hear the lid open..."
-            message3="Can take a while to register the unlock..."
+            messages={[
+              'Unlocking plunge...',
+              'May take a few secs to complete...',
+              'You can start as soon as you hear the lid open...',
+              'Can take a few secs to register the unlock...',
+            ]}
           />
         ) : null}
       </div>

@@ -7,30 +7,26 @@ export default function LoadingSpinner({
   size,
   className,
   color,
-  message1,
-  message2,
-  message3,
+  messages,
 }: {
   size?: number;
   className?: string;
   color?: string;
-  message1?: string;
-  message2?: string;
-  message3?: string;
+  messages?: string[];
 }) {
   const [messageState, setMessageState] = useState<string | null>(null);
   useEffect(() => {
     const messageDelay = async () => {
-      await sleep(4000);
-      if (message1) setMessageState((prev) => message1);
-      await sleep(4000);
-      if (message2) setMessageState((prev) => message2);
-      await sleep(4000);
-      if (message3) setMessageState((prev) => message3);
+      if (messages) {
+        for (const message of messages) {
+          setMessageState((prev) => message);
+          await sleep(4000);
+        }
+      }
     };
 
     messageDelay();
-  }, [message1, message2, message3]);
+  }, [messages]);
 
   return (
     <div role="status" className={cn(className)}>

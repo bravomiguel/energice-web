@@ -9,10 +9,10 @@ export default function SessionEndContinueBtn() {
   const router = useRouter();
   return (
     <BottomNav className="space-y-3">
-      <PenaltyChargeWarning />
       <Button className="w-full" onClick={() => router.push('/')}>
         Continue
       </Button>
+      <PenaltyChargeWarning />
     </BottomNav>
   );
 }

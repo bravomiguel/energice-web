@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   // verify webhook came from stripe
   let event;
   try {
-    event = stripe.webhooks.costructEvent(
+    event = stripe.webhooks.constructEvent(
       body,
       signature,
       process.env.STRIPE_WEBHOOK_SECRET,
@@ -22,12 +22,14 @@ export async function POST(request: Request) {
   // reflect payment in session record in db
   switch (event.type) {
     case 'checkout.session.completed':
-      // prisma.user.update({
-      //   where: { email: event.data.object.customer_email },
-      //   data: {
-      //     hasAccess: true,
-      //   },
-      // });
+      await prisma.session.update({
+        where: { id: event.data.object.metadata.session_id },
+        data: {
+          hasPaid: true,
+          amountSubtotal: event.data.object.amount_subtotal,
+          amountTotal: event.data.object.amount_total,
+        },
+      });
       break;
     default:
       console.log(`Unhandled event type ${event.type}`);

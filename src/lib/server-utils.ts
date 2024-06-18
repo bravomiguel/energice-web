@@ -65,58 +65,41 @@ export async function getSessionById(sessionId: Session['id']) {
   return session;
 }
 
-export async function getSessionsByUserId(userId: User['id']) {
+export async function getSessionsByUserId(userId: Session['id']) {
   const sessions = await prisma.session.findMany({ where: { userId } });
   return sessions;
 }
 
-export async function checkActivePlungeSession(userId: User['id']): Promise<{
+export async function checkPlungeSession(userId: User['id']): Promise<{
   data: Session | null;
-  status: 'started' | 'active' | 'no_active';
+  status: 'valid_started' | 'valid_not_started' | 'none_valid';
 }> {
-  const activePlungeSession = await prisma.session.findFirst({
-    where: { userId, isActive: true },
+  const paidSession = await prisma.session.findFirst({
+    where: { userId, hasPaid: true },
+    orderBy: { createdAt: 'desc' },
   });
-  if (activePlungeSession) {
-    if (activePlungeSession.sessionStart) {
-      if (isWithinTimeLimit(activePlungeSession.sessionStart, 10)) {
-        // redirect(`/session/${activePlungeSession.id}`);
-        return {
-          data: activePlungeSession,
-          status: 'started',
-        };
-      } else {
-        await prisma.session.update({
-          where: { id: activePlungeSession.id },
-          data: { isActive: false },
-        });
 
-        return {
-          data: activePlungeSession,
-          status: 'no_active',
-        };
-      }
-    } else if (isWithinTimeLimit(activePlungeSession.createdAt, 12)) {
-      // redirect(`/plunge/${activePlungeSession.unitId}/unlock`);
-      return {
-        data: activePlungeSession,
-        status: 'active',
-      };
-    } else {
-      await prisma.session.update({
-        where: { id: activePlungeSession.id },
-        data: { isActive: false },
-      });
+  const isSessionValid =
+    paidSession && isWithinTimeLimit(paidSession.createdAt, 11);
+  const hasSessionStarted =
+    paidSession?.sessionStart &&
+    isWithinTimeLimit(paidSession?.sessionStart, 10);
+  const hasSessionEnded = paidSession?.sessionEnd;
 
-      return {
-        data: activePlungeSession,
-        status: 'no_active',
-      };
-    }
+  if (isSessionValid && hasSessionStarted && !hasSessionEnded) {
+    return {
+      data: paidSession,
+      status: 'valid_started',
+    };
+  } else if (isSessionValid && !hasSessionStarted) {
+    return {
+      data: paidSession,
+      status: 'valid_not_started',
+    };
+  } else {
+    return {
+      data: null,
+      status: 'none_valid',
+    };
   }
-
-  return {
-    data: null,
-    status: 'no_active',
-  };
 }

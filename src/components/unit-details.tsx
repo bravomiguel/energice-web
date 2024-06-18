@@ -1,22 +1,23 @@
 'use client';
 
-import { GoGoal } from 'react-icons/go';
+import { useState, useTransition } from 'react';
 import { BsThermometerSnow } from 'react-icons/bs';
+import { GoGoal } from 'react-icons/go';
 import { GoChecklist } from 'react-icons/go';
-import { Button } from './ui/button';
 import { IoMdInformationCircleOutline } from 'react-icons/io';
+import { IoWarningOutline } from 'react-icons/io5';
+import { PiWarningCircle } from 'react-icons/pi';
+
+import { Button } from './ui/button';
 import BottomNav from './bottom-nav';
 import PenaltyChargeWarning from './penalty-charge-warning';
-import { createActiveSession } from '@/actions/actions';
-import { useState } from 'react';
+import { createSession } from '@/actions/actions';
 import { plungeTimerSecsSchema } from '@/lib/validations';
 import { formatSecsToMins } from '@/lib/utils';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
-import { IoWarningOutline } from 'react-icons/io5';
-import { PiWarningCircle } from 'react-icons/pi';
 
-export default function PlungeDetails({
+export default function UnitDetails({
   unitStatus,
   unitId,
 }: {
@@ -32,6 +33,7 @@ export default function PlungeDetails({
       : plungeTimerSecs > 120 && plungeTimerSecs < 300
       ? 'Beginners advised to do <2 mins'
       : null;
+  const [isPending, startTransition] = useTransition();
 
   const handleTimerInput = (e: React.FormEvent<HTMLInputElement>) => {
     // validation check
@@ -120,17 +122,19 @@ export default function PlungeDetails({
             <p className="text-4xl font-bold">$10</p>
           </div>
           <Button
-            disabled={unitStatus !== 'Ready' || !isValid}
+            disabled={unitStatus !== 'Ready' || !isValid || isPending}
             className="flex-1"
             onClick={async () => {
-              const response = await createActiveSession({
-                unitId,
-                plungeTimerSecs,
-                assignCode: true,
+              startTransition(async () => {
+                const response = await createSession({
+                  unitId,
+                  plungeTimerSecs,
+                  assignCode: true,
+                });
+                if (response?.error) {
+                  console.error({ error: response.error });
+                }
               });
-              if (response?.error) {
-                console.error({ error: response.error });
-              }
             }}
           >
             Start Plunge

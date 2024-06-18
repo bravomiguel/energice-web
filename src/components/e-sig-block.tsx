@@ -88,7 +88,7 @@ export default function ESigBlock({
           className="w-full"
           disabled={!isChecked}
           onClick={async () => {
-            // router.push('/plunge');
+            // router.push('/unit');
             const response = await signWaiver();
             if (response?.error) {
               console.error({ error: response.error });
@@ -130,59 +130,56 @@ function ESigBtn({
           {children}
         </Button>
       </DialogTrigger>
-      <DialogContent className='gap-5'>
-        <div className='flex flex-col gap-1'>
+      <DialogContent className="gap-5">
+        <div className="flex flex-col gap-1">
           <DialogHeader>
-            <DialogTitle className='text-xl'>
-              Adopt your signature
-            </DialogTitle>
+            <DialogTitle className="text-xl">Adopt your signature</DialogTitle>
           </DialogHeader>
-            <Subtitle className="text-center">
-              Confirm your name and signature
-            </Subtitle>
+          <Subtitle className="text-center">
+            Confirm your name and signature
+          </Subtitle>
         </div>
-          <form
-            className="flex flex-col gap-5"
-            onSubmit={(e: FormEvent<HTMLFormElement>): void => {
-              e.preventDefault();
-              setSignature(fullName);
-              setIsCheckboxVisible(true);
-              setIsFormOpen(false);
-            }}
+        <form
+          className="flex flex-col gap-5"
+          onSubmit={(e: FormEvent<HTMLFormElement>): void => {
+            e.preventDefault();
+            setSignature(fullName);
+            setIsCheckboxVisible(true);
+            setIsFormOpen(false);
+          }}
+        >
+          <div className="space-y-1">
+            <Label htmlFor="fullName">Full Name</Label>
+            <Input
+              id="fullName"
+              type="text"
+              value={fullName}
+              onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                setFullName(e.target.value);
+              }}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label htmlFor="signaturePreview">Signature Preview</Label>
+            <Input
+              id="signaturePreview"
+              type="text"
+              value={fullName}
+              disabled
+              className={`${homemadeApple.className} text-center h-16`}
+            />
+          </div>
+
+          <Button
+            type="submit"
+            variant="koldupBlue"
+            disabled={!isValid}
+            className="w-full"
           >
-            <div className="space-y-1">
-              <Label htmlFor="fullName">Full Name</Label>
-              <Input
-                id="fullName"
-                type="text"
-                value={fullName}
-                onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                  setFullName(e.target.value);
-                }}
-              />
-            </div>
-  
-            <div className="space-y-1">
-              <Label htmlFor="signaturePreview">Signature Preview</Label>
-              <Input
-                id="signaturePreview"
-                type="text"
-                value={fullName}
-                disabled
-                className={`${homemadeApple.className} text-center h-16`}
-              />
-            </div>
-  
-            <Button
-              type="submit"
-              variant="koldupBlue"
-              disabled={!isValid}
-              className="w-full"
-            >
-              Adopt and Sign
-            </Button>
-          </form>
-      
+            Adopt and Sign
+          </Button>
+        </form>
       </DialogContent>
     </Dialog>
   );

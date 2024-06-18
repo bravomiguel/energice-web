@@ -12,18 +12,20 @@ import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
 import H1 from './h1';
 import { useCallback, useEffect, useState } from 'react';
-import { endActiveSession } from '@/actions/actions';
+import { endSession } from '@/actions/actions';
 
 export default function SessionDisplay({
-  sessionData,
+  sessionId,
+  plungeTimerSecs,
   sessionSecs,
   className,
 }: {
-  sessionData: Session;
+  sessionId: Session['id'];
+  plungeTimerSecs: Session['plungeTimerSecs'];
   sessionSecs: number;
   className?: string;
 }) {
-  const { id: sessionId, plungeTimerSecs } = sessionData;
+  // const { id: sessionId, plungeTimerSecs } = sessionData;
   // const plungeTimerSecs = 10;
   const [timerCountdownSecs, setTimerCountdownSecs] = useState(() => {
     const storedTimerCountdownSecs = localStorage.getItem('timerCountdownSecs');
@@ -39,25 +41,21 @@ export default function SessionDisplay({
     setIsTimerPlaying((prev) => (prev === null ? true : !prev));
   };
 
-  const handleEndSession = useCallback(
-    async ({ hasPenalty }: { hasPenalty: Session['hasPenalty'] }) => {
-      // launch full screen loading state
-      // TBC
-      // clean out local storage
-      localStorage.removeItem('timerCountdownSecs');
-      localStorage.removeItem('isTimerPlaying');
-      // run end session server action
-      const response = await endActiveSession({
-        sessionId,
-        totalPlungeSecs,
-        hasPenalty,
-      });
-      if (response?.error) {
-        console.error({ error: response.error });
-      }
-    },
-    [sessionId, totalPlungeSecs],
-  );
+  const handleEndSession = useCallback(async () => {
+    // launch full screen loading state
+    // TBC
+    // clean out local storage
+    localStorage.removeItem('timerCountdownSecs');
+    localStorage.removeItem('isTimerPlaying');
+    // run end session server action
+    const response = await endSession({
+      sessionId,
+      totalPlungeSecs,
+    });
+    if (response?.error) {
+      console.error({ error: response.error });
+    }
+  }, [sessionId, totalPlungeSecs]);
 
   useEffect(() => {
     if (isTimerPlaying !== null) {
@@ -97,7 +95,7 @@ export default function SessionDisplay({
 
     if (sessionSecsLeft <= -30) {
       setSessionSecsLeft(-30);
-      handleEndSession({ hasPenalty: true });
+      handleEndSession();
     }
 
     return () => clearInterval(sessionTimeId);
@@ -122,7 +120,7 @@ export default function SessionDisplay({
           <Button
             variant="destructive"
             className="w-full h-16"
-            onClick={async () => await handleEndSession({ hasPenalty: false })}
+            onClick={async () => await handleEndSession()}
           >
             Done
           </Button>
@@ -222,7 +220,7 @@ export default function SessionDisplay({
         <Button
           variant="destructive"
           className="w-full h-16"
-          onClick={async () => await handleEndSession({ hasPenalty: false })}
+          onClick={async () => await handleEndSession()}
         >
           End session
         </Button>

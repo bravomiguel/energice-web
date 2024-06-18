@@ -1,8 +1,14 @@
 'use client';
 
+import { Viewport } from 'next';
+import { Suspense } from 'react';
+
 import H1 from '@/components/h1';
 import LogoFullText from '@/components/logo-full-text';
-import { Suspense } from 'react';
+
+export const viewport: Viewport = {
+  themeColor: '#4285f4ff',
+}
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

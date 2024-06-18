@@ -1,3 +1,5 @@
+import { Viewport } from 'next';
+
 import { Toaster } from '@/components/ui/sonner';
 import UnitContextProvider from '@/contexts/unit-context-provider';
 import SessionContextProvider from '@/contexts/session-context-provider';
@@ -7,6 +9,10 @@ import {
   getAllUnits,
   getSessionsByUserId,
 } from '@/lib/server-utils';
+
+export const viewport: Viewport = {
+  themeColor: '#f4f4f5',
+}
 
 export default async function Layout({
   children,

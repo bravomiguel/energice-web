@@ -36,8 +36,8 @@ export default async function Home() {
     redirect(user.authCallbackUrl);
   }
 
-  // redirect to texas iron gym unit (as currently, it's the only unit)
-  redirect(`/unit/${process.env.TEXAS_IRON_GYM_ID}`);
+  // redirect to profile (currently, no need for home screen)
+  redirect("/profile");
 
   return <main className="h-screen">Home</main>;
 }

@@ -37,7 +37,7 @@ export default async function Home() {
   }
 
   // redirect to texas iron gym unit (as currently, it's the only unit)
-  redirect("/unit/clxjlkwqk0000rzk6ia6wzips");
+  redirect(`/unit/${process.env.TEXAS_IRON_GYM_ID}`);
 
   return <main className="h-screen">Home</main>;
 }

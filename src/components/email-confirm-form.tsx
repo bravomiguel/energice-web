@@ -11,7 +11,7 @@ import { Label } from './ui/label';
 import { Button } from './ui/button';
 import { checkEmailConfirmCode, sendConfirmEmail } from '@/actions/actions';
 import BottomNav from './bottom-nav';
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { cn } from '@/lib/utils';
 
 export default function EmailConfirmForm() {
@@ -25,16 +25,18 @@ export default function EmailConfirmForm() {
   });
 
   const [isCodeSent, setIsCodeSent] = useState(false);
-  const [isSubmitError, setIsSubmitError] = useState<string | null>(null);
+  // const [isSubmitError, setIsSubmitError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const onSubmit = handleSubmit(async (data) => {
     const response = await checkEmailConfirmCode(data);
     if (response?.error) {
       console.error({ error: response.error });
-      setIsSubmitError(response.error);
-      // toast.warning(response.error);
-      // return;
+      // setIsSubmitError(response.error);
+      toast.warning(response.error);
+      return;
     }
+    toast.success("Email confirmed!");
   });
 
   return (
@@ -52,26 +54,33 @@ export default function EmailConfirmForm() {
             type="number"
             {...register('eConfCode')}
             disabled={!isCodeSent}
-            className={cn({ 'bg-zinc-300 italic': !isCodeSent })}
+            className={cn("placeholder:italic", { 'bg-zinc-300': !isCodeSent })}
             placeholder={
-              !isCodeSent ? 'Hit send code below to get your code' : ''
+              !isCodeSent ? 'Hit send code below to get your code' : 'Enter 6 digit code here'
             }
           />
           {errors.eConfCode && (
             <p className="text-red-500 text-sm">{errors.eConfCode.message}</p>
           )}
+          {/* {isSubmitError && (
+            <p className="text-red-500 text-sm">{isSubmitError}</p>
+          )} */}
         </div>
         <Button
+          disabled={isPending || isSubmitting}
           variant="koldupBlue"
-          onClick={async () => {
-            const response = await sendConfirmEmail();
+          onClick={async (e) => {
+            e.preventDefault();
 
-            if (response?.error) {
-              console.error({ error: response.error });
-              toast.warning(response.error);
-              setIsCodeSent(false);
-              return;
-            }
+            startTransition(async () => {
+              const response = await sendConfirmEmail();
+              if (response?.error) {
+                console.error({ error: response.error });
+                toast.warning(response.error);
+                setIsCodeSent(false);
+                return;
+              }
+            });
 
             toast.success('Code sent successfully');
             setIsCodeSent(true);
@@ -89,9 +98,6 @@ export default function EmailConfirmForm() {
         >
           Submit
         </Button>
-        {isSubmitError && (
-          <p className="text-red-500 text-sm">{isSubmitError}</p>
-        )}
       </BottomNav>
     </form>
   );

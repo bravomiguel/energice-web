@@ -93,7 +93,9 @@ export const plungeTimerSecsSchema = z.union([
     .string()
     .trim()
     .min(1, { message: 'Cannot be left blank' })
-    .regex(/^(0[0-9]|[1-5][0-9]):([0-5][0-9])$/, {message: "Invalid time format"})
+    .regex(/^(0[0-9]|[1-5][0-9]):([0-5][0-9])$/, {
+      message: 'Invalid time format',
+    })
     .transform((val, ctx) => {
       const [minutes, seconds] = val.split(':').map(Number);
       const timerSecs = minutes * 60 + seconds;
@@ -131,10 +133,6 @@ export const plungeTimerSecsSchema = z.union([
   z.number(),
 ]);
 
-export const emailConfirmCodeSchema = z
-.object({
-  eConfCode: z
-    .string()
-    .trim()
-    .length(6, { message: 'Code is 6 digits long' }),
-})
+export const emailConfirmCodeSchema = z.object({
+  eConfCode: z.string().trim().length(6, { message: 'Code is 6 digits long' }),
+});

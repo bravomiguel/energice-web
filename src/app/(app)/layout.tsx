@@ -12,7 +12,7 @@ import {
 
 export const viewport: Viewport = {
   themeColor: '#f4f4f5',
-}
+};
 
 export default async function Layout({
   children,
@@ -33,7 +33,16 @@ export default async function Layout({
           <UnitContextProvider data={units}>{children}</UnitContextProvider>
         </SessionContextProvider>
       </div>
-      <Toaster position="top-right" />
+      <Toaster
+        position="top-center"
+        richColors
+        toastOptions={{
+          style: {
+            background: "#f4f4f5",
+            border: "#a1a1aa",
+          },
+        }}
+      />
     </>
   );
 }

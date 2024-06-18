@@ -825,7 +825,9 @@ export async function sendConfirmEmail() {
   }
 }
 
-export async function checkEmailConfirmCode(data: { eConfCode: User['eConfCode'] }) {
+export async function checkEmailConfirmCode(data: {
+  eConfCode: User['eConfCode'];
+}) {
   // auth check
   const session = await checkAuth();
 
@@ -869,6 +871,13 @@ export async function checkEmailConfirmCode(data: { eConfCode: User['eConfCode']
     };
   }
 
+  // check code provided by user
+  if (eConfCode !== user.eConfCode) {
+    return {
+      error: 'Code is not correct, please try again',
+    };
+  }
+
   // check code has not expired
   const now = new Date();
   const secsSinceCodeCreated = getTimeDiffSecs(user.eConfCodeAt, now);
@@ -876,13 +885,6 @@ export async function checkEmailConfirmCode(data: { eConfCode: User['eConfCode']
   if (hasCodeExpired) {
     return {
       error: 'Code has expired, please hit resend',
-    };
-  }
-
-  // check code provided by user
-  if (eConfCode !== user.eConfCode) {
-    return {
-      error: 'Code is not correct, please try again',
     };
   }
 

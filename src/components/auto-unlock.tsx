@@ -1,6 +1,6 @@
 'use client';
 
-import { startActiveSession, unlockAction } from '@/actions/actions';
+import { startSession, unlockAction } from '@/actions/actions';
 import { Session, Unit } from '@prisma/client';
 import {
   useCallback,
@@ -38,7 +38,7 @@ export default function AutoUnlock({
         return;
       }
 
-      const startSessionResp = await startActiveSession({ sessionId });
+      const startSessionResp = await startSession({ sessionId });
       if (startSessionResp?.error) {
         setIsError(startSessionResp.error);
         console.error({ error: startSessionResp.error });

@@ -565,7 +565,6 @@ export async function createSession(data: {
   plungeTimerSecs: Session['plungeTimerSecs'];
   // assignCode?: boolean;
 }) {
-  console.log({data});
   // auth check
   const session = await checkAuth();
 
@@ -579,7 +578,6 @@ export async function createSession(data: {
     .safeParse(data);
 
   if (!validatedData.success) {
-    console.log({error: validatedData.error.issues[0].message});
     return {
       error: validatedData.error.issues[0].message,
     };
@@ -617,7 +615,6 @@ export async function createSession(data: {
     newSession = await prisma.session.create({
       data: { userId: session.user.id, unitId, plungeTimerSecs },
     });
-    console.log({newSession});
   } catch (e) {
     return {
       error: 'Failed to create new session',
@@ -629,7 +626,7 @@ export async function createSession(data: {
   // redirect(`/unit/${unitId}/unlock`);
 }
 
-export async function startActiveSession(data: { sessionId: Session['id'] }) {
+export async function startSession(data: { sessionId: Session['id'] }) {
   // auth check
   const session = await checkAuth();
 
@@ -741,7 +738,6 @@ export async function createCheckoutSession(data: {
   unitId: Unit['id'];
   sessionId: Session['id'];
 }) {
-  console.log({data});
   // authentication check
   const session = await checkAuth();
 
@@ -754,7 +750,6 @@ export async function createCheckoutSession(data: {
     .safeParse(data);
 
   if (!validatedData.success) {
-    console.log({ error: validatedData.error.issues[0].message });
     return {
       error: validatedData.error.issues[0].message,
     };
@@ -783,8 +778,6 @@ export async function createCheckoutSession(data: {
       error: 'Checkout failed, please try again',
     };
   }
-  console.log({checkoutSession});
-  console.log(checkoutSession.url);
 
   // redirect user
   redirect(checkoutSession.url);

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
 import { SessionProvider } from 'next-auth/react';
 import './globals.css';
@@ -10,6 +10,10 @@ export const metadata: Metadata = {
   title: 'KoldUp',
   description: 'Take the plunge.',
 };
+
+export const viewport: Viewport = {
+  themeColor: '#4285f4ff',
+}
 
 export default function RootLayout({
   children,

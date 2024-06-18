@@ -4,7 +4,7 @@ import { Session, Unit } from '@prisma/client';
 
 import { Button, ButtonProps } from './ui/button';
 import { cn } from '@/lib/utils';
-import { startActiveSession, unlockAction } from '@/actions/actions';
+import { startSession, unlockAction } from '@/actions/actions';
 import { TransitionStartFunction } from 'react';
 
 export default function UnlockPlungeBtn({
@@ -34,7 +34,7 @@ export default function UnlockPlungeBtn({
           if (unlockResponse?.error) {
             console.error({ error: unlockResponse.error });
           }
-          const startSessionResp = await startActiveSession({ sessionId });
+          const startSessionResp = await startSession({ sessionId });
           if (startSessionResp.error) {
             console.error({ error: startSessionResp.error });
           }

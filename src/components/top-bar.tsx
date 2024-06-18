@@ -1,6 +1,6 @@
 'use client';
 
-import { startActiveSession } from '@/actions/actions';
+import { startSession } from '@/actions/actions';
 import { useSessionContext } from '@/contexts/session-context-provider';
 import { cn } from '@/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
@@ -24,8 +24,8 @@ export default function TopBar() {
 
   useEffect(() => {
     if (showSessionCountdown) {
-      const startSession = async () => {
-        const response = await startActiveSession({
+      const startNewSession = async () => {
+        const response = await startSession({
           sessionId: activeSessionId,
         });
         if (response?.error) {
@@ -62,7 +62,7 @@ export default function TopBar() {
 
       if (sessionStartSecs === 0) {
         localStorage.removeItem('sessionStartSecs');
-        startSession();
+        startNewSession();
       }
 
       return () => clearInterval(intervalId);
@@ -83,7 +83,7 @@ export default function TopBar() {
             className="text-zinc-300 hover:text-zinc-500"
             onClick={async () => {
               localStorage.removeItem('sessionStartSecs');
-              const response = await startActiveSession({
+              const response = await startSession({
                 sessionId: activeSessionId,
               });
               if (response?.error) {

@@ -18,10 +18,6 @@ export default async function Page() {
 
   return (
     <main className="relative flex-1 flex flex-col gap-6">
-      <div className='flex flex-col gap-1'>
-        <H1>Confirm your email</H1>
-        <Subtitle>Request an email confirmation code, and enter it below</Subtitle>
-      </div>
       <EmailConfirmForm />
     </main>
   );

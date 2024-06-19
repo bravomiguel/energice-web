@@ -35,15 +35,9 @@ export default function PasswordResetForm() {
 
   const email = watch('email');
   const pwResetCode = watch('pwResetCode');
-  // const newPassword = watch('newPassword');
-  // const newPasswordConfirm = watch('newPasswordConfirm');
-  // console.log({ email, pwResetCode, newPassword, newPasswordConfirm });
-
   const [isCodeSent, setIsCodeSent] = useState(false);
   const [isCodeConfirmed, setIsCodeConfirmed] = useState(false);
   const [isPending, startTransition] = useTransition();
-
-  // console.log({isCodeSent, isCodeConfirmed});
 
   const handleGetCode = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();

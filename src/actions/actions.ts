@@ -572,7 +572,6 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
 export async function createSession(data: {
   unitId: Unit['id'];
   plungeTimerSecs: Session['plungeTimerSecs'];
-  // assignCode?: boolean;
 }) {
   // auth check
   const session = await checkAuth();
@@ -582,7 +581,6 @@ export async function createSession(data: {
     .object({
       unitId: z.string().trim().min(1),
       plungeTimerSecs: plungeTimerSecsSchema,
-      // assignCode: z.union([z.undefined(), z.boolean()]),
     })
     .safeParse(data);
 
@@ -593,30 +591,6 @@ export async function createSession(data: {
   }
 
   const { unitId, plungeTimerSecs } = validatedData.data;
-
-  // get access code, if relevant
-  // let codeData;
-  // if (assignCode) {
-  //   const response = await getLatestEligibleCode({ unitId });
-  //   codeData = response?.data;
-  // }
-
-  // prep initial data for new session
-  // let initialData: Pick<Session, 'userId' | 'unitId' | 'plungeTimerSecs'> &
-  //   Partial<Pick<Session, 'accessCodeId' | 'accessCode' | 'accessCodeEndsAt'>> =
-  //   {
-  //     userId: session.user.id,
-  //     unitId,
-  //     plungeTimerSecs,
-  //   };
-  // if (codeData) {
-  //   initialData = {
-  //     ...initialData,
-  //     accessCodeId: codeData.access_code_id,
-  //     accessCode: codeData.code,
-  //     accessCodeEndsAt: codeData.ends_at ? new Date(codeData.ends_at) : null,
-  //   };
-  // }
 
   // create new session
   let newSession;

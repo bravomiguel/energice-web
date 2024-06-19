@@ -57,16 +57,3 @@ export default function LoadingSpinner({
     </div>
   );
 }
-
-// export const LoadingPage = ({ message }: { message?: string }) => {
-//   return (
-//     <div className="absolute right-0 top-0 flex flex-col gap-4 h-screen w-screen justify-center items-center -z-10">
-//       <LoadingSpinner
-//         size={50}
-//         colourPrimary="text-indigo-700"
-//         // colourSecondary="dark:text-slate-200"
-//       />
-//       {message && <p className="text-xl">{message}</p>}
-//     </div>
-//   );
-// };

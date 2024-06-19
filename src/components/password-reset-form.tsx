@@ -80,9 +80,7 @@ export default function PasswordResetForm() {
       toast.warning(updatePwResponse.error);
       return;
     }
-
-    toast.success('Password changed!');
-
+    // toast.success('Password changed!');
     // await signOutAction();
   });
 
@@ -120,7 +118,7 @@ export default function PasswordResetForm() {
 
             <div className="space-y-1">
               <Label htmlFor="email">Email</Label>
-              <Input id="email" type="text" {...register('email')} />
+              <Input id="email" type="email" {...register('email')} />
               {errors.email && (
                 <p className="text-red-500 text-sm">{errors.email.message}</p>
               )}

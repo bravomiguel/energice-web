@@ -791,9 +791,9 @@ export async function sendConfirmEmail() {
 
   try {
     await resend.emails.send({
-      from: 'Miguel <hello@koldup.com>',
+      from: 'KoldUp <info@koldup.com>',
       to: [session.user.email],
-      subject: 'KoldUp - Confirm your email',
+      subject: 'Confirm your email',
       react: confirmEmail({ eConfCode }),
     });
     // return { success: true, dataResend, recipient };
@@ -921,9 +921,9 @@ export async function sendPwResetEmail(data: { email: User['email'] }) {
   // send code
   try {
     await resend.emails.send({
-      from: 'Miguel <hello@koldup.com>',
+      from: 'KoldUp <info@koldup.com>',
       to: [email],
-      subject: 'KoldUp - Reset your password',
+      subject: 'Reset your password',
       react: passwordResetEmail({ pwResetCode }),
     });
     // return { success: true, dataResend, recipient };

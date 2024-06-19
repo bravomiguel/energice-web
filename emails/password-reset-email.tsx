@@ -18,13 +18,13 @@ const baseUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
   : '';
 
-export default function confirmEmail({
-  eConfCode = '596853',
-}: {eConfCode: User['eConfCode']}) {
+export default function passwordResetEmail({
+  pwResetCode = '596853',
+}: {pwResetCode: User['pwResetCode']}) {
   return (
     <Html>
       <Head />
-      <Preview>Your email confirmation code</Preview>
+      <Preview>Your request to reset password</Preview>
       <Body style={main}>
         <Container style={container}>
           <Section style={coverSection}>
@@ -37,16 +37,14 @@ export default function confirmEmail({
               />  
             </Section>
             <Section style={upperSection}>
-              <Heading style={h1}>Confirm your email address</Heading>
+              <Heading style={h1}>{`Let's get you a new password`}</Heading>
               <Text style={mainText}>
-                {`Thanks for joining KoldUp. We
-                want to make sure it's really you. Please enter the following
-                confirmation code when prompted in the app.`}
+                {`We got a request to reset your KoldUp account password. Here's your password reset code below. Please enter it when prompted in the app.`}
               </Text>
               <Section style={confirmationSection}>
-                <Text style={confirmText}>Confirmation code</Text>
+                <Text style={confirmText}>Password reset code</Text>
 
-                <Text style={codeText}>{eConfCode}</Text>
+                <Text style={codeText}>{pwResetCode}</Text>
                 <Text style={validityText}>
                   (This code is valid for 10 minutes)
                 </Text>

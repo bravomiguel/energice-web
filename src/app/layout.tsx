@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter } from 'next/font/google';
-import { SessionProvider } from 'next-auth/react';
+
 import './globals.css';
 import LogoTransparent from '@/components/logo-transparent';
 
@@ -12,8 +12,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#4285f4ff', 
-}
+  themeColor: '#4285f4ff',
+};
 
 export default function RootLayout({
   children,
@@ -29,9 +29,7 @@ export default function RootLayout({
         <p className="hidden sm:block text-lg font-semibold">
           App only available on mobile
         </p>
-        <div className="sm:hidden">
-          <SessionProvider>{children}</SessionProvider>
-        </div>
+        <div className="sm:hidden">{children}</div>
       </body>
     </html>
   );

@@ -25,6 +25,8 @@ model User {
   healthQuiz       String?
   authCallbackUrl  String?
   sessions         Session[]
+  pwResetCode          String?
+  pwResetCodeAt        DateTime?
   deleted          Boolean   @default(false)
   deletedAt        DateTime?
   createdAt        DateTime  @default(now())

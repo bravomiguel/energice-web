@@ -36,7 +36,7 @@ export default function EmailConfirmForm() {
       toast.warning(response.error);
       return;
     }
-    toast.success("Email confirmed!");
+    toast.success('Email confirmed!');
   });
 
   return (
@@ -54,9 +54,11 @@ export default function EmailConfirmForm() {
             type="number"
             {...register('eConfCode')}
             disabled={!isCodeSent}
-            className={cn("placeholder:italic", { 'bg-zinc-300': !isCodeSent })}
+            className={cn('placeholder:italic', { 'bg-zinc-300': !isCodeSent })}
             placeholder={
-              !isCodeSent ? 'Hit send code below to get your code' : 'Enter 6 digit code here'
+              !isCodeSent
+                ? 'Hit send code below to get your code'
+                : 'Enter 6 digit code here'
             }
           />
           {errors.eConfCode && (

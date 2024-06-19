@@ -11,7 +11,7 @@ import { Button } from './ui/button';
 export default function TopBar() {
   const router = useRouter();
   const activePathname = usePathname();
-  const showArrowBack = ['/plunge'].find(
+  const showArrowBack = ['/reset-password'].find(
     (pathName) => pathName === activePathname,
   );
   const isUnlockScreen = activePathname.includes('/unlock');
@@ -70,7 +70,7 @@ export default function TopBar() {
   }, [activeSessionId, showSessionCountdown, sessionStartSecs]);
 
   return (
-    <header className="relative flex justify-between items-center mb-4 min-h-4">
+    <header className="relative flex justify-between items-center">
       {/* <SessionStartingCountdown /> */}
       {showSessionCountdown && (
         <div className="transition w-screen -mx-4 px-4 py-4 bg-green-koldup text-zinc-200 text-lg font-medium text-center flex justify-between items-center">
@@ -98,10 +98,17 @@ export default function TopBar() {
       <nav>
         <ul className="flex gap-2 text-xs">
           <li>
-            <button onClick={() => router.back()}>
+            <button
+              onClick={async () => {
+                // if (!handleArrowBack) {
+                  router.back();
+                // }
+                // await handleArrowBack();
+              }}
+            >
               {showArrowBack && (
                 <IoIosArrowBack
-                  className={cn('h-8 w-8 text-indigo-700 -translate-x-2', {
+                  className={cn('h-8 w-8 text-indigo-700 -translate-x-2 my-2', {
                     invisible: !showArrowBack,
                   })}
                 />
@@ -112,4 +119,4 @@ export default function TopBar() {
       </nav>
     </header>
   );
-};
+}

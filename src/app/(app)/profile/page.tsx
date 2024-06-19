@@ -7,11 +7,14 @@ import StartPlungeBtn from "@/components/start-plunge-btn";
 import { checkAuth, getUserById } from '@/lib/server-utils';
 
 export default async function Page() {
-  // noStore();
+  noStore();
 
   // auth check
-  // const session = await checkAuth();
-  // const user = await getUserById(session.user.id);
+  const session = await checkAuth();
+  const user = await getUserById(session.user.id);
+
+  // redirect to reset password page, if required
+  if (user?.email === "resetpassword@koldup.com") redirect('/reset-password');
 
   // onboarded check
   // if (!user?.isEmailConfirmed) redirect('/confirm-email');

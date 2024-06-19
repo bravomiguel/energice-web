@@ -2,7 +2,6 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSession } from 'next-auth/react';
 
 import { authFormSchema } from '@/lib/validations';
 import { TAuthForm } from '@/lib/types';
@@ -30,7 +29,6 @@ export default function AuthForm({ type }: AuthFormProps) {
 
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
-  const {data: session} = useSession();
 
   const [passwordShow, setPasswordShow] = useState<boolean>(false);
   const [authErrors, setAuthErrors] = useState<{
@@ -102,7 +100,7 @@ export default function AuthForm({ type }: AuthFormProps) {
       <div className="space-y-1">
         <Button
           type="submit"
-          disabled={!isValid || isSubmitting || !!session?.user}
+          disabled={!isValid || isSubmitting}
           className="w-full"
         >
           {type === 'signUp' ? 'Sign up' : 'Sign in'}

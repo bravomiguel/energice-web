@@ -15,9 +15,11 @@ import { Resend } from 'resend';
 import prisma from '@/lib/db';
 import {
   authFormSchema,
+  emailConfirmCodeSchema,
   healthQuizDataSchema,
   memberDetailsFormSchema,
   plungeTimerSecsSchema,
+  pwResetCodeSchema,
 } from '@/lib/validations';
 import { signIn, signOut } from '@/lib/auth-no-edge';
 import {
@@ -31,6 +33,7 @@ import { getTimeDiffSecs } from '@/lib/utils';
 import { HealthQuizData, TAuthForm, TMemberDetailsForm } from '@/lib/types';
 import { ONBOARDING_URLS } from '@/lib/constants';
 import confirmEmail from '../../emails/confirm-email';
+import passwordResetEmail from '../../emails/password-reset-email';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const seam = new Seam();
@@ -163,13 +166,13 @@ export async function signInAction(
 
     if (!user?.hashedPassword)
       return {
-        error: 'Invalid credentials.',
+        error: 'Invalid credentials',
       };
 
     hashedPassword = user.hashedPassword;
   } catch (e) {
     return {
-      error: 'Invalid credentials.',
+      error: 'Invalid credentials provided',
     };
   }
 
@@ -832,14 +835,7 @@ export async function checkEmailConfirmCode(data: {
   const session = await checkAuth();
 
   // validation check
-  const validatedData = z
-    .object({
-      eConfCode: z
-        .string()
-        .trim()
-        .length(6, { message: 'Code is 6 digits long' }),
-    })
-    .safeParse(data);
+  const validatedData = emailConfirmCodeSchema.safeParse(data);
 
   if (!validatedData.success) {
     return {
@@ -901,4 +897,186 @@ export async function checkEmailConfirmCode(data: {
   }
 
   redirect('/member-details');
+}
+
+// --- password reset actions ---
+
+export async function sendPwResetEmail(data: { email: User['email'] }) {
+  // validation check
+  const validatedData = authFormSchema.pick({ email: true }).safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { email } = validatedData.data;
+
+  // check user exists
+  let user;
+  try {
+    user = await prisma.user.findUnique({ where: { email } });
+  } catch (e) {
+    return {
+      error: 'Account lookup failed, please try again',
+    };
+  }
+  if (!user) {
+    return {
+      error: 'No account found with this email',
+    };
+  }
+
+  // generate 6 digit code
+  const pwResetCode = String(Math.floor(100000 + Math.random() * 900000));
+  const pwResetCodeAt = new Date();
+
+  // add code to user record
+  try {
+    await prisma.user.update({
+      where: { email },
+      data: { pwResetCode, pwResetCodeAt },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to create code',
+    };
+  }
+
+  // send code
+  try {
+    await resend.emails.send({
+      from: 'Miguel <hello@koldup.com>',
+      to: [email],
+      subject: 'KoldUp - Reset your password',
+      react: passwordResetEmail({ pwResetCode }),
+    });
+    // return { success: true, dataResend, recipient };
+  } catch (error) {
+    return { error: 'Failed to send email' };
+  }
+}
+
+export async function checkPwResetCode(data: {
+  email: User['email'];
+  pwResetCode: User['pwResetCode'];
+}) {
+  // validation check
+  const validatedData = z
+    .object({
+      pwResetCode: z
+        .string()
+        .trim()
+        .length(6, { message: 'Code is 6 digits long' }),
+      email: z
+        .string()
+        .trim()
+        .email({ message: 'Not a valid email' })
+        .min(1, { message: 'Email is required' }),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { pwResetCode, email } = validatedData.data;
+
+  // get user data
+  let user;
+  try {
+    user = await prisma.user.findUnique({ where: { email } });
+  } catch (e) {
+    return {
+      error: 'Account lookup failed, please try again',
+    };
+  }
+
+  // check user exists
+  if (!user) {
+    return {
+      error: 'No account found with this email',
+    };
+  }
+
+  // check confirmation code exists
+  if (!user.pwResetCode) {
+    return {
+      error: 'No password reset code found, please try again',
+    };
+  }
+
+  // check code provided by user
+  if (pwResetCode !== user.pwResetCode) {
+    return {
+      error: 'Code is not correct, please try again',
+    };
+  }
+
+  // check code has not expired
+  const now = new Date();
+  const secsSinceCodeCreated = getTimeDiffSecs(user.pwResetCodeAt, now);
+  const hasCodeExpired = secsSinceCodeCreated && secsSinceCodeCreated > 10 * 60;
+  if (hasCodeExpired) {
+    return {
+      error: 'Code has expired, please try again',
+    };
+  }
+}
+
+export async function updatePassword(data: {
+  email: User['email'];
+  pwResetCode: User['pwResetCode'];
+  newPassword: string;
+  newPasswordConfirm: string;
+}) {
+  console.log({ data });
+  // validation check
+  const validatedData = pwResetCodeSchema.safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { email, newPassword } = validatedData.data;
+
+  // update user password
+  const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+
+  console.log({ email, newPassword, hashedNewPassword });
+
+  try {
+    await prisma.user.update({
+      where: { email },
+      data: {
+        hashedPassword: hashedNewPassword,
+      },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to update password',
+    };
+  }
+}
+
+export async function accessResetPassword() {
+  // signin
+  try {
+    await signIn('credentials', {
+      email: process.env.RESET_PASSWORD_EMAIL,
+      password: process.env.RESET_PASSWORD_PW,
+    });
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return {
+        message: 'Error, could not sign up',
+      };
+    }
+    throw error; // to deal with next.js redirect throwing error
+  }
 }

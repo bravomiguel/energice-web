@@ -11,6 +11,9 @@ export default async function Home() {
   const session = await checkAuth();
   const user = await getUserById(session.user.id);
 
+  // redirect to reset password page
+  if (user?.email === "resetpassword@koldup.com") redirect('/reset-password');
+
   // onboarded check
   if (!user?.isEmailConfirmed) redirect('/confirm-email');
   if (!user?.firstName) redirect('/member-details');

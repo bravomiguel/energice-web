@@ -136,3 +136,25 @@ export const plungeTimerSecsSchema = z.union([
 export const emailConfirmCodeSchema = z.object({
   eConfCode: z.string().trim().length(6, { message: 'Code is 6 digits long' }),
 });
+
+export const pwResetCodeSchema = z
+  .object({
+    pwResetCode: z
+      .string()
+      .trim()
+      .length(6, { message: 'Code is 6 digits long' }),
+    email: z
+      .string()
+      .trim()
+      .email({ message: 'Not a valid email' })
+      .min(1, { message: 'Email is required' }),
+    newPassword: z
+      .string()
+      .trim()
+      .min(8, { message: 'Password must be at least 8 characters' }),
+    newPasswordConfirm: z.string().trim(),
+  })
+  .refine((data) => data.newPasswordConfirm === data.newPassword, {
+    message: 'Passwords do not match',
+    path: ['newPasswordConfirm'],
+  });

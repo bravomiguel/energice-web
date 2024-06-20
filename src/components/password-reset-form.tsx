@@ -4,7 +4,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 
-import { pwResetCodeSchema, pwResetCodeSchemaPwConfirm } from '@/lib/validations';
+import {
+  pwResetCodeSchema,
+  pwResetCodeSchemaPwConfirm,
+} from '@/lib/validations';
 import { TPasswordResetForm } from '@/lib/types';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -84,20 +87,25 @@ export default function PasswordResetForm() {
     // await signOutAction();
   });
 
+  const handleReturnToSignIn = async () => {
+    startTransition(async () => {
+      await signOutAction();
+    });
+  };
+
   if (isSubmitSuccessful) {
     return (
       <>
         <div className="flex flex-col flex-1 gap-4 justify-center items-center text-center px-10 transition-all">
           <FaCheckCircle className="h-16 w-16 text-green-koldup" />
           <H1>Password changed successfully</H1>
-          <Subtitle>
-            You can now sign in with your new credentials.
-          </Subtitle>
+          <Subtitle>You can now sign in with your new credentials.</Subtitle>
         </div>
         <BottomNav>
           <Button
-            className="w-full"
-            onClick={async () => await signOutAction()}
+            onClick={async () => await handleReturnToSignIn()}
+            disabled={isPending}
+            isLoading={isPending}
           >
             Return to signin
           </Button>
@@ -191,7 +199,10 @@ export default function PasswordResetForm() {
           {isCodeSent && isCodeConfirmed ? (
             <Button
               type="submit"
-              disabled={!isValid || isSubmitting || isSubmitSuccessful}
+              disabled={
+                !isValid || isSubmitting || (isSubmitSuccessful && !!errors)
+              }
+              isLoading={isSubmitting || (isSubmitSuccessful && !!errors)}
               className="w-full"
             >
               Submit
@@ -204,6 +215,7 @@ export default function PasswordResetForm() {
                 pwResetCode === '' ||
                 !!errors.pwResetCode
               }
+              isLoading={isPending}
               className="w-full"
               onClick={async (e) => await handleConfirmCode(e)}
             >
@@ -217,6 +229,7 @@ export default function PasswordResetForm() {
                 email === '' ||
                 !!errors.email
               }
+              isLoading={isPending}
               className="w-full"
               onClick={async (e) => await handleGetCode(e)}
             >

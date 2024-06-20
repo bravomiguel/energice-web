@@ -7,11 +7,13 @@ export default function LoadingSpinner({
   size,
   className,
   color,
+  secondaryColor = "fill-zinc-300",
   messages,
 }: {
   size?: number;
   className?: string;
   color?: string;
+  secondaryColor?: string;
   messages?: string[];
 }) {
   const [messageState, setMessageState] = useState<string | null>(null);
@@ -32,7 +34,7 @@ export default function LoadingSpinner({
     <div role="status" className={cn(className)}>
       <svg
         aria-hidden="true"
-        className={cn('animate-spin fill-zinc-300', color)}
+        className={cn('animate-spin', secondaryColor, color)}
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

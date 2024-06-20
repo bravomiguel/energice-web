@@ -91,15 +91,24 @@ export default function SignupForm() {
             />
           </div>
           {errors.passwordConfirm && (
-            <p className="text-red-900 text-sm">{errors.passwordConfirm.message}</p>
+            <p className="text-red-900 text-sm">
+              {errors.passwordConfirm.message}
+            </p>
           )}
         </div>
       </div>
 
-      <div className="space-y-1">
+      <div className="flex flex-col gap-1">
         <Button
           type="submit"
-          disabled={!isValid || isSubmitting || isSubmitSuccessful}
+          disabled={
+            !isValid ||
+            isSubmitting ||
+            (isSubmitSuccessful && signupError === null)
+          }
+          isLoading={
+            isSubmitting || (isSubmitSuccessful && signupError === null)
+          }
           className="w-full"
         >
           Sign up

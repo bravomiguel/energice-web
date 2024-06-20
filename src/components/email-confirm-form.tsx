@@ -83,18 +83,19 @@ export default function EmailConfirmForm() {
                   )}
                 </div>
               </div>
-              <BottomNav className='space-y-2'>
+              <BottomNav>
                 <Button
                   type="submit"
-                  disabled={!isValid || isSubmitting || isSubmitSuccessful}
-                  className="w-full"
+                  disabled={
+                    !isValid || isSubmitting || (isSubmitSuccessful && !!errors)
+                  }
+                  isLoading={isSubmitting || (isSubmitSuccessful && !!errors)}
                 >
                   Confirm email
                 </Button>
                 <Button
                   type="submit"
                   variant="outline"
-                  className="w-full"
                   onClick={async (e) => await handleGetCode(e)}
                 >
                   Resend code
@@ -107,15 +108,19 @@ export default function EmailConfirmForm() {
             <Subtitle className="h-10">
               Get a confirmation code sent to your email
             </Subtitle>
-            <Button
-              className="w-full h-16 flex gap-3"
-              variant="koldupGreen"
-              onClick={async (e) => await handleGetCode(e)}
-              disabled={isPending}
-            >
-              <FiSend className="w-5 h-5" />
-              <p>Get code</p>
-            </Button>
+            <div className="flex">
+              <Button
+                className="w-full h-16 flex gap-3"
+                variant="koldupGreen"
+                onClick={async (e) => await handleGetCode(e)}
+                disabled={isPending}
+                isLoading={isPending}
+                loadingBgColor="fill-green-koldup"
+              >
+                <FiSend className="w-5 h-5" />
+                <p>Get code</p>
+              </Button>
+            </div>
           </>
         )}
       </div>

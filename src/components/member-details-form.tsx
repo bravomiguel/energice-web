@@ -15,7 +15,7 @@ export default function MemberDetailsForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting },
+    formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
   } = useForm<TMemberDetailsForm>({
     resolver: zodResolver(memberDetailsSchema),
     mode: 'all',
@@ -60,7 +60,7 @@ export default function MemberDetailsForm() {
 
         <div className="space-y-1">
           <Label htmlFor="dob">Date of Birth</Label>
-          <Input id="dob" type="date" {...register('dob')} className="" />
+          <Input id="dob" type="date" {...register('dob')} className="text-left" />
           {errors.dob && (
             <p className="text-red-500 text-sm">{errors.dob.message}</p>
           )}
@@ -70,8 +70,8 @@ export default function MemberDetailsForm() {
       <BottomNav>
         <Button
           type="submit"
-          disabled={!isValid || isSubmitting}
-          className="w-full"
+          disabled={!isValid || isSubmitting || (isSubmitSuccessful && !!errors)}
+          isLoading={isSubmitting || (isSubmitSuccessful && !!errors)}
         >
           Submit
         </Button>

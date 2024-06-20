@@ -117,13 +117,12 @@ export default function UnitDetails({
         </div>
       </div>
       <BottomNav>
-        <div className="flex gap-4">
-          <div className="flex gap-1 items-center">
-            <p className="text-4xl font-bold">$10</p>
-          </div>
+        <div className="flex flex-row w-full gap-4">
+          <p className="text-4xl font-bold">$10</p>
           <Button
             disabled={unitStatus !== 'Ready' || !isValid || isPending}
-            className="flex-1"
+            isLoading={isPending}
+            className="w-full"
             onClick={async () => {
               startTransition(async () => {
                 const response = await createSession({

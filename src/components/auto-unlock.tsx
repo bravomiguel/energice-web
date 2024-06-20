@@ -77,8 +77,8 @@ export default function AutoUnlock({
         <H1>Unlock Plunge</H1>
         <UnlockRetry handleUnlock={handleUnlock} />
       </div>
-      <BottomNav className="space-y-2">
-        <Subtitle className="text-zinc-600">Access issues?</Subtitle>
+      <BottomNav className="gap-2">
+        <Subtitle className="text-zinc-600 text-start">Access issues?</Subtitle>
         <Button variant="outline" className="w-full" onClick={() => {}}>
           Report issue
         </Button>

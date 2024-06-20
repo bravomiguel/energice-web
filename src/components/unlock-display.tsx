@@ -124,11 +124,10 @@ export default function UnlockDisplay({
           />
         ) : null}
       </div>
-      <BottomNav className="space-y-2">
-        <Subtitle className="text-zinc-600">Access issues?</Subtitle>
+      <BottomNav>
+        <Subtitle className="text-zinc-600 text-start">Access issues?</Subtitle>
         {isCodeAvailable ? (
           <UnlockPlungeBtn
-            className="w-full"
             unitId={unitId}
             sessionId={activeSessionId}
             isPending={isPending}
@@ -137,9 +136,7 @@ export default function UnlockDisplay({
             Unlock via app
           </UnlockPlungeBtn>
         ) : null}
-        <Button variant="outline" className="w-full">
-          Report issue
-        </Button>
+        <Button variant="outline">Report issue</Button>
       </BottomNav>
     </>
   );

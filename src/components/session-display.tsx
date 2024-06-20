@@ -11,7 +11,7 @@ import Subtitle from './subtitle';
 import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
 import H1 from './h1';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useTransition } from 'react';
 import { endSession } from '@/actions/actions';
 
 export default function SessionDisplay({
@@ -36,25 +36,26 @@ export default function SessionDisplay({
   const [totalPlungeSecs, setTotalPlungeSecs] = useState(0);
   const [isTimerPlaying, setIsTimerPlaying] = useState<boolean | null>(null);
   const [sessionSecsLeft, setSessionSecsLeft] = useState(sessionSecs);
+  const [isPending, startTransition] = useTransition();
 
   const handleIsTimerPlaying = () => {
     setIsTimerPlaying((prev) => (prev === null ? true : !prev));
   };
 
   const handleEndSession = useCallback(async () => {
-    // launch full screen loading state
-    // TBC
-    // clean out local storage
-    localStorage.removeItem('timerCountdownSecs');
-    localStorage.removeItem('isTimerPlaying');
-    // run end session server action
-    const response = await endSession({
-      sessionId,
-      totalPlungeSecs,
+    startTransition(async () => {
+      // clean out local storage
+      localStorage.removeItem('timerCountdownSecs');
+      localStorage.removeItem('isTimerPlaying');
+      // run end session server action
+      const response = await endSession({
+        sessionId,
+        totalPlungeSecs,
+      });
+      if (response?.error) {
+        console.error({ error: response.error });
+      }
     });
-    if (response?.error) {
-      console.error({ error: response.error });
-    }
   }, [sessionId, totalPlungeSecs]);
 
   useEffect(() => {
@@ -116,10 +117,12 @@ export default function SessionDisplay({
             To avoid an extra <span>$10</span> charge
           </Subtitle>
         </div>
-        <BottomNav className="space-y-3">
+        <BottomNav>
           <Button
             variant="destructive"
             className="w-full h-16"
+            disabled={isPending}
+            isLoading={isPending}
             onClick={async () => await handleEndSession()}
           >
             Done
@@ -205,7 +208,7 @@ export default function SessionDisplay({
           </p>
         </div>
       </div>
-      <BottomNav className="space-y-3">
+      <BottomNav>
         <Button
           variant={isTimerPlaying === false ? 'koldupBlue' : 'default'}
           className="w-full h-16"
@@ -220,6 +223,8 @@ export default function SessionDisplay({
         <Button
           variant="destructive"
           className="w-full h-16"
+          disabled={isPending}
+          isLoading={isPending}
           onClick={async () => await handleEndSession()}
         >
           End session

@@ -8,10 +8,8 @@ import { Button } from './ui/button';
 export default function SessionEndContinueBtn() {
   const router = useRouter();
   return (
-    <BottomNav className="space-y-3">
-      <Button className="w-full" onClick={() => router.push('/')}>
-        Continue
-      </Button>
+    <BottomNav className="gap-1">
+      <Button onClick={() => router.push('/')}>Continue</Button>
       <PenaltyChargeWarning />
     </BottomNav>
   );

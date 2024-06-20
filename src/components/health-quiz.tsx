@@ -99,12 +99,13 @@ function BtnSet({
 }) {
   const router = useRouter();
   return (
-    <BottomNav className="flex w-full gap-3 justify-center items-center">
+    <BottomNav className="flex flex-row justify-center items-center">
       <Button variant="outline" onClick={() => router.push('/waiver')}>
         Skip
       </Button>
       <Button
         disabled={!isQuizComplete || isSubmitting}
+        isLoading={isSubmitting}
         onClick={async () => await onSubmit()}
         className="w-full"
       >

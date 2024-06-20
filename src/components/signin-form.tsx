@@ -17,7 +17,7 @@ export default function SigninForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isValid, isSubmitting, isSubmitSuccessful, isSubmitted },
   } = useForm<TSigninForm>({
     resolver: zodResolver(signinSchema),
     mode: 'all',
@@ -74,10 +74,11 @@ export default function SigninForm() {
         </div>
       </div>
 
-      <div className="space-y-1">
+      <div className="flex flex-col gap-1">
         <Button
           type="submit"
-          disabled={!isValid || isSubmitting || isSubmitSuccessful}
+          disabled={!isValid || isSubmitting || (isSubmitSuccessful && signinError === null)}
+          isLoading={isSubmitting || (isSubmitSuccessful && signinError === null)}
           className="w-full"
         >
           Sign in

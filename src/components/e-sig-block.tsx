@@ -9,6 +9,7 @@ import {
   useMemo,
   useRef,
   useState,
+  useTransition,
 } from 'react';
 import { Homemade_Apple } from 'next/font/google';
 import { Label } from '@radix-ui/react-label';
@@ -45,6 +46,7 @@ export default function ESigBlock({
   const [isChecked, setIsChecked] = useState(false);
 
   const checkboxRef = useRef<HTMLDivElement>(null);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     if (isCheckboxVisible) {
@@ -85,14 +87,16 @@ export default function ESigBlock({
       </div>
       <BottomNav>
         <Button
-          className="w-full"
-          disabled={!isChecked}
+          disabled={!isChecked || isPending}
+          isLoading={isPending}
           onClick={async () => {
             // router.push('/unit');
-            const response = await signWaiver();
-            if (response?.error) {
-              console.error({ error: response.error });
-            }
+            startTransition(async () => {
+              const response = await signWaiver();
+              if (response?.error) {
+                console.error({ error: response.error });
+              }
+            });
           }}
         >
           Continue

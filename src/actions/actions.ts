@@ -992,7 +992,6 @@ export async function updatePassword(data: {
   newPassword: string;
   newPasswordConfirm: string;
 }) {
-  console.log({ data });
   // validation check
   const validatedData = pwResetCodeSchema.safeParse(data);
 
@@ -1006,8 +1005,6 @@ export async function updatePassword(data: {
 
   // update user password
   const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-
-  console.log({ email, newPassword, hashedNewPassword });
 
   try {
     await prisma.user.update({

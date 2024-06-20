@@ -1,8 +1,7 @@
 import { Viewport } from 'next';
 
 import { Toaster } from '@/components/ui/sonner';
-import UnitContextProvider from '@/contexts/unit-context-provider';
-import SessionContextProvider from '@/contexts/session-context-provider';
+import PlungeSessionsContextProvider from '@/contexts/sessions-context-provider';
 import TopBar from '@/components/top-bar';
 import {
   checkAuth,
@@ -28,18 +27,18 @@ export default async function Layout({
   return (
     <>
       <div className="relative flex flex-col px-4 min-h-screen">
-        <SessionContextProvider data={sessions}>
+        <PlungeSessionsContextProvider data={sessions}>
           <TopBar />
-          <UnitContextProvider data={units}>{children}</UnitContextProvider>
-        </SessionContextProvider>
+          {children}
+        </PlungeSessionsContextProvider>
       </div>
       <Toaster
         position="top-center"
         richColors
         toastOptions={{
           style: {
-            background: "#f4f4f5",
-            border: "#a1a1aa",
+            background: '#f4f4f5',
+            border: '#a1a1aa',
           },
         }}
       />

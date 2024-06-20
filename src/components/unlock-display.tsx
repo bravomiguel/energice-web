@@ -8,7 +8,7 @@ import { IoMdInformationCircleOutline } from 'react-icons/io';
 import { useEffect, useState, useTransition } from 'react';
 import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
-import { useSessionContext } from '@/contexts/session-context-provider';
+import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import LoadingSpinner from './loading-spinner';
 import { Session } from '@prisma/client';
 
@@ -30,7 +30,7 @@ export default function UnlockDisplay({
   const [codeExpirySecs, setCodeExpirySecs] = useState<number | null>(secsLeft);
   const isCodeAvailable = code && codeExpirySecs && codeExpirySecs > 0;
 
-  const { handleChangeActiveSessionId } = useSessionContext();
+  const { handleChangeActiveSessionId } = usePlungeSessions();
   useEffect(() => {
     if (activeSessionId) handleChangeActiveSessionId(activeSessionId);
   }, [activeSessionId, handleChangeActiveSessionId]);

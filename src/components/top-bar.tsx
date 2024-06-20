@@ -1,7 +1,7 @@
 'use client';
 
 import { startSession } from '@/actions/actions';
-import { useSessionContext } from '@/contexts/session-context-provider';
+import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import { cn } from '@/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -15,7 +15,7 @@ export default function TopBar() {
     (pathName) => pathName === activePathname,
   );
   const isUnlockScreen = activePathname.includes('/unlock');
-  const { activeSessionId, activeSession } = useSessionContext();
+  const { activeSessionId, activeSession } = usePlungeSessions();
   const showSessionCountdown =
     activeSessionId && activeSession?.accessCode && isUnlockScreen;
 

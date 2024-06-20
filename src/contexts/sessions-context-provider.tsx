@@ -7,12 +7,12 @@ import { createContext, useContext, useOptimistic, useState } from 'react';
 import { Session } from '@prisma/client';
 // import { SessionEssentials } from '@/lib/types';
 
-type SessionContextProviderProps = {
+type PlungeSessionsProviderProps = {
   data: Session[];
   children: React.ReactNode;
 };
 
-type TSessionContext = {
+type TPlungeSessions = {
   sessions: Session[];
   activeSessionId: Session['id'] | null;
   handleChangeActiveSessionId: (id: Session['id']) => void;
@@ -21,12 +21,12 @@ type TSessionContext = {
   // handleAddSession: (newSession: SessionEssentials) => Promise<void>;
 };
 
-export const SessionContext = createContext<TSessionContext | null>(null);
+export const PlungeSessions = createContext<TPlungeSessions | null>(null);
 
-export default function SessionContextProvider({
+export default function PlungeSessionsProvider({
   data: sessions,
   children,
-}: SessionContextProviderProps) {
+}: PlungeSessionsProviderProps) {
   // const [sessions, setSessions] = useState(data);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
 
@@ -46,7 +46,7 @@ export default function SessionContextProvider({
   // };
 
   return (
-    <SessionContext.Provider
+    <PlungeSessions.Provider
       value={{
         sessions,
         activeSessionId,
@@ -57,15 +57,15 @@ export default function SessionContextProvider({
       }}
     >
       {children}
-    </SessionContext.Provider>
+    </PlungeSessions.Provider>
   );
 }
 
-export function useSessionContext() {
-  const context = useContext(SessionContext);
+export function usePlungeSessions() {
+  const context = useContext(PlungeSessions);
 
   if (!context) {
-    throw new Error('useSessionContext must be used within a UnitSessionProvider');
+    throw new Error('usePlungeSessions must be used within a UnitSessionProvider');
   }
 
   return context;

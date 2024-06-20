@@ -12,7 +12,7 @@ export default function Page() {
 
   return (
     <main className="w-full">
-      <H1 className='text-zinc-200 text-xl mb-4'>Sign In</H1>
+      <H1 className='text-zinc-200 text-lg font-medium mb-4'>Sign In</H1>
       <SigninForm />
       <div className="mt-6 gap-3 flex flex-col items-center justify-center text-zinc-200 text-sm text-center">
         <p className="">

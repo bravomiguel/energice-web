@@ -11,8 +11,6 @@ const config = {
   providers: [
     credentials({
       async authorize(credentials) {
-        console.log({ credentials });
-
         // runs on signin
         const validatedCredentials = signinSchema.safeParse({
           email: credentials.email,

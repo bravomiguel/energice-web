@@ -6,6 +6,7 @@ import { Session, Unit, User } from '@prisma/client';
 import prisma from './db';
 import { Seam } from 'seam';
 import { isWithinTimeLimit } from './utils';
+import { APP_PATHNAMES } from './constants';
 
 // --- auth utils ---
 
@@ -16,6 +17,33 @@ export async function checkAuth() {
   }
 
   return session;
+}
+
+export async function authCallbackRedirect({
+  id: userId,
+  authCallbackUrl,
+}: Pick<User, 'id' | 'authCallbackUrl'>) {
+  if (authCallbackUrl) {
+    // clear callback from db
+    try {
+      await prisma.user.update({
+        where: { id: userId },
+        data: { authCallbackUrl: null },
+      });
+    } catch (e) {
+      return {
+        error: 'Failed to run callback url',
+      };
+    }
+
+    const isCallbackUrlAllowed =
+      APP_PATHNAMES.filter((pathName) => authCallbackUrl.includes(pathName))
+        .length > 0;
+
+    if (isCallbackUrlAllowed) {
+      redirect(authCallbackUrl);
+    }
+  }
 }
 
 // --- user utils ---

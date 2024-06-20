@@ -16,7 +16,7 @@ export default function SignOutBtn() {
       disabled={isPending}
       isLoading={isPending}
     >
-      Sign out
+      Log out
     </Button>
   );
 }

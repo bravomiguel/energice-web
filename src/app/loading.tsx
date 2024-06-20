@@ -5,7 +5,7 @@ export default function Loading() {
   return (
     <LoadingSpinner
       className="absolute right-0 top-0 flex flex-col gap-4 h-screen w-screen justify-center items-center"
-      size={40}
+      size={35}
       color="text-indigo-700"
     />
   );

@@ -11,6 +11,7 @@ import {
   getLockByLockId,
   getUnitById,
   getUserById,
+  authCallbackRedirect,
 } from '@/lib/server-utils';
 import H1 from '@/components/h1';
 import Image from 'next/image';
@@ -30,10 +31,19 @@ export default async function Page({
   const session = await checkAuth();
   const user = await getUserById(session.user.id);
 
+  // redirect to reset password page
+  if (user?.email === 'resetpassword@koldup.com') redirect('/reset-password');
+
   // onboarded check
   if (!user?.isEmailConfirmed) redirect('/confirm-email');
   if (!user?.firstName) redirect('/member-details');
   if (!user.isWaiverSigned) redirect('/waiver');
+
+  // redirect to auth callback, if relevant
+  await authCallbackRedirect({
+    id: session.user.id,
+    authCallbackUrl: user.authCallbackUrl,
+  });
 
   // valid session check (i.e. paid for, and within time limit)
   const { data: plungeSession, status: plungeSessionStatus } =

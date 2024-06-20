@@ -1,7 +1,12 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import { checkPlungeSession, checkAuth, getUserById } from '@/lib/server-utils';
+import {
+  checkPlungeSession,
+  checkAuth,
+  getUserById,
+  authCallbackRedirect,
+} from '@/lib/server-utils';
 import prisma from '@/lib/db';
 
 export default async function Home() {
@@ -12,12 +17,18 @@ export default async function Home() {
   const user = await getUserById(session.user.id);
 
   // redirect to reset password page
-  if (user?.email === "resetpassword@koldup.com") redirect('/reset-password');
+  if (user?.email === 'resetpassword@koldup.com') redirect('/reset-password');
 
   // onboarded check
   if (!user?.isEmailConfirmed) redirect('/confirm-email');
   if (!user?.firstName) redirect('/member-details');
   if (!user.isWaiverSigned) redirect('/waiver');
+
+  // redirect to auth callback, if relevant
+  await authCallbackRedirect({
+    id: session.user.id,
+    authCallbackUrl: user.authCallbackUrl,
+  });
 
   // valid session check (i.e. paid for, and within time limit)
   const { data: plungeSession, status: plungeSessionStatus } =
@@ -30,17 +41,8 @@ export default async function Home() {
     redirect(`/session/${plungeSession.id}/unlock`);
   }
 
-  if (user.authCallbackUrl) {
-    // clear callback from db
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: { authCallbackUrl: null },
-    });
-    redirect(user.authCallbackUrl);
-  }
-
   // redirect to profile (currently, no need for home screen)
-  redirect("/profile");
+  redirect('/profile');
 
   return <main className="h-screen">Home</main>;
 }

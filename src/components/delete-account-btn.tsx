@@ -20,6 +20,7 @@ export default function DeleteAccountBtn() {
       onClick={async () => await handleDeleteAccount()}
       disabled={isPending}
       isLoading={isPending}
+      variant="outline"
     >
       Delete Account
     </Button>

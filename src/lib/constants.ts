@@ -8,3 +8,5 @@ export const ONBOARDING_URLS = [
     return `http://localhost:${process.env.PORT}${pathName}`;
   return `${process.env.CANONICAL_URL}${pathName}`;
 });
+
+export const APP_PATHNAMES = ['/', '/profile', '/unit']

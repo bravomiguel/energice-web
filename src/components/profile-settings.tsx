@@ -2,7 +2,6 @@
 
 import Link from 'next/link';
 import { IoChevronForward } from 'react-icons/io5';
-import { Url } from 'url';
 
 export default function ProfileSettings() {
   return (

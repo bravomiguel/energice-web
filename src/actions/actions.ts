@@ -123,19 +123,7 @@ export async function signUp(data: TAuthForm & { callbackUrl: string | null }) {
   }
 
   // signin
-  try {
-    await signIn('credentials', {
-      email,
-      password,
-    });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return {
-        message: 'Error, could not sign up',
-      };
-    }
-    throw error; // to deal with next.js redirect throwing error
-  }
+  await signIn('credentials', { email, password });
 }
 
 export async function signInAction(
@@ -206,33 +194,30 @@ export async function signInAction(
     }
   }
 
-  try {
-    await signIn('credentials', {
-      email,
-      password,
-    });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      switch (error.type) {
-        case 'CredentialsSignin': {
-          return {
-            error: 'Invalid credentials',
-          };
-        }
-        case 'CallbackRouteError': {
-          return {
-            error: 'Invalid credentials',
-          };
-        }
-        default: {
-          return {
-            error: 'Error, could not sign in',
-          };
-        }
-      }
-    }
-    throw error; // to deal with next.js redirect throwing error
-  }
+  // try {
+  await signIn('credentials', { email, password });
+  // } catch (error) {
+  //   if (error instanceof AuthError) {
+  //     switch (error.type) {
+  //       case 'CredentialsSignin': {
+  //         return {
+  //           error: 'Invalid credentials',
+  //         };
+  //       }
+  //       case 'CallbackRouteError': {
+  //         return {
+  //           error: 'Invalid credentials',
+  //         };
+  //       }
+  //       default: {
+  //         return {
+  //           error: 'Error, could not sign in',
+  //         };
+  //       }
+  //     }
+  //   }
+  //   throw error; // to deal with next.js redirect throwing error
+  // }
 }
 
 export async function signOutAction() {
@@ -1042,17 +1027,8 @@ export async function updatePassword(data: {
 
 export async function accessResetPassword() {
   // signin
-  try {
-    await signIn('credentials', {
-      email: process.env.RESET_PASSWORD_EMAIL,
-      password: process.env.RESET_PASSWORD_PW,
-    });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return {
-        message: 'Error, could not sign up',
-      };
-    }
-    throw error; // to deal with next.js redirect throwing error
-  }
+  await signIn('credentials', {
+    email: process.env.RESET_PASSWORD_EMAIL,
+    password: process.env.RESET_PASSWORD_PW,
+  });
 }

@@ -2,7 +2,28 @@ import { z } from 'zod';
 
 export const userIdSchema = z.string().cuid();
 
-export const authFormSchema = z.object({
+export const signupSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .email({ message: 'Not a valid email' })
+    .min(1, { message: 'Email is required' }),
+  password: z
+    .string()
+    .trim()
+    .min(8, { message: 'Password must be at least 8 characters' }),
+  passwordConfirm: z.string().trim(),
+});
+
+export const signupSchemaPwConfirm = signupSchema.refine(
+  (data) => data.passwordConfirm === data.password,
+  {
+    message: 'Passwords do not match',
+    path: ['passwordConfirm'],
+  },
+);
+
+export const signinSchema = z.object({
   email: z
     .string()
     .trim()
@@ -14,7 +35,7 @@ export const authFormSchema = z.object({
     .min(8, { message: 'Password must be at least 8 characters' }),
 });
 
-export const memberDetailsFormSchema = z.object({
+export const memberDetailsSchema = z.object({
   firstName: z
     .string()
     .trim()
@@ -137,24 +158,27 @@ export const emailConfirmCodeSchema = z.object({
   eConfCode: z.string().trim().length(6, { message: 'Code is 6 digits long' }),
 });
 
-export const pwResetCodeSchema = z
-  .object({
-    pwResetCode: z
-      .string()
-      .trim()
-      .length(6, { message: 'Code is 6 digits long' }),
-    email: z
-      .string()
-      .trim()
-      .email({ message: 'Not a valid email' })
-      .min(1, { message: 'Email is required' }),
-    newPassword: z
-      .string()
-      .trim()
-      .min(8, { message: 'Password must be at least 8 characters' }),
-    newPasswordConfirm: z.string().trim(),
-  })
-  .refine((data) => data.newPasswordConfirm === data.newPassword, {
+export const pwResetCodeSchema = z.object({
+  pwResetCode: z
+    .string()
+    .trim()
+    .length(6, { message: 'Code is 6 digits long' }),
+  email: z
+    .string()
+    .trim()
+    .email({ message: 'Not a valid email' })
+    .min(1, { message: 'Email is required' }),
+  newPassword: z
+    .string()
+    .trim()
+    .min(8, { message: 'Password must be at least 8 characters' }),
+  newPasswordConfirm: z.string().trim(),
+});
+
+export const pwResetCodeSchemaPwConfirm = pwResetCodeSchema.refine(
+  (data) => data.newPasswordConfirm === data.newPassword,
+  {
     message: 'Passwords do not match',
     path: ['newPasswordConfirm'],
-  });
+  },
+);

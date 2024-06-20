@@ -1,6 +1,6 @@
 'use client';
 
-import { TAuthForm } from '@/lib/types';
+import { TSignupForm } from '@/lib/types';
 import { Button } from './ui/button';
 import { deleteAccount } from '@/actions/actions';
 

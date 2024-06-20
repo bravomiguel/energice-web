@@ -2,20 +2,23 @@ import z from 'zod';
 
 import { Session, Unit } from '@prisma/client';
 import {
-  authFormSchema,
+  signupSchema,
   emailConfirmCodeSchema,
   healthQuizDataSchema,
-  memberDetailsFormSchema,
+  memberDetailsSchema,
   pwResetCodeSchema,
+  signinSchema,
 } from './validations';
 
 export type UnitEssentials = Omit<Unit, 'id' | 'createdAt' | 'updatedAt'>;
 
 export type SessionEssentials = Omit<Session, 'id' | 'createdAt' | 'updatedAt'>;
 
-export type TAuthForm = z.infer<typeof authFormSchema>;
+export type TSignupForm = z.infer<typeof signupSchema>;
 
-export type TMemberDetailsForm = z.infer<typeof memberDetailsFormSchema>;
+export type TSigninForm = z.infer<typeof signinSchema>;
+
+export type TMemberDetailsForm = z.infer<typeof memberDetailsSchema>;
 
 export type HealthQuizData = z.infer<typeof healthQuizDataSchema>;
 

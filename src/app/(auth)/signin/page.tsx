@@ -1,7 +1,8 @@
 'use client';
 
 import { accessResetPassword } from '@/actions/actions';
-import AuthForm from '@/components/auth-form';
+import H1 from '@/components/h1';
+import SigninForm from '@/components/signin-form';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 
@@ -11,7 +12,8 @@ export default function Page() {
 
   return (
     <main className="w-full">
-      <AuthForm type={'signIn'} />
+      <H1 className='text-zinc-200 text-xl mb-4'>Sign In</H1>
+      <SigninForm />
       <div className="mt-6 gap-3 flex flex-col items-center justify-center text-zinc-200 text-sm text-center">
         <p className="">
           No account yet?{' '}

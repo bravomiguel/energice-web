@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { memberDetailsFormSchema } from '@/lib/validations';
+import { memberDetailsSchema } from '@/lib/validations';
 import { TMemberDetailsForm } from '@/lib/types';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -17,7 +17,7 @@ export default function MemberDetailsForm() {
     handleSubmit,
     formState: { errors, isValid, isSubmitting },
   } = useForm<TMemberDetailsForm>({
-    resolver: zodResolver(memberDetailsFormSchema),
+    resolver: zodResolver(memberDetailsSchema),
     mode: 'all',
   });
 

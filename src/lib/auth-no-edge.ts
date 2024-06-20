@@ -3,7 +3,7 @@ import credentials from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 
 import { nextAuthEdgeConfig } from './auth-edge';
-import { authFormSchema } from './validations';
+import { signinSchema, signupSchema } from './validations';
 import { getUserByEmail } from './server-utils';
 
 const config = {
@@ -11,10 +11,16 @@ const config = {
   providers: [
     credentials({
       async authorize(credentials) {
+        console.log({ credentials });
+
         // runs on signin
-        const validatedCredentials = authFormSchema.safeParse(credentials);
+        const validatedCredentials = signinSchema.safeParse({
+          email: credentials.email,
+          password: credentials.password,
+        });
 
         if (!validatedCredentials.success) {
+          console.log(validatedCredentials.error.issues[0].message);
           return null;
         }
 

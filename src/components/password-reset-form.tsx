@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 
-import { pwResetCodeSchema } from '@/lib/validations';
+import { pwResetCodeSchema, pwResetCodeSchemaPwConfirm } from '@/lib/validations';
 import { TPasswordResetForm } from '@/lib/types';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -29,7 +29,7 @@ export default function PasswordResetForm() {
     handleSubmit,
     formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
   } = useForm<TPasswordResetForm>({
-    resolver: zodResolver(pwResetCodeSchema),
+    resolver: zodResolver(pwResetCodeSchemaPwConfirm),
     mode: 'all',
   });
 
@@ -87,7 +87,7 @@ export default function PasswordResetForm() {
   if (isSubmitSuccessful) {
     return (
       <>
-        <div className="flex flex-col flex-1 gap-4 justify-center items-center text-center px-10">
+        <div className="flex flex-col flex-1 gap-4 justify-center items-center text-center px-10 transition-all">
           <FaCheckCircle className="h-16 w-16 text-green-koldup" />
           <H1>Password changed successfully</H1>
           <Subtitle>

@@ -3,27 +3,23 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { authFormSchema } from '@/lib/validations';
-import { TAuthForm } from '@/lib/types';
+import { signinSchema } from '@/lib/validations';
+import { TSigninForm } from '@/lib/types';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Button } from './ui/button';
-import { signInAction, signUp } from '@/actions/actions';
+import { signInAction } from '@/actions/actions';
 import { useState } from 'react';
 import ShowPasswordToggle from './show-password-toggle';
 import { useSearchParams } from 'next/navigation';
 
-type AuthFormProps = {
-  type: 'signUp' | 'signIn';
-};
-
-export default function AuthForm({ type }: AuthFormProps) {
+export default function SigninForm() {
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting },
-  } = useForm<TAuthForm>({
-    resolver: zodResolver(authFormSchema),
+    formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
+  } = useForm<TSigninForm>({
+    resolver: zodResolver(signinSchema),
     mode: 'all',
   });
 
@@ -31,32 +27,13 @@ export default function AuthForm({ type }: AuthFormProps) {
   const callbackUrl = searchParams.get('callbackUrl');
 
   const [passwordShow, setPasswordShow] = useState<boolean>(false);
-  const [authErrors, setAuthErrors] = useState<{
-    signIn: string | null;
-    signUp: string | null;
-  }>({ signIn: null, signUp: null });
+  const [signinError, setSigninError] = useState<string | null>(null);
 
   const onSubmit = handleSubmit(async (data) => {
-    // console.log({ data });
-    if (type === 'signIn') {
-      const response = await signInAction({ ...data, callbackUrl });
-      if (response?.error) {
-        console.error({ error: response.error });
-        setAuthErrors((prev) => {
-          return { ...prev, signIn: response.error };
-        });
-      }
-    } else {
-      const response = await signUp({ ...data, callbackUrl });
-      if (response?.error) {
-        console.error({ error: response.error });
-        setAuthErrors((prev) => {
-          return {
-            ...prev,
-            signUp: response.error,
-          };
-        });
-      }
+    const response = await signInAction({ ...data, callbackUrl });
+    if (response?.error) {
+      console.error({ error: response.error });
+      setSigninError(response.error);
     }
   });
 
@@ -100,17 +77,12 @@ export default function AuthForm({ type }: AuthFormProps) {
       <div className="space-y-1">
         <Button
           type="submit"
-          disabled={!isValid || isSubmitting}
+          disabled={!isValid || isSubmitting || isSubmitSuccessful}
           className="w-full"
         >
-          {type === 'signUp' ? 'Sign up' : 'Sign in'}
+          Sign in
         </Button>
-        {authErrors.signIn && (
-          <p className="text-red-900 text-sm">{authErrors.signIn}</p>
-        )}
-        {authErrors.signUp && (
-          <p className="text-red-900 text-sm">{authErrors.signUp}</p>
-        )}
+        {signinError && <p className="text-red-900 text-sm">{signinError}</p>}
       </div>
     </form>
   );

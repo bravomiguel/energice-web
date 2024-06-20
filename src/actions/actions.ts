@@ -14,12 +14,13 @@ import { Resend } from 'resend';
 
 import prisma from '@/lib/db';
 import {
-  authFormSchema,
+  signupSchema,
   emailConfirmCodeSchema,
   healthQuizDataSchema,
-  memberDetailsFormSchema,
+  memberDetailsSchema,
   plungeTimerSecsSchema,
   pwResetCodeSchema,
+  signinSchema,
 } from '@/lib/validations';
 import { signIn, signOut } from '@/lib/auth-no-edge';
 import {
@@ -30,7 +31,12 @@ import {
   getUnitById,
 } from '@/lib/server-utils';
 import { getTimeDiffSecs } from '@/lib/utils';
-import { HealthQuizData, TAuthForm, TMemberDetailsForm } from '@/lib/types';
+import {
+  HealthQuizData,
+  TSignupForm,
+  TMemberDetailsForm,
+  TSigninForm,
+} from '@/lib/types';
 import { ONBOARDING_URLS } from '@/lib/constants';
 import confirmEmail from '../../emails/confirm-email';
 import passwordResetEmail from '../../emails/password-reset-email';
@@ -42,9 +48,11 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // --- user actions ---
 
-export async function signUp(data: TAuthForm & { callbackUrl: string | null }) {
+export async function signUp(
+  data: TSignupForm & { callbackUrl: string | null },
+) {
   // validation check
-  const validatedData = authFormSchema
+  const validatedData = signupSchema
     .extend({ callbackUrl: z.union([z.null(), z.string().trim().url()]) })
     .safeParse(data);
 
@@ -74,7 +82,7 @@ export async function signUp(data: TAuthForm & { callbackUrl: string | null }) {
 
   if (user && !user.deleted) {
     return {
-      error: 'Email already exists',
+      error: 'Account already exists',
     };
   }
 
@@ -127,10 +135,10 @@ export async function signUp(data: TAuthForm & { callbackUrl: string | null }) {
 }
 
 export async function signInAction(
-  data: TAuthForm & { callbackUrl: string | null },
+  data: TSigninForm & { callbackUrl: string | null },
 ) {
   // validation check
-  const validatedData = authFormSchema
+  const validatedData = signinSchema
     .extend({ callbackUrl: z.union([z.null(), z.string().trim().url()]) })
     .safeParse(data);
 
@@ -266,7 +274,7 @@ export async function addMemberDetails(data: TMemberDetailsForm) {
   const session = await checkAuth();
 
   // validation check
-  const validatedMemberDetails = memberDetailsFormSchema.safeParse(data);
+  const validatedMemberDetails = memberDetailsSchema.safeParse(data);
 
   if (!validatedMemberDetails.success) {
     return {
@@ -864,7 +872,7 @@ export async function checkEmailConfirmCode(data: {
 
 export async function sendPwResetEmail(data: { email: User['email'] }) {
   // validation check
-  const validatedData = authFormSchema.pick({ email: true }).safeParse(data);
+  const validatedData = signupSchema.pick({ email: true }).safeParse(data);
 
   if (!validatedData.success) {
     return {
@@ -924,18 +932,8 @@ export async function checkPwResetCode(data: {
   pwResetCode: User['pwResetCode'];
 }) {
   // validation check
-  const validatedData = z
-    .object({
-      pwResetCode: z
-        .string()
-        .trim()
-        .length(6, { message: 'Code is 6 digits long' }),
-      email: z
-        .string()
-        .trim()
-        .email({ message: 'Not a valid email' })
-        .min(1, { message: 'Email is required' }),
-    })
+  const validatedData = pwResetCodeSchema
+    .pick({ pwResetCode: true, email: true })
     .safeParse(data);
 
   if (!validatedData.success) {

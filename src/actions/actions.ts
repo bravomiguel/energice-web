@@ -251,6 +251,8 @@ export async function deleteAccount() {
       data: {
         eConfCode: null,
         eConfCodeAt: null,
+        pwResetCode: null,
+        pwResetCodeAt: null,
         isEmailConfirmed: false,
         firstName: null,
         lastName: null,

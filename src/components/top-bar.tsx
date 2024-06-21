@@ -1,23 +1,24 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { IoIosArrowBack } from 'react-icons/io';
-import { FaUserAlt, FaRegUser, FaUser } from 'react-icons/fa';
+import { FaUser } from 'react-icons/fa';
 
 import { signOutAction, startSession } from '@/actions/actions';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
-import { ONBOARDING_PATHNAMES } from '@/lib/constants';
+import { ONBOARDING_PATHNAMES, RESET_PW_PATHNAME } from '@/lib/constants';
 import Link from 'next/link';
 
 export default function TopBar() {
-  const router = useRouter();
   const activePathname = usePathname();
-  const isOnboardingBackArrow = [
-    ...ONBOARDING_PATHNAMES,
-    '/reset-password',
-  ].find((pathName) => pathName === activePathname);
+
+  const isOnboardingPath = ONBOARDING_PATHNAMES.find(
+    (pathName) => pathName === activePathname,
+  );
+  const isResetPasswordPath = RESET_PW_PATHNAME === activePathname;
+
   const isUnlockScreen = activePathname.includes('/unlock');
   const { activeSessionId, activeSession } = usePlungeSessions();
   const showSessionCountdown =
@@ -102,10 +103,15 @@ export default function TopBar() {
       <nav className="w-full">
         <ul className="w-full flex gap-2 text-xs justify-between items-center text-indigo-800 ">
           <>
-            {isOnboardingBackArrow && (
+            {isOnboardingPath && (
               <>
                 <BackArrow label="Signin" handler={signOutAction} />
                 <ProfileLink />
+              </>
+            )}
+            {isResetPasswordPath && (
+              <>
+                <BackArrow label="Signin" handler={signOutAction} />
               </>
             )}
           </>

@@ -119,7 +119,11 @@ export default function PasswordResetForm() {
       <H1>Reset Password</H1>
       <form className="flex-1 flex flex-col transition-all" onSubmit={onSubmit}>
         <div className="flex-1 flex flex-col gap-5">
-          <div className={cn('flex flex-col gap-5', { hidden: isCodeSent })}>
+          <div
+            className={cn('flex flex-col gap-4 transition-all', {
+              hidden: isCodeSent,
+            })}
+          >
             <Subtitle>
               Need a new password? Enter your email below to get a reset code.
             </Subtitle>
@@ -134,7 +138,7 @@ export default function PasswordResetForm() {
           </div>
 
           <div
-            className={cn('flex flex-col gap-5', {
+            className={cn('flex flex-col gap-4 transition-all', {
               hidden: !isCodeSent || (isCodeSent && isCodeConfirmed),
             })}
           >
@@ -159,7 +163,7 @@ export default function PasswordResetForm() {
           </div>
 
           <div
-            className={cn('flex flex-col gap-5', {
+            className={cn('flex flex-col gap-4 transition-all', {
               hidden: !isCodeConfirmed,
             })}
           >
@@ -208,19 +212,28 @@ export default function PasswordResetForm() {
               Submit
             </Button>
           ) : isCodeSent ? (
-            <Button
-              disabled={
-                isPending ||
-                pwResetCode === undefined ||
-                pwResetCode === '' ||
-                !!errors.pwResetCode
-              }
-              isLoading={isPending}
-              className="w-full"
-              onClick={async (e) => await handleConfirmCode(e)}
-            >
-              Confirm code
-            </Button>
+            <>
+              <Button
+                disabled={
+                  isPending ||
+                  pwResetCode === undefined ||
+                  pwResetCode === '' ||
+                  !!errors.pwResetCode
+                }
+                isLoading={isPending}
+                className="w-full"
+                onClick={async (e) => await handleConfirmCode(e)}
+              >
+                Confirm code
+              </Button>
+              <Button
+                type="submit"
+                variant="outline"
+                onClick={async (e) => await handleGetCode(e)}
+              >
+                Resend code
+              </Button>
+            </>
           ) : (
             <Button
               disabled={

@@ -5,6 +5,8 @@ export const ONBOARDING_PATHNAMES = [
   '/waiver',
 ];
 
+export const RESET_PW_PATHNAME = '/reset-password';
+
 export const ONBOARDING_URLS = ONBOARDING_PATHNAMES.map((pathName) => {
   if (!process.env.CANONICAL_URL)
     return `http://localhost:${process.env.PORT}${pathName}`;

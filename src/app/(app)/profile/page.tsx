@@ -28,6 +28,8 @@ export default async function Page() {
   // if (!user?.isEmailConfirmed) redirect('/confirm-email');
   // if (!user?.firstName) redirect('/member-details');
   // if (!user.isWaiverSigned) redirect('/waiver');
+  let isOnboarded = true;
+  if (!user?.isEmailConfirmed || !user?.firstName || !user.isWaiverSigned) isOnboarded = false;
 
   // redirect to auth callback, if relevant
   await authCallbackRedirect({
@@ -39,12 +41,11 @@ export default async function Page() {
     <>
       <main className="relative flex-1 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <H1>Hey, {user?.firstName}</H1>
-          <Subtitle>{`Let's get you feeling great`}</Subtitle>
+          <H1>Hey {user?.firstName}</H1>
+          <Subtitle>{`Let's get you feeling great 🚀`}</Subtitle>
         </div>
         <section className="space-y-7">
-          <H2>Your plunge stats</H2>
-          <PlungeStats />
+          <PlungeStats isOnboarded={isOnboarded} />
         </section>
         <section>
           <H2 className="mb-3">Settings</H2>

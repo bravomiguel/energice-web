@@ -66,11 +66,14 @@ export default async function Page({
 
   // get unit lock
   const lock = await getLockByLockId(unit.lockDeviceId);
-  const unitStatus = !lock.properties.online
-    ? 'Offline'
-    : lock.properties.door_open
-    ? 'In use'
-    : 'Ready';
+  let unitStatus: 'Ready' | 'Offline' | 'In use' = 'Ready';
+  if (process.env.VERCEL_ENV === 'production') {
+    unitStatus = !lock.properties.online
+      ? 'Offline'
+      : lock.properties.door_open
+      ? 'In use'
+      : 'Ready';
+  }
 
   const hostGMapsUrl = `https://www.google.com/maps/search/?api=1&query=${unit.hostAddress
     .toLowerCase()

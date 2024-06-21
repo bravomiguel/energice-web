@@ -68,7 +68,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading ? (
           <LoadingSpinner
-            className="absolute translate-x-[calc(50%_-_12px)] translate-y-[calc(50%_-_12px)]"
+            className="absolute translate-x-[calc(50%_-_12px)] translate-y-[calc(50%_-_12px)] h-0 w-0"
             size={20}
             color="text-zinc-200"
             secondaryColor={loadingBgColor}

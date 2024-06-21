@@ -14,17 +14,19 @@ export default async function Page({
 
   return (
     <main className="relative flex-1 flex flex-col">
-      <div className="flex-1 flex flex-col justify-center items-center gap-6 w-[250px] mx-auto text-center">
-        <H1>Total plunge time</H1>
-        <div className="relative rounded-md border-8 border-green-koldup bg-transparent text-center p-5 h-24 flex items-center justify-center text-5xl font-semibold w-full">
-          {!session?.totalPlungeSecs
-            ? '🎉🎉🎉'
-            : formatSecsToMins(session.totalPlungeSecs)}
+      <div className="flex-1 flex flex-col justify-center items-center gap-6 w-[270px] mx-auto text-center">
+        <div className='space-y-4 w-full'>
+          <H1>Total plunge time</H1>
+          <div className="relative rounded-md border-8 border-green-koldup bg-transparent text-center py-5 w-full flex items-center justify-center text-6xl font-semibold">
+            {!session?.totalPlungeSecs
+              ? '🎉🎉🎉'
+              : formatSecsToMins(session.totalPlungeSecs)}
+          </div>
         </div>
-        <Subtitle className="text-2xl text-zinc-900 font-medium">
+        <Subtitle className="text-3xl text-zinc-900 font-medium">
           Well done!
         </Subtitle>
-        <Subtitle className="w-[180px]">
+        <Subtitle className="text-xl w-[210px]">
           Enjoy feeling great for the rest of the day 🚀
         </Subtitle>
       </div>

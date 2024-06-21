@@ -118,7 +118,7 @@ export default function UnitDetails({
       </div>
       <BottomNav>
         <div className="flex flex-row w-full gap-4">
-          <p className="text-4xl font-bold">$10</p>
+          <p className="text-4xl font-bold">$15</p>
           <Button
             disabled={unitStatus !== 'Ready' || !isValid || isPending}
             isLoading={isPending}

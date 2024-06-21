@@ -31,7 +31,7 @@ export default function LoadingSpinner({
   }, [messages]);
 
   return (
-    <div role="status" className={cn(className)}>
+    <div role="status" className={cn(`w-[${size}px]`, `h-[${size}px]`, className)}>
       <svg
         aria-hidden="true"
         className={cn('animate-spin', secondaryColor, color)}

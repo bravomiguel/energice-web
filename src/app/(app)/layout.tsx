@@ -21,13 +21,12 @@ export default async function Layout({
   // auth check
   const session = await checkAuth();
 
-  const units = await getAllUnits();
-  const sessions = await getSessionsByUserId(session.user.id);
+  const plungeSessions = await getSessionsByUserId(session.user.id);
 
   return (
     <>
       <div className="relative flex flex-col px-4 min-h-screen">
-        <PlungeSessionsContextProvider data={sessions}>
+        <PlungeSessionsContextProvider data={plungeSessions}>
           <TopBar />
           {children}
         </PlungeSessionsContextProvider>

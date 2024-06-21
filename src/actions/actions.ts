@@ -3,7 +3,7 @@
 import bcrypt from 'bcryptjs';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { AuthError } from 'next-auth';
+// import { AuthError } from 'next-auth';
 import {
   Seam,
   isSeamActionAttemptFailedError,
@@ -30,7 +30,7 @@ import {
   getSessionById,
   getUnitById,
 } from '@/lib/server-utils';
-import { getTimeDiffSecs } from '@/lib/utils';
+import { getTimeDiffSecs, sleep } from '@/lib/utils';
 import {
   HealthQuizData,
   TSignupForm,
@@ -202,30 +202,7 @@ export async function signInAction(
     }
   }
 
-  // try {
   await signIn('credentials', { email, password });
-  // } catch (error) {
-  //   if (error instanceof AuthError) {
-  //     switch (error.type) {
-  //       case 'CredentialsSignin': {
-  //         return {
-  //           error: 'Invalid credentials',
-  //         };
-  //       }
-  //       case 'CallbackRouteError': {
-  //         return {
-  //           error: 'Invalid credentials',
-  //         };
-  //       }
-  //       default: {
-  //         return {
-  //           error: 'Error, could not sign in',
-  //         };
-  //       }
-  //     }
-  //   }
-  //   throw error; // to deal with next.js redirect throwing error
-  // }
 }
 
 export async function signOutAction() {
@@ -529,36 +506,44 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
   }
 
   // unlock action
-  try {
-    const actionResponse = await seam.locks.unlockDoor(
-      { device_id: lockDeviceId },
-      {
-        waitForActionAttempt: {
-          pollingInterval: 1000,
-          timeout: 60000,
+  if (
+    process.env.VERCEL_ENV === 'development' ||
+    process.env.VERCEL_ENV === 'preview'
+  ) {
+    await sleep(8000);
+    return;
+  } else if (process.env.VERCEL_ENV === 'production') {
+    try {
+      const actionResponse = await seam.locks.unlockDoor(
+        { device_id: lockDeviceId },
+        {
+          waitForActionAttempt: {
+            pollingInterval: 1000,
+            timeout: 60000,
+          },
         },
-      },
-    );
+      );
 
-    await seam.actionAttempts.get({
-      action_attempt_id: actionResponse.action_attempt_id,
-    });
-  } catch (e) {
-    if (isSeamActionAttemptFailedError(e)) {
-      // console.log('Locking unsuccessful');
+      await seam.actionAttempts.get({
+        action_attempt_id: actionResponse.action_attempt_id,
+      });
+    } catch (e) {
+      if (isSeamActionAttemptFailedError(e)) {
+        // console.log('Locking unsuccessful');
+        return {
+          error: 'Unlocking unsuccessful, try again',
+        };
+      }
+      if (isSeamActionAttemptTimeoutError(e)) {
+        // console.log('Lock action took too long to resolve.');
+        return {
+          error: 'Locking took too long',
+        };
+      }
       return {
-        error: 'Unlocking unsuccessful, try again',
+        error: 'Unlocking unsuccessful, please try again',
       };
     }
-    if (isSeamActionAttemptTimeoutError(e)) {
-      // console.log('Lock action took too long to resolve.');
-      return {
-        error: 'Locking took too long',
-      };
-    }
-    return {
-      error: 'Unlocking unsuccessful, please try again',
-    };
   }
 }
 

@@ -29,7 +29,8 @@ export default async function Page() {
   // if (!user?.firstName) redirect('/member-details');
   // if (!user.isWaiverSigned) redirect('/waiver');
   let isOnboarded = true;
-  if (!user?.isEmailConfirmed || !user?.firstName || !user.isWaiverSigned) isOnboarded = false;
+  if (!user?.isEmailConfirmed || !user?.firstName || !user.isWaiverSigned)
+    isOnboarded = false;
 
   // redirect to auth callback, if relevant
   await authCallbackRedirect({
@@ -41,8 +42,14 @@ export default async function Page() {
     <>
       <main className="relative flex-1 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          <H1>Hey {user?.firstName}</H1>
-          <Subtitle>{`Let's get you feeling great 🚀`}</Subtitle>
+          {user?.firstName ? (
+            <>
+              <H1>Hey {user?.firstName}</H1>{' '}
+              <Subtitle>{`Let's get you feeling great 🚀`}</Subtitle>
+            </>
+          ) : (
+            <H1>{`Let's get you feeling great 🚀`}</H1>
+          )}
         </div>
         <section className="space-y-7">
           <PlungeStats isOnboarded={isOnboarded} />

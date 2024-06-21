@@ -60,10 +60,10 @@ export default function EmailConfirmForm() {
   return (
     <>
       <H1>Confirm your email</H1>
-      <div className="flex-1 flex flex-col gap-5 transition-all mt-6">
+      <div className="flex-1 flex flex-col gap-4 transition-all mt-6">
         {isCodeSent ? (
           <>
-            <Subtitle className="h-10">
+            <Subtitle>
               Check your email for the code we sent, and enter it below to
               continue
             </Subtitle>
@@ -105,9 +105,7 @@ export default function EmailConfirmForm() {
           </>
         ) : (
           <>
-            <Subtitle className="h-10">
-              Get a confirmation code sent to your email
-            </Subtitle>
+            <Subtitle>Get a confirmation code sent to your email</Subtitle>
             <div className="flex">
               <Button
                 className="w-full h-16 flex gap-3"

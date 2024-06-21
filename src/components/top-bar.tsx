@@ -1,19 +1,23 @@
 'use client';
 
-import { startSession } from '@/actions/actions';
-import { usePlungeSessions } from '@/contexts/sessions-context-provider';
-import { cn } from '@/lib/utils';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
 import { IoIosArrowBack } from 'react-icons/io';
+import { FaUserAlt, FaRegUser, FaUser } from 'react-icons/fa';
+
+import { signOutAction, startSession } from '@/actions/actions';
+import { usePlungeSessions } from '@/contexts/sessions-context-provider';
+import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
+import { ONBOARDING_PATHNAMES } from '@/lib/constants';
+import Link from 'next/link';
 
 export default function TopBar() {
   const router = useRouter();
   const activePathname = usePathname();
-  const showArrowBack = ['/reset-password'].find(
-    (pathName) => pathName === activePathname,
-  );
+  const isOnboardingBackArrow = [
+    ...ONBOARDING_PATHNAMES,
+    '/reset-password',
+  ].find((pathName) => pathName === activePathname);
   const isUnlockScreen = activePathname.includes('/unlock');
   const { activeSessionId, activeSession } = usePlungeSessions();
   const showSessionCountdown =
@@ -70,7 +74,7 @@ export default function TopBar() {
   }, [activeSessionId, showSessionCountdown, sessionStartSecs]);
 
   return (
-    <header className="relative flex justify-between items-center">
+    <header className="relative w-full flex justify-between items-center">
       {/* <SessionStartingCountdown /> */}
       {showSessionCountdown && (
         <div className="transition w-screen -mx-4 px-4 py-4 bg-green-koldup text-zinc-200 text-lg font-medium text-center flex justify-between items-center">
@@ -95,28 +99,46 @@ export default function TopBar() {
           </Button>
         </div>
       )}
-      <nav>
-        <ul className="flex gap-2 text-xs">
-          <li>
-            <button
-              onClick={async () => {
-                // if (!handleArrowBack) {
-                  router.back();
-                // }
-                // await handleArrowBack();
-              }}
-            >
-              {showArrowBack && (
-                <IoIosArrowBack
-                  className={cn('h-8 w-8 text-indigo-700 -translate-x-2 my-2', {
-                    invisible: !showArrowBack,
-                  })}
-                />
-              )}
-            </button>
-          </li>
+      <nav className="w-full">
+        <ul className="w-full flex gap-2 text-xs justify-between items-center text-indigo-800 ">
+          <>
+            {isOnboardingBackArrow && (
+              <>
+                <BackArrow label="Signin" handler={signOutAction} />
+                <ProfileLink />
+              </>
+            )}
+          </>
         </ul>
       </nav>
     </header>
+  );
+}
+
+function BackArrow({
+  label,
+  handler,
+}: {
+  label?: string;
+  handler: () => Promise<void>;
+}) {
+  return (
+    <li
+      className="flex items-center mt-2 mb-3"
+      onClick={async () => await handler()}
+    >
+      <IoIosArrowBack className="h-8 w-8 text-indigo-700 -translate-x-2" />
+      {label && <p className="-translate-x-3">{label}</p>}
+    </li>
+  );
+}
+
+function ProfileLink() {
+  return (
+    <li>
+      <Link href={'/profile'}>
+        <FaUser className="w-5 h-5" />
+      </Link>
+    </li>
   );
 }

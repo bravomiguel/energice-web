@@ -56,7 +56,7 @@ export default async function Page() {
         </section>
         <section>
           <H2 className="mb-3">Settings</H2>
-          <ProfileSettings />
+          <ProfileSettings firstName={user?.firstName ?? null} lastName={user?.lastName ?? null} />
         </section>
         <section className="flex flex-col w-full gap-3">
           <SignOutBtn />

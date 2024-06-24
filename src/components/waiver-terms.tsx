@@ -1,16 +1,26 @@
 import { User } from '@prisma/client';
+import { Homemade_Apple } from 'next/font/google';
+
 import H2 from './h2';
+import { Input } from './ui/input';
+import { cn } from '@/lib/utils';
+
+const homemadeApple = Homemade_Apple({ weight: '400', subsets: ['latin'] });
 
 export default function WaiverTerms({
   firstName,
   lastName,
+  isSigned,
 }: {
   firstName: User['firstName'];
   lastName: User['lastName'];
+  isSigned?: boolean;
 }) {
   return (
     <div className="flex-1 flex flex-col gap-5">
-      <p className="font-semibold uppercase">Please read carefully before signing</p>
+      <p className="font-semibold uppercase">
+        Please read carefully before signing
+      </p>
       <div className="flex flex-col gap-4">
         <p>
           {`This Cold Plunge Waiver and Release of Liability ("Waiver") is made and entered into as of ${new Date().toLocaleDateString(
@@ -24,9 +34,7 @@ export default function WaiverTerms({
         </p>
       </div>
       <div className="flex flex-col gap-4">
-        <H2>
-          1. Risks and Responsibilities
-        </H2>
+        <H2>1. Risks and Responsibilities</H2>
         <p>
           Participant acknowledges that the Services involve inherent risks,
           including but not limited to:
@@ -67,9 +75,7 @@ export default function WaiverTerms({
         </ul>
       </div>
       <div className="flex flex-col gap-4">
-        <H2>
-          2. Waiver and Release of Liability
-        </H2>
+        <H2>2. Waiver and Release of Liability</H2>
         <p className="font-semibold">{`Participant hereby waives, releases, and discharges Provider from any and all claims, demands, losses, liabilities, damages, and causes of action of any kind whatsoever (collectively, "Claims"), arising out of or related to Participant's participation in the Services, including, but not limited to, Claims arising from:`}</p>
         <ul className="list-disc ml-5">
           <li>{`Participant's own negligence or that of a third party.`}</li>
@@ -101,7 +107,34 @@ export default function WaiverTerms({
         <H2>8. Binding Effect</H2>
         <p>{`This Waiver shall be binding upon and inure to the benefit of the parties hereto and their respective heirs, successors, and assigns.`}</p>
       </div>
-      <p className="font-semibold">{`Participant acknowledges that Participant has read this Waiver carefully and understands its terms. By selecting "I AGREE" below, Participant agrees to be bound by this Waiver and makes this agreement freely and voluntarily.`}</p>
+      <p className="font-semibold">{`Participant acknowledges that Participant has read this Waiver carefully and understands its terms. Participant agrees to be bound by this Waiver and signs it freely and voluntarily.`}</p>
+
+      {isSigned && (
+        <div className="space-y-3 mt-4">
+          <Input
+            id="signature"
+            type="text"
+            disabled
+            value={'Signature Name'}
+            // placeholder="Click SIGN below to add your signature"
+            className={`${homemadeApple.className} disabled:opacity-100 h-16 text-center`}
+          />
+          <div className="flex flex-row gap-2">
+            <p className="w-24">Print Name:</p>
+            <div className="flex flex-col gap-0 w-fit">
+              <span className="px-4 italic">{`${firstName} ${lastName}`}</span>
+              <div className="border-b border-zinc-800 h-0" />
+            </div>
+          </div>
+          <div className="flex flex-row gap-2">
+            <p className="w-24">Date:</p>
+            <div className="flex flex-col gap-0 w-fit">
+              <span className="px-4 italic">{`Add date here`}</span>
+              <div className="border-b border-zinc-800 h-0" />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

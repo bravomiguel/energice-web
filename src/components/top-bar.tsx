@@ -75,7 +75,7 @@ export default function TopBar() {
   }, [activeSessionId, showSessionCountdown, sessionStartSecs]);
 
   return (
-    <header className="relative w-full flex justify-between items-center">
+    <header className="relative w-full flex justify-between items-center pt-3">
       {/* <SessionStartingCountdown /> */}
       {showSessionCountdown && (
         <div className="transition w-screen -mx-4 px-4 py-4 bg-green-koldup text-zinc-200 text-lg font-medium text-center flex justify-between items-center">
@@ -130,7 +130,7 @@ function BackArrow({
 }) {
   return (
     <li
-      className="flex items-center mt-2 mb-3"
+      className="flex items-center -mt-1 mb-3"
       onClick={async () => await handler()}
     >
       <IoIosArrowBack className="h-8 w-8 text-indigo-700 -translate-x-2" />

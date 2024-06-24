@@ -11,11 +11,11 @@ export default function SessionEndContinueBtn() {
   const [isPending, startTransition] = useTransition();
   const handleContinue = async () => {
     startTransition(async () => {
-      router.push(`/unit/${process.env.NEXT_PUBLIC_TEXAS_IRON_GYM_ID}`);
+      router.push("/profile");
     });
   };
   return (
-    <BottomNav className="gap-1">
+    <BottomNav className="gap-0">
       <Button
         disabled={isPending}
         isLoading={isPending}

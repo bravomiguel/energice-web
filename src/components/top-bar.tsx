@@ -3,26 +3,27 @@
 import { usePathname } from 'next/navigation';
 import { IoIosArrowBack } from 'react-icons/io';
 import { FaUser } from 'react-icons/fa';
+import Link from 'next/link';
 
 import { signOutAction, startSession } from '@/actions/actions';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { ONBOARDING_PATHNAMES, RESET_PW_PATHNAME } from '@/lib/constants';
-import Link from 'next/link';
 
 export default function TopBar() {
   const activePathname = usePathname();
 
-  const isOnboardingPath = ONBOARDING_PATHNAMES.find(
+  const isOnboarding = ONBOARDING_PATHNAMES.find(
     (pathName) => pathName === activePathname,
   );
-  const isResetPasswordPath = RESET_PW_PATHNAME === activePathname;
+  const isResetPassword = RESET_PW_PATHNAME === activePathname;
+  const isUnit = activePathname.includes('/unit');
+  const isUnlock = activePathname.includes('/unlock');
 
-  const isUnlockScreen = activePathname.includes('/unlock');
   const { activeSessionId, activeSession } = usePlungeSessions();
   const showSessionCountdown =
-    activeSessionId && activeSession?.accessCode && isUnlockScreen;
+    activeSessionId && activeSession?.accessCode && isUnlock;
 
   const [sessionStartSecs, setSessionStartSecs] = useState<number | null>(null);
   // console.log({sessionStartSecs});
@@ -103,15 +104,20 @@ export default function TopBar() {
       <nav className="w-full">
         <ul className="w-full flex gap-2 text-xs justify-between items-center text-indigo-800 ">
           <>
-            {isOnboardingPath && (
+            {isOnboarding && (
               <>
                 <BackArrow label="Signin" handler={signOutAction} />
                 <ProfileLink />
               </>
             )}
-            {isResetPasswordPath && (
+            {isResetPassword && (
               <>
                 <BackArrow label="Signin" handler={signOutAction} />
+              </>
+            )}
+            {isUnit && (
+              <>
+                <BackArrow isLink={true} href="/" />
               </>
             )}
           </>
@@ -124,24 +130,41 @@ export default function TopBar() {
 function BackArrow({
   label,
   handler,
+  isLink,
+  href,
 }: {
   label?: string;
-  handler: () => Promise<void>;
+  handler?: () => Promise<void>;
+  isLink?: boolean;
+  href?: any;
 }) {
-  return (
-    <li
-      className="flex items-center -mt-1 mb-3"
-      onClick={async () => await handler()}
-    >
-      <IoIosArrowBack className="h-8 w-8 text-indigo-700 -translate-x-2" />
-      {label && <p className="-translate-x-3">{label}</p>}
-    </li>
-  );
+  if (isLink) {
+    return (
+      <li className="flex items-center -mt-1 mb-3">
+        <Link href={href} className="w-full">
+          <IoIosArrowBack className="h-8 w-8 text-indigo-700 -translate-x-2" />
+          {label && <p className="-translate-x-3">{label}</p>}
+        </Link>
+      </li>
+    );
+  }
+
+  if (!isLink && handler) {
+    return (
+      <li
+        className="flex items-center -mt-1 mb-3"
+        onClick={async () => await handler()}
+      >
+        <IoIosArrowBack className="h-8 w-8 text-indigo-700 -translate-x-2" />
+        {label && <p className="-translate-x-3">{label}</p>}
+      </li>
+    );
+  }
 }
 
 function ProfileLink() {
   return (
-    <li>
+    <li className='self-start translate-y-1'>
       <Link href={'/profile'}>
         <FaUser className="w-5 h-5" />
       </Link>

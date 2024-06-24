@@ -2,7 +2,7 @@ import { NextAuthConfig } from 'next-auth';
 
 export const nextAuthEdgeConfig = {
   pages: {
-    signIn: '/signin',
+    signIn: '/signup',
   },
   // default settings below
   // session: {

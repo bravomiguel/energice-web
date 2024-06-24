@@ -13,6 +13,7 @@ import { Button } from './ui/button';
 import H1 from './h1';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import { endSession } from '@/actions/actions';
+import EndSessionBtn from './end-session-btn';
 
 export default function SessionDisplay({
   sessionId,
@@ -220,15 +221,7 @@ export default function SessionDisplay({
             ? 'Resume timer'
             : 'Pause timer'}
         </Button>
-        <Button
-          variant="destructive"
-          className="w-full h-16"
-          disabled={isPending}
-          isLoading={isPending}
-          onClick={async () => await handleEndSession()}
-        >
-          End session
-        </Button>
+        <EndSessionBtn handleEndSession={handleEndSession} />
       </BottomNav>
     </>
   );

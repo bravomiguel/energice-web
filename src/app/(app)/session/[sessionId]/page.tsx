@@ -33,14 +33,14 @@ export default async function Page({
     redirect(`/session/${plungeSession.id}/unlock`);
   }
 
-  // calculate session seconds left, before passing it to client
+  // calculate session seconds left, before passing it to client (put this into session context?)
   const now = new Date();
   const sessionEnd = new Date(
     plungeSession.sessionStart.getTime() + 10 * 60 * 1000 + 3 * 1000,
   );
   const sessionSecsLeft = getTimeDiffSecs(now, sessionEnd);
 
-  if (!sessionSecsLeft) redirect('/');
+  if (!sessionSecsLeft) redirect('/'); // add redirect if session secs is zero?
 
   return (
     <main className="relative flex-1 flex flex-col gap-6">

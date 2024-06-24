@@ -3,7 +3,6 @@
 import { useState, useTransition } from 'react';
 
 import { Button } from './ui/button';
-import { deleteAccount } from '@/actions/actions';
 import {
   Dialog,
   DialogContent,
@@ -13,35 +12,57 @@ import {
   DialogTitle,
   DialogTrigger,
 } from './ui/dialog';
+import { cn } from '@/lib/utils';
 
-export default function DeleteAccountBtn() {
+const buttonClassNames = 'w-full h-16';
+
+export default function EndSessionBtn({
+  handleEndSession,
+}: {
+  handleEndSession: () => Promise<void>;
+}) {
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" onClick={() => setIsOpen(true)}>Delete account</Button>
+        <Button
+          className={cn(buttonClassNames)}
+          variant="destructive"
+          onClick={() => setIsOpen(true)}
+        >
+          End session
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="mb-5 space-y-5">
-          <DialogTitle className='text-lg leading-tight'>Are you sure you want to delete your account?</DialogTitle>
-          <DialogDescription className='text-base leading-tight'>
-            This action cannot be undone. Your account would be permanently deleted.
+          <DialogTitle className="text-lg leading-tight">
+            End session?
+          </DialogTitle>
+          <DialogDescription className="text-base leading-tight">
+            You will have 1 minute to exit and close the plunge
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-col gap-2 mb-5">
-          <Button onClick={() => setIsOpen(false)}>Cancel</Button>
           <Button
-            variant="outline"
+            variant="destructive"
+            className={cn(buttonClassNames)}
             onClick={async () => {
               startTransition(async () => {
-                await deleteAccount();
+                await handleEndSession();
               });
             }}
             disabled={isPending}
             isLoading={isPending}
           >
-            Delete account
+            End session
+          </Button>
+          <Button
+            variant="outline"
+            className={cn(buttonClassNames)}
+            onClick={() => setIsOpen(false)}
+          >
+            Back
           </Button>
         </DialogFooter>
       </DialogContent>

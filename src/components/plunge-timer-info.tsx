@@ -35,12 +35,12 @@ export default function PlungeTimerInfo() {
           <IoMdInformationCircleOutline className="w-5 h-5" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className='px-4 bg-zinc-100'>
+      <DrawerContent className='px-4'>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader className="px-0 pb-4">
             <DrawerTitle>Plunge timer</DrawerTitle>
           </DrawerHeader>
-          <div className="pb-6 max-h-[73vh] overflow-scroll text-zinc-700 space-y-6">
+          <div className="pb-6 max-h-[70vh] overflow-scroll text-zinc-700 space-y-6">
             <WhatIsItCarousel />
             <div className="w-full border-b border-zinc-200" />
             <PlungeTimeGuide />
@@ -93,8 +93,8 @@ function WhatIsItCarousel() {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselNext className="-translate-x-[150%]" />
-      <CarouselPrevious className="translate-x-[150%]" />
+      <CarouselNext className="-translate-x-[170%]" />
+      <CarouselPrevious className="translate-x-[170%]" />
     </Carousel>
   );
 }
@@ -106,10 +106,10 @@ function PlungeTimeGuide() {
         <Subtitle className="text-zinc-900 font-semibold text-lg">
           Plunge time guide
         </Subtitle>
-        <p className="text-zinc-700">Suggested max plunge times, based on your experience level</p>
+        <p className="text-zinc-700">Suggested max plunge times, to help you stay safe and in control</p>
       </div>
       <div className="grid grid-cols-1 grid-rows-4 text-zinc-700 w-fit items-center mx-auto">
-        <div className="w-full row-start-1 row-span-1 grid grid-cols-[100px_1fr_80px] grid-rows-1 gap-7 font-semibold text-zinc-900 border-b border-zinc-300 h-6 self-end">
+        <div className="w-full row-start-1 row-span-1 grid grid-cols-[100px_1fr_80px] grid-rows-1 gap-7 font-semibold text-zinc-900 border-b h-7 self-end">
           <p>{`Level`}</p>
           <p>{`Experience`}</p>
           <p>{`Max time`}</p>

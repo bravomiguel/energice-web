@@ -193,7 +193,7 @@ export default function SessionDisplay({
             </div>
           )}
         </CountdownCircleTimer>
-        <div className="ml-12 self-start flex flex-col border-[0.5px] rounded-lg py-2 px-4 shadow">
+        {/* <div className="ml-12 self-start flex flex-col border-[0.5px] rounded-lg py-2 px-4 shadow">
           <Subtitle className="text-zinc-600 font-normal">
             Session time left
           </Subtitle>
@@ -207,7 +207,7 @@ export default function SessionDisplay({
               ? '10:00'
               : formatSecsToMins(sessionSecsLeft)}
           </p>
-        </div>
+        </div> */}
       </div>
       <BottomNav>
         <Button

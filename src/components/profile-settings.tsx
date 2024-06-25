@@ -68,7 +68,7 @@ function ViewWaiverDrawer({
               You must sign this waiver in order to use the cold plunge
             </DrawerDescription> */}
           </DrawerHeader>
-          <div className="pb-6 max-h-[73vh] overflow-scroll">
+          <div className="pb-6 max-h-[65vh] overflow-scroll">
             <WaiverTerms
               firstName={firstName}
               lastName={lastName}

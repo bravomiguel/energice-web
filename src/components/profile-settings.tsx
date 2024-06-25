@@ -60,7 +60,7 @@ function ViewWaiverDrawer({
       </DrawerTrigger>
       <DrawerContent>
         <div className="mx-auto w-full max-w-sm">
-          <DrawerHeader className='px-0'>
+          <DrawerHeader className="px-0">
             <DrawerTitle>
               Cold Plunge Waiver and Release of Liability
             </DrawerTitle>
@@ -68,20 +68,22 @@ function ViewWaiverDrawer({
               You must sign this waiver in order to use the cold plunge
             </DrawerDescription> */}
           </DrawerHeader>
-          <div className="pb-6 h-[70vh] overflow-scroll">
+          <div className="pb-6 max-h-[73vh] overflow-scroll">
             <WaiverTerms
               firstName={firstName}
               lastName={lastName}
               isSigned={true}
             />
           </div>
-          <DrawerFooter className='px-0'>
-            <Link href="https://koldup.com">
-              <Button className="w-full">Download waiver</Button>
-            </Link>
+          <DrawerFooter className="px-0">
             <DrawerClose asChild>
               <Button variant="outline">Back</Button>
             </DrawerClose>
+            <Link href="https://koldup.com">
+              <Button className="w-full" variant="outline">
+                Download waiver
+              </Button>
+            </Link>
           </DrawerFooter>
         </div>
       </DrawerContent>

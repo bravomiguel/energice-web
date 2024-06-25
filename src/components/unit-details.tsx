@@ -4,7 +4,6 @@ import { useState, useTransition } from 'react';
 import { BsThermometerSnow } from 'react-icons/bs';
 import { GoGoal } from 'react-icons/go';
 import { GoChecklist } from 'react-icons/go';
-import { IoMdInformationCircleOutline } from 'react-icons/io';
 import { IoWarningOutline } from 'react-icons/io5';
 import { PiWarningCircle } from 'react-icons/pi';
 
@@ -16,6 +15,7 @@ import { plungeTimerSecsSchema } from '@/lib/validations';
 import { formatSecsToMins } from '@/lib/utils';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
+import PlungeTimerInfo from './plunge-timer-info';
 
 export default function UnitDetails({
   unitStatus,
@@ -28,9 +28,9 @@ export default function UnitDetails({
   const [validationError, setValidationError] = useState<string | null>(null);
   const isValid = validationError === null;
   const warningMessage =
-    plungeTimerSecs >= 300
-      ? '>5 mins is for advanced practitioners'
-      : plungeTimerSecs > 120 && plungeTimerSecs < 300
+    plungeTimerSecs > 240
+      ? '>4 mins is for advanced plungers'
+      : plungeTimerSecs > 120 && plungeTimerSecs < 240
       ? 'Beginners advised to do <2 mins'
       : null;
   const [isPending, startTransition] = useTransition();
@@ -90,12 +90,7 @@ export default function UnitDetails({
             ) : null}
           </div>
 
-          <Button
-            size="sm"
-            className="p-2 ml-auto bg-indigo-600 hover:bg-indigo-600/90"
-          >
-            <IoMdInformationCircleOutline className="w-5 h-5" />
-          </Button>
+          <PlungeTimerInfo />
         </div>
 
         <div className="flex gap-3 items-center py-4 border-b">
@@ -107,7 +102,6 @@ export default function UnitDetails({
         <div className="flex flex-col gap-3 py-4 border-b">
           <div className="flex gap-3 items-center">
             <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
-
             <p>How it works</p>
           </div>
 
@@ -116,7 +110,7 @@ export default function UnitDetails({
           </div>
         </div>
       </div>
-      <BottomNav className='gap-0'>
+      <BottomNav className="gap-0">
         <div className="flex flex-row w-full gap-4">
           <p className="text-4xl font-bold">$15</p>
           <Button

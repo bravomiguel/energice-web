@@ -139,11 +139,11 @@ export const plungeTimerSecsSchema = z.union([
         }
       }
 
-      if (timerSecs > 60 * 8) {
+      if (timerSecs > 60 * 6) {
         {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
-            message: 'Max timer is 8 mins',
+            message: 'Max time is 6 mins',
           });
           return z.NEVER;
         }

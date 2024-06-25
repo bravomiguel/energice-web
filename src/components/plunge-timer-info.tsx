@@ -35,12 +35,12 @@ export default function PlungeTimerInfo() {
           <IoMdInformationCircleOutline className="w-5 h-5" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className='px-4'>
+      <DrawerContent className="px-4">
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader className="px-0 pb-4">
             <DrawerTitle>Plunge timer</DrawerTitle>
           </DrawerHeader>
-          <div className="pb-6 max-h-[70vh] overflow-scroll text-zinc-700 space-y-6">
+          <div className="pt-3 pb-6 max-h-[66vh] overflow-scroll text-zinc-700 space-y-6">
             <WhatIsItCarousel />
             <div className="w-full border-b border-zinc-200" />
             <PlungeTimeGuide />
@@ -60,38 +60,41 @@ function WhatIsItCarousel() {
   return (
     <Carousel className="w-full mx-auto">
       <CarouselContent>
-        {Array.from({ length: 3 }).map((_, index) => (
-          <CarouselItem key={index} className="space-y-5">
-            <p className="text-zinc-700 text-left">
-              {PLUNGE_TIME_INFO_ARRAY[index].message}
-            </p>
-            <div className="flex justify-center items-center w-9/12 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
-              <Image
-                src={PLUNGE_TIME_INFO_ARRAY[index].gifUrl}
-                alt="explainer gif"
-                width={250}
-                height={250}
-              />
-            </div>
-            <div className="flex gap-2 items-center justify-center">
-              <div
-                className={cn('w-2 aspect-square rounded-full bg-zinc-300', {
-                  'bg-indigo-700': index === 0,
-                })}
-              />
-              <div
-                className={cn('w-2 aspect-square rounded-full bg-zinc-300', {
-                  'bg-indigo-700': index === 1,
-                })}
-              />
-              <div
-                className={cn('w-2 aspect-square rounded-full bg-zinc-300', {
-                  'bg-indigo-700': index === 2,
-                })}
-              />
-            </div>
-          </CarouselItem>
-        ))}
+        {Array.from({ length: PLUNGE_TIME_INFO_ARRAY.length }).map(
+          (_, index) => (
+            <CarouselItem key={index} className="space-y-5">
+              <div className="flex gap-2 mx-2">
+                <span className="w-5 h-5 bg-gray-200 rounded-full text-xs flex items-center justify-center text-gray-700 font-extrabold p-2 translate-y-0.5">
+                  {index + 1}
+                </span>
+                <p className="text-zinc-700 text-left">
+                  {PLUNGE_TIME_INFO_ARRAY[index].message}
+                </p>
+              </div>
+              <div className="flex justify-center items-center w-9/12 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
+                <Image
+                  src={PLUNGE_TIME_INFO_ARRAY[index].gifUrl}
+                  alt="explainer gif"
+                  width={250}
+                  height={250}
+                />
+              </div>
+              {Array.from({ length: PLUNGE_TIME_INFO_ARRAY.length }).map(
+                (_, dotIndex) => (
+                  <div
+                    key={dotIndex}
+                    className={cn(
+                      'w-2 aspect-square rounded-full bg-zinc-300',
+                      {
+                        'bg-indigo-700': dotIndex === index,
+                      },
+                    )}
+                  />
+                ),
+              )}
+            </CarouselItem>
+          ),
+        )}
       </CarouselContent>
       <CarouselNext className="-translate-x-[170%]" />
       <CarouselPrevious className="translate-x-[170%]" />
@@ -106,7 +109,9 @@ function PlungeTimeGuide() {
         <Subtitle className="text-zinc-900 font-semibold text-lg">
           Plunge time guide
         </Subtitle>
-        <p className="text-zinc-700">Suggested max plunge times, to help you stay safe and in control</p>
+        <p className="text-zinc-700">
+          Suggested max plunge times, to help you stay safe and in control
+        </p>
       </div>
       <div className="grid grid-cols-1 grid-rows-4 text-zinc-700 w-fit items-center mx-auto">
         <div className="w-full row-start-1 row-span-1 grid grid-cols-[100px_1fr_80px] grid-rows-1 gap-7 font-semibold text-zinc-900 border-b h-7 self-end">

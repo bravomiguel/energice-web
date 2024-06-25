@@ -25,11 +25,46 @@ export const PLUNGE_TIME_INFO_ARRAY: {
     gifUrl: '',
   },
   {
-    message: `The timer is completely optional. You're in control of your plunge, and can exit when you want`,
+    message: `The timer is completely optional. You're in control and can exit when you want`,
     gifUrl: '',
   },
   {
     message: `You can go over the timer, just note your session will time-out after 6 minutes`,
+    gifUrl: '',
+  },
+];
+
+export const HOW_IT_WORKS_ARRAY: {
+  message: React.ReactNode;
+  gifUrl: string;
+}[] = [
+  {
+    message:
+      `Set your plunge timer, and hit start session to begin`,
+    gifUrl: '',
+  },
+  {
+    message: `Wait for the plunge to unlock, open the lid and place your phone in the holder`,
+    gifUrl: '',
+  },
+  {
+    message: `Take some big breaths for composure... and jump in!`,
+    gifUrl: '',
+  },
+  {
+    message: `Start your plunge timer to keep track of progress. You can pause any time.`,
+    gifUrl: '',
+  },
+  {
+    message: `Ready to jump out? Just hit end session, and close the lid when you're done`,
+    gifUrl: '',
+  },
+  {
+    message: `Note, you can go over your timer but your session will time out after 6 minutes`,
+    gifUrl: '',
+  },
+  {
+    message: `Make sure to close the lid when you're done to avoid getting charged twice!`,
     gifUrl: '',
   },
 ];

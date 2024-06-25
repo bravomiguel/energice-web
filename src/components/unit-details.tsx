@@ -12,10 +12,19 @@ import BottomNav from './bottom-nav';
 import PenaltyChargeWarning from './penalty-charge-warning';
 import { createSession } from '@/actions/actions';
 import { plungeTimerSecsSchema } from '@/lib/validations';
-import { formatSecsToMins } from '@/lib/utils';
+import { cn, formatSecsToMins } from '@/lib/utils';
 import { Label } from './ui/label';
 import { Input } from './ui/input';
 import PlungeTimerInfo from './plunge-timer-info';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from './ui/carousel';
+import Image from 'next/image';
+import { HOW_IT_WORKS_ARRAY, PLUNGE_TIME_INFO_ARRAY } from '@/lib/constants';
 
 export default function UnitDetails({
   unitStatus,
@@ -96,7 +105,7 @@ export default function UnitDetails({
         <div className="flex gap-3 items-center py-4 border-b">
           <BsThermometerSnow className="ml-1 h-7 w-7 text-zinc-500" />
 
-          <p>42F-46F water temp</p>
+          <p>43F-47F water temp</p>
         </div>
 
         <div className="flex flex-col gap-3 py-4 border-b">
@@ -105,9 +114,7 @@ export default function UnitDetails({
             <p>How it works</p>
           </div>
 
-          <div className="w-full h-[25vh] rounded-lg overflow-hidden flex justify-center items-center bg-zinc-200">
-            {`GIF "How it works" Explanation`}
-          </div>
+          <HowItWorksCarousel />
         </div>
       </div>
       <BottomNav className="gap-0">
@@ -129,11 +136,57 @@ export default function UnitDetails({
               });
             }}
           >
-            Start Plunge
+            Start session
           </Button>
         </div>
         <PenaltyChargeWarning />
       </BottomNav>
     </>
+  );
+}
+
+function HowItWorksCarousel() {
+  return (
+    <Carousel className="w-full mx-auto">
+      <CarouselContent>
+        {Array.from({ length: HOW_IT_WORKS_ARRAY.length }).map((_, index) => (
+          <CarouselItem key={index} className="space-y-5 relative">
+            <div className="flex w-9/12 mx-auto gap-2">
+              <span className="w-5 h-5 bg-gray-200 rounded-full text-xs flex items-center justify-center text-gray-700 font-extrabold p-2 translate-y-0.5">
+                {index + 1}
+              </span>
+              <p className="text-zinc-700 text-left">
+                {HOW_IT_WORKS_ARRAY[index].message}
+              </p>
+            </div>
+            <div className="flex justify-center items-center w-9/12 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
+              <Image
+                src={HOW_IT_WORKS_ARRAY[index].gifUrl}
+                alt="explainer gif"
+                width={250}
+                height={250}
+              />
+            </div>
+            <div className="flex gap-2 items-center justify-center">
+              {Array.from({ length: HOW_IT_WORKS_ARRAY.length }).map(
+                (_, dotIndex) => (
+                  <div
+                    key={dotIndex}
+                    className={cn(
+                      'w-2 aspect-square rounded-full bg-zinc-300',
+                      {
+                        'bg-indigo-700': dotIndex === index,
+                      },
+                    )}
+                  />
+                ),
+              )}
+            </div>
+          </CarouselItem>
+        ))}
+      </CarouselContent>
+      <CarouselNext className="-translate-x-[170%]" />
+      <CarouselPrevious className="translate-x-[170%]" />
+    </Carousel>
   );
 }

@@ -58,7 +58,7 @@ function ViewWaiverDrawer({
           <IoChevronForward className="w-5 h-5" />
         </div>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className='px-4'>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader className="px-0">
             <DrawerTitle>
@@ -68,7 +68,7 @@ function ViewWaiverDrawer({
               You must sign this waiver in order to use the cold plunge
             </DrawerDescription> */}
           </DrawerHeader>
-          <div className="pb-6 max-h-[65vh] overflow-scroll">
+          <div className="pb-6 max-h-[55vh] overflow-scroll">
             <WaiverTerms
               firstName={firstName}
               lastName={lastName}

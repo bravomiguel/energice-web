@@ -35,7 +35,7 @@ export default function PlungeTimerInfo() {
           <IoMdInformationCircleOutline className="w-5 h-5" />
         </Button>
       </DrawerTrigger>
-      <DrawerContent>
+      <DrawerContent className='px-4 bg-zinc-100'>
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader className="px-0 pb-4">
             <DrawerTitle>Plunge timer</DrawerTitle>
@@ -65,7 +65,7 @@ function WhatIsItCarousel() {
             <p className="text-zinc-700 text-left">
               {PLUNGE_TIME_INFO_ARRAY[index].message}
             </p>
-            <div className="flex justify-center items-center w-9/12 mx-auto overflow-hidden rounded-lg bg-zinc-200">
+            <div className="flex justify-center items-center w-9/12 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
               <Image
                 src={PLUNGE_TIME_INFO_ARRAY[index].gifUrl}
                 alt="explainer gif"
@@ -104,30 +104,30 @@ function PlungeTimeGuide() {
     <div className="space-y-2">
       <div className="flex flex-col">
         <Subtitle className="text-zinc-900 font-semibold text-lg">
-          Plunge time guidelines
+          Plunge time guide
         </Subtitle>
-        <p className="text-zinc-700">Based on experience level</p>
+        <p className="text-zinc-700">Suggested max plunge times, based on your experience level</p>
       </div>
-      <div className="grid grid-cols-1 grid-rows-4 gap-2 items-end text-zinc-700">
-        <div className="w-full row-start-1 row-span-1 grid grid-cols-3 grid-rows-1 gap-1 font-semibold text-zinc-900">
+      <div className="grid grid-cols-1 grid-rows-4 text-zinc-700 w-fit items-center mx-auto">
+        <div className="w-full row-start-1 row-span-1 grid grid-cols-[100px_1fr_80px] grid-rows-1 gap-7 font-semibold text-zinc-900 border-b border-zinc-300 h-6 self-end">
           <p>{`Level`}</p>
           <p>{`Experience`}</p>
           <p>{`Max time`}</p>
         </div>
 
-        <div className="row-start-2 row-span-1 grid grid-cols-3 grid-rows-1 gap-1 border-b py-3">
+        <div className="row-start-2 row-span-1 grid grid-cols-[100px_1fr_80px] grid-rows-1 gap-7 border-b py-3">
           <p>{`Beginner`}</p>
           <p>{`30 plunges`}</p>
           <p>{`2 mins`}</p>
         </div>
 
-        <div className="row-start-3 row-span-1 grid grid-cols-3 grid-rows-1 gap-1 border-b py-3">
+        <div className="row-start-3 row-span-1 grid grid-cols-[100px_1fr_80px] grid-rows-1 gap-7 border-b py-3">
           <p>{`Intermediate`}</p>
           <p>{`30-90 plunges`}</p>
           <p>{`4 mins`}</p>
         </div>
 
-        <div className="row-start-4 row-span-1 grid grid-cols-3 grid-rows-1 gap-1 py-3">
+        <div className="row-start-4 row-span-1 grid grid-cols-[100px_1fr_80px] grid-rows-1 gap-7 py-3">
           <p>{`Advanced`}</p>
           <p>{`>90 plunges`}</p>
           <p>{`6 mins`}</p>

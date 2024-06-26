@@ -11,7 +11,7 @@ export default function PlungeTipsCarousel() {
         {Array.from({ length: PLUNGE_TIPS_ARRAY.length }).map((_, index) => (
           <CarouselItem key={index} className="space-y-5 relative">
             <div className="flex w-9/12 mx-auto gap-2">
-              <span className="w-5 h-5 bg-gray-200 rounded-full text-xs flex items-center justify-center text-gray-700 font-extrabold p-2 translate-y-0.5">
+              <span className="w-5 h-5 bg-gray-200 rounded-full text-xs flex items-center justify-center text-gray-600 font-extrabold p-2 translate-y-0.5">
                 {index + 1}
               </span>
               <p className="text-zinc-700 text-left">

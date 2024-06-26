@@ -132,9 +132,9 @@ export default function ESigBlock({
         )}
         <div className="grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
           <span className="col-start-1 row-start-1">Print Name:</span>
-          <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2">{`${firstName} ${lastName}`}</span>
+          <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">{`${firstName} ${lastName}`}</span>
           <span className="col-start-1 row-start-2">Date:</span>
-          <span className="col-start-2 row-start-2 border-b border-zinc-700 px-2">
+          <span className="col-start-2 row-start-2 border-b border-zinc-700 px-2 font-medium">
             {new Date().toLocaleDateString('en-US')}
           </span>
         </div>

@@ -41,11 +41,7 @@ export function DurationDropdown({
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <div
-          onClick={(e) => {
-            setIsOpen(true);
-          }}
-        >
+        <div onClick={() => setIsOpen(true)}>
           <Input
             id={type === 'mins' ? 'minutes' : 'seconds'}
             type="number"

@@ -20,15 +20,15 @@ export const PLUNGE_TIME_INFO_ARRAY: {
   gifUrl: string;
 }[] = [
   {
-    message: `The plunge timer is there to help you track your progress, and have a goal to aim for`,
+    message: `The plunge timer is there to help you track your progress, and have a goal to aim for.`,
     gifUrl: '',
   },
   {
-    message: `The timer is completely optional. You're in control and can exit when you want`,
+    message: `The timer is completely optional. You're in control and can exit when you want.`,
     gifUrl: '',
   },
   {
-    message: `You can go over the timer, just note your session will time-out after 6 minutes`,
+    message: `You can go over the timer, just note your session times out after 6 mins.`,
     gifUrl: '',
   },
 ];
@@ -38,27 +38,27 @@ export const HOW_IT_WORKS_ARRAY: {
   gifUrl: string;
 }[] = [
   {
-    message: `Set your timer & start new session to unlock the plunge`,
+    message: `Set your timer, and start a new session to unlock the plunge.`,
     gifUrl: '',
   },
   {
-    message: `Get ready. Open the lid & place your phone in the holder`,
+    message: `Open the lid and place your phone in the holder to prep for your plunge.`,
     gifUrl: '',
   },
   {
-    message: `It's plunge time. Take some big breaths & jump in!`,
+    message: `It's plunge time. Take a few big breaths and jump in!`,
     gifUrl: '',
   },
   {
-    message: `Use the timer to keep track of your plunge progress`,
+    message: `Use the timer to keep track of your plunge progress.`,
     gifUrl: '',
   },
   {
-    message: `Done? End your session, jump out & close the lid behind you`,
+    message: `Done? End your session, jump out and close the lid behind you.`,
     gifUrl: '',
   },
   {
-    message: `You did it! Enjoy feeling great for the rest of the day`,
+    message: `You did it! Enjoy feeling great for the rest of the day.`,
     gifUrl: '',
   },
 ];
@@ -68,23 +68,23 @@ export const PLUNGE_TIPS_ARRAY: {
   gifUrl: string;
 }[] = [
   {
-    message: `Breathing is key. Prep for your plunge with 5-10 big breaths`,
+    message: `Breathing is key. Prep for your plunge with 5-10 big breaths.`,
     gifUrl: '',
   },
   {
-    message: `Ready? Breathe in. Hold. Breathe out as you smoothly get in`,
+    message: `Ready to plunge? Big breath in, breathing out as you hit the water.`,
     gifUrl: '',
   },
   {
-    message: `The first 30s are a shock. Slow your breath as much as you can`,
+    message: `The first 30 secs can be a shock. Slow the breath as much as you can.`,
     gifUrl: '',
   },
   {
-    message: `Release any tension in your body. More relaxed = more benefits`,
+    message: `After 30 secs, you'll notice your body relaxing. Lean in, don't fight it!`,
     gifUrl: '',
   },
   {
-    message: `You're in full control. End your session whenever you need to`,
+    message: `You're in control at all times. End your session whenever you need to.`,
     gifUrl: '',
   },
 ];

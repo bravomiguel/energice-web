@@ -40,7 +40,7 @@ export default function PlungeTimerInfo() {
           <DrawerHeader className="px-0 pb-4">
             <DrawerTitle>Plunge timer</DrawerTitle>
           </DrawerHeader>
-          <div className="pt-3 pb-6 max-h-[66vh] overflow-scroll text-zinc-700 space-y-6">
+          <div className="pt-3 pb-6 max-h-[66vh] overflow-scroll text-zinc-600 space-y-6">
             <WhatIsItCarousel />
             <div className="w-full border-b border-zinc-200" />
             <PlungeTimeGuide />
@@ -58,12 +58,12 @@ export default function PlungeTimerInfo() {
 
 function WhatIsItCarousel() {
   return (
-    <Carousel className="w-full mx-auto">
+    <Carousel className="w-full mx-auto text-sm">
       <CarouselContent>
         {Array.from({ length: PLUNGE_TIME_INFO_ARRAY.length }).map(
           (_, index) => (
             <CarouselItem key={index} className="space-y-5">
-              <p className="text-zinc-700 text-left">
+              <p className="text-zinc-600 text-center">
                 {PLUNGE_TIME_INFO_ARRAY[index].message}
               </p>
               <div className="flex justify-center items-center w-9/12 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
@@ -106,12 +106,13 @@ function PlungeTimeGuide() {
         <Subtitle className="text-zinc-900 font-semibold text-lg">
           Plunge time guide
         </Subtitle>
-        <p className="text-zinc-700">
-          Suggested max plunge times, to help you stay safe and in control
+        <p className="text-zinc-600 text-sm">
+          Suggested plunge times based on experience level. <br />
+          To help you stay safe and in control.
         </p>
       </div>
-      <div className="grid grid-cols-1 grid-rows-4 text-zinc-700 w-fit items-center mx-auto">
-        <div className="w-full row-start-1 row-span-1 grid grid-cols-[100px_1fr_80px] grid-rows-1 gap-7 font-semibold text-zinc-900 border-b h-7 self-end">
+      <div className="grid grid-cols-1 grid-rows-4 text-zinc-700 w-fit items-center mx-auto text-sm">
+        <div className="w-full row-start-1 row-span-1 grid grid-cols-[100px_1fr_80px] grid-rows-1 gap-7 font-semibold text-zinc-900 self-end">
           <p>{`Level`}</p>
           <p>{`Experience`}</p>
           <p>{`Max time`}</p>

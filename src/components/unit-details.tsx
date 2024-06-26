@@ -6,15 +6,15 @@ import { GoGoal } from 'react-icons/go';
 import { GoChecklist } from 'react-icons/go';
 import { IoWarningOutline } from 'react-icons/io5';
 import { PiWarningCircle } from 'react-icons/pi';
+import { MdOutlineTipsAndUpdates } from "react-icons/md";
+import { RiLightbulbFlashLine } from "react-icons/ri";
 
 import { Button } from './ui/button';
 import BottomNav from './bottom-nav';
 import PenaltyChargeWarning from './penalty-charge-warning';
 import { createSession } from '@/actions/actions';
 import { plungeTimerSecsSchema } from '@/lib/validations';
-import { cn, formatSecsToMins } from '@/lib/utils';
-import { Label } from './ui/label';
-import { Input } from './ui/input';
+import { cn } from '@/lib/utils';
 import PlungeTimerInfo from './plunge-timer-info';
 import {
   Carousel,
@@ -24,11 +24,7 @@ import {
   CarouselPrevious,
 } from './ui/carousel';
 import Image from 'next/image';
-import {
-  HOW_IT_WORKS_ARRAY,
-  PLUNGE_TIME_INFO_ARRAY,
-  PLUNGE_TIPS_ARRAY,
-} from '@/lib/constants';
+import { HOW_IT_WORKS_ARRAY } from '@/lib/constants';
 import PlungeTipsCarousel from './plunge-tips-carousel';
 import { DurationDropdown } from './duration-dropdown';
 
@@ -63,41 +59,41 @@ export default function UnitDetails({
   }, [plungeTimerVals]);
 
   const warningMessage =
-    plungeTimerSecs && plungeTimerSecs > 240
+    plungeTimerSecs && plungeTimerSecs === 360
+      ? '6 mins is the max time limit'
+      : plungeTimerSecs && plungeTimerSecs > 240
       ? '>4 mins is for advanced plungers'
       : plungeTimerSecs && plungeTimerSecs > 120 && plungeTimerSecs < 240
       ? 'Beginners advised to do <2 mins'
       : null;
+
   const [isPending, startTransition] = useTransition();
 
   return (
     <>
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col text-sm">
         <div className="flex gap-3 items-start justify-between py-4 border-b">
           <GoGoal className="h-7 w-7 mr-1 text-zinc-500" />
 
           <div className="flex-1 flex flex-col gap-1">
             <div className="flex gap-2">
-              <Label
-                className="self-center text-base font-normal"
-                htmlFor="plungeTimer"
-              >
+              <p className="self-center text-zinc-950">
                 Set your plunge timer:
-              </Label>
+              </p>
 
-              <div className="flex-1 flex gap-1 items-center justify-end">
+              <div className="flex-1 flex gap-1 items-start justify-end">
                 <DurationDropdown
                   type="mins"
                   value={plungeTimerVals}
                   setValue={setPlungeTimerVals}
-                  className="bg-zinc-200 font-semibold h-8"
+                  className="bg-zinc-200 font-semibold h-8 text-sm"
                 />
-                <span className="font-bold">:</span>
+                <span className="font-bold translate-y-1">:</span>
                 <DurationDropdown
                   type="secs"
                   value={plungeTimerVals}
                   setValue={setPlungeTimerVals}
-                  className="bg-zinc-200 font-semibold h-8"
+                  className="bg-zinc-200 font-semibold h-8 text-sm"
                 />
               </div>
             </div>
@@ -120,25 +116,22 @@ export default function UnitDetails({
 
         <div className="flex gap-3 items-center py-4 border-b">
           <BsThermometerSnow className="ml-1 h-7 w-7 text-zinc-500" />
-
-          <p>43F-47F water temp</p>
+          <p className="text-zinc-950">43F-47F water temp</p>
         </div>
 
         <div className="flex flex-col gap-3 py-4 border-b">
           <div className="flex gap-3 items-center">
             <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
-            <p>How it works</p>
+            <p className="text-zinc-950">How it works</p>
           </div>
-
           <HowItWorksCarousel />
         </div>
 
         <div className="flex flex-col gap-3 py-4 border-b">
           <div className="flex gap-3 items-center">
-            <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
-            <p>Plunge Tips</p>
+            <MdOutlineTipsAndUpdates className="ml-1 h-7 w-7 text-zinc-500 self-start" />
+            <p className="text-zinc-950">Plunge Tips</p>
           </div>
-
           <PlungeTipsCarousel />
         </div>
       </div>
@@ -181,7 +174,7 @@ function HowItWorksCarousel() {
               <span className="w-5 h-5 bg-gray-200 rounded-full text-xs flex items-center justify-center text-gray-700 font-extrabold p-2 translate-y-0.5">
                 {index + 1}
               </span>
-              <p className="text-zinc-700 text-left">
+              <p className="text-zinc-600 text-left">
                 {HOW_IT_WORKS_ARRAY[index].message}
               </p>
             </div>

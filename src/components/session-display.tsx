@@ -14,6 +14,7 @@ import H1 from './h1';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import { endSession } from '@/actions/actions';
 import EndSessionBtn from './end-session-btn';
+import PlungeTipsDrawer from './plunge-tips-drawer';
 
 export default function SessionDisplay({
   sessionId,
@@ -103,39 +104,42 @@ export default function SessionDisplay({
     return () => clearInterval(sessionTimeId);
   }, [sessionSecsLeft, handleEndSession]);
 
-  if (sessionSecsLeft < 0) {
-    return (
-      <>
-        <div className="flex-1 flex flex-col justify-center items-center gap-4">
-          <IoWarningOutline className="h-16 w-16 text-red-600" />
-          <div className="text-2xl text-red-600 flex gap-2">
-            <p className="font-medium">Close the lid in</p>{' '}
-            <span className="w-20 font-medium text-start">
-              {formatSecsToMins(30 + sessionSecsLeft)}
-            </span>
-          </div>
-          <Subtitle className="text-zinc-800">
-            To avoid an extra <span>$10</span> charge
-          </Subtitle>
-        </div>
-        <BottomNav>
-          <Button
-            variant="destructive"
-            className="w-full h-16"
-            disabled={isPending}
-            isLoading={isPending}
-            onClick={async () => await handleEndSession()}
-          >
-            Done
-          </Button>
-        </BottomNav>
-      </>
-    );
-  }
+  // if (sessionSecsLeft < 0) {
+  //   return (
+  //     <>
+  //       <div className="flex-1 flex flex-col justify-center items-center gap-4">
+  //         <IoWarningOutline className="h-16 w-16 text-red-600" />
+  //         <div className="text-2xl text-red-600 flex gap-2">
+  //           <p className="font-medium">Close the lid in</p>{' '}
+  //           <span className="w-20 font-medium text-start">
+  //             {formatSecsToMins(30 + sessionSecsLeft)}
+  //           </span>
+  //         </div>
+  //         <Subtitle className="text-zinc-800">
+  //           To avoid an extra <span>$10</span> charge
+  //         </Subtitle>
+  //       </div>
+  //       <BottomNav>
+  //         <Button
+  //           variant="destructive"
+  //           className="w-full h-16"
+  //           disabled={isPending}
+  //           isLoading={isPending}
+  //           onClick={async () => await handleEndSession()}
+  //         >
+  //           Done
+  //         </Button>
+  //       </BottomNav>
+  //     </>
+  //   );
+  // }
 
   return (
     <>
-      <H1>Session</H1>
+      <div className="w-full flex justify-between items-center">
+        <H1>Session</H1>
+        <PlungeTipsDrawer />
+      </div>
       <div className={cn(className)}>
         <CountdownCircleTimer
           isPlaying={isTimerPlaying || false}

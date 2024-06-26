@@ -5,103 +5,55 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { FaUser } from 'react-icons/fa';
 import Link from 'next/link';
 
-import { signOutAction, startSession } from '@/actions/actions';
+import { endSession, signOutAction, startSession } from '@/actions/actions';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { ONBOARDING_PATHNAMES, RESET_PW_PATHNAME } from '@/lib/constants';
+import { getTimeDiffSecs } from '@/lib/utils';
 
 export default function TopBar() {
   const activePathname = usePathname();
-
   const isOnboarding = ONBOARDING_PATHNAMES.find(
     (pathName) => pathName === activePathname,
   );
   const isResetPassword = RESET_PW_PATHNAME === activePathname;
   const isUnit = activePathname.includes('/unit');
-  const isUnlock = activePathname.includes('/unlock');
 
-  const { activeSessionId, activeSession } = usePlungeSessions();
-  const showSessionCountdown =
-    activeSessionId && activeSession?.accessCode && isUnlock;
-
-  const [sessionStartSecs, setSessionStartSecs] = useState<number | null>(null);
-  // console.log({sessionStartSecs});
+  const { activeSessionId, activeSessionSecsLeft, activePlungeSecs } =
+    usePlungeSessions();
+  const isSessionEnding = activeSessionSecsLeft
+    ? activeSessionId && activeSessionSecsLeft <= 60
+    : false;
 
   useEffect(() => {
-    if (showSessionCountdown) {
-      const startNewSession = async () => {
-        const response = await startSession({
+    if (isSessionEnding && activeSessionId) {
+      const endSessionAction = async () => {
+        // clean out local storage
+        localStorage.removeItem('countdownSecs');
+        localStorage.removeItem('isTimerPlaying');
+        // run end session server action
+        const response = await endSession({
           sessionId: activeSessionId,
+          totalPlungeSecs: activePlungeSecs,
         });
         if (response?.error) {
-          console.error({ error: response?.error });
+          console.error({ error: response.error });
         }
       };
 
-      const storedSessionStartSecs = localStorage.getItem('sessionStartSecs');
-      if (!storedSessionStartSecs && !sessionStartSecs) {
-        localStorage.setItem('sessionStartSecs', JSON.stringify(15));
+      if (activeSessionSecsLeft === 0) {
+        endSessionAction();
       }
-
-      if (!sessionStartSecs) {
-        setSessionStartSecs(() => {
-          const storedSessionStartSecs =
-            localStorage.getItem('sessionStartSecs');
-          return storedSessionStartSecs
-            ? JSON.parse(storedSessionStartSecs)
-            : 0;
-        });
-      }
-
-      const intervalId = setInterval(() => {
-        if (sessionStartSecs && sessionStartSecs > 0) {
-          setSessionStartSecs(sessionStartSecs - 1);
-          localStorage.setItem(
-            'sessionStartSecs',
-            JSON.stringify(sessionStartSecs - 1),
-          );
-        } else {
-          clearInterval(intervalId);
-        }
-      }, 1000);
-
-      if (sessionStartSecs === 0) {
-        localStorage.removeItem('sessionStartSecs');
-        startNewSession();
-      }
-
-      return () => clearInterval(intervalId);
     }
-  }, [activeSessionId, showSessionCountdown, sessionStartSecs]);
+  }, [isSessionEnding, activeSessionSecsLeft, activeSessionId, activePlungeSecs]);
 
   return (
-    <header className="relative w-full flex justify-between items-center pt-3">
-      {/* <SessionStartingCountdown /> */}
-      {showSessionCountdown && (
-        <div className="transition w-screen -mx-4 px-4 py-4 bg-green-koldup text-zinc-200 text-lg font-medium text-center flex justify-between items-center">
-          <p>
-            Session starting in{' '}
-            <span className="text-2xl font-semibold">{sessionStartSecs}</span>
-          </p>
-          <Button
-            variant="outline"
-            className="text-zinc-300 hover:text-zinc-500"
-            onClick={async () => {
-              localStorage.removeItem('sessionStartSecs');
-              const response = await startSession({
-                sessionId: activeSessionId,
-              });
-              if (response?.error) {
-                console.error({ error: response?.error });
-              }
-            }}
-          >
-            Start
-          </Button>
-        </div>
+    <header className="relative w-full flex justify-between items-center">
+      {isSessionEnding && (
+        <SessionEndingBanner sessionStartSecs={activeSessionSecsLeft} />
       )}
-      <nav className="w-full">
+      <nav className="w-full pt-3">
         <ul className="w-full flex gap-2 text-xs justify-between items-center text-indigo-800 ">
           <>
             {isOnboarding && (
@@ -124,6 +76,21 @@ export default function TopBar() {
         </ul>
       </nav>
     </header>
+  );
+}
+
+function SessionEndingBanner({
+  sessionStartSecs,
+}: {
+  sessionStartSecs: number | null;
+}) {
+  return (
+    <div className="transition w-screen -mx-4 px-4 py-4 bg-red-500 text-zinc-200 text-lg font-medium text-center flex justify-between items-center">
+      <p>
+        Session ending in{' '}
+        <span className="text-2xl font-semibold">{sessionStartSecs}</span>
+      </p>
+    </div>
   );
 }
 
@@ -164,7 +131,7 @@ function BackArrow({
 
 function ProfileLink() {
   return (
-    <li className='self-start translate-y-1'>
+    <li className="self-start translate-y-1">
       <Link href={'/profile'}>
         <FaUser className="w-5 h-5" />
       </Link>

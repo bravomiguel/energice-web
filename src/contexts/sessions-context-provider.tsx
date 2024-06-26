@@ -13,7 +13,11 @@ type TPlungeSessions = {
   sessions: Session[];
   activeSessionId: Session['id'] | null;
   handleChangeActiveSessionId: (id: Session['id']) => void;
-  activeSession: Session | undefined;
+  activeSession?: Session;
+  activeSessionSecsLeft: number | null;
+  handleChangeActiveSessionSecs: (sessionSecsLeft: number) => void;
+  activePlungeSecs: number | null;
+  handleChangeActivePlungeSecs: (plungeSecs: number) => void;
   numberOfSessions: number;
   overallPlungeSecs: number;
   currentStreakDays: number;
@@ -26,10 +30,26 @@ export default function PlungeSessionsProvider({
   children,
 }: PlungeSessionsProviderProps) {
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
+  const [activeSessionSecsLeft, setActiveSessionSecsLeft] = useState<
+    number | null
+  >(null);
+  const [activePlungeSecs, setActivePlungeSecs] = useState<number | null>(null);
 
   const activeSession = sessions.find(
     (session) => session.id === activeSessionId,
   );
+
+  const handleChangeActiveSessionSecs = (sessionSecsLeft: number) => {
+    setActiveSessionSecsLeft(sessionSecsLeft);
+  };
+
+  const handleChangeActivePlungeSecs = (plungeSecs: number) => {
+    setActivePlungeSecs(plungeSecs);
+  };
+
+  const handleChangeActiveSessionId = (id: Session['id']) => {
+    setActiveSessionId(id);
+  };
 
   const numberOfSessions = sessions.length;
 
@@ -94,10 +114,6 @@ export default function PlungeSessionsProvider({
     currentStreakDays === 0;
   }
 
-  const handleChangeActiveSessionId = (id: Session['id']) => {
-    setActiveSessionId(id);
-  };
-
   return (
     <PlungeSessions.Provider
       value={{
@@ -105,6 +121,10 @@ export default function PlungeSessionsProvider({
         activeSessionId,
         handleChangeActiveSessionId,
         activeSession,
+        activeSessionSecsLeft,
+        handleChangeActiveSessionSecs,
+        activePlungeSecs,
+        handleChangeActivePlungeSecs,
         numberOfSessions,
         overallPlungeSecs,
         currentStreakDays,

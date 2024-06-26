@@ -28,7 +28,7 @@ export default function PlungeTipsDrawer() {
       <DrawerContent className="px-4">
         <div className="mx-auto w-full max-w-sm">
           <DrawerHeader className="px-0 pb-4">
-            <DrawerTitle>Plunging tips</DrawerTitle>
+            <DrawerTitle>Plunge tips</DrawerTitle>
           </DrawerHeader>
           <div className="pt-3 pb-6 max-h-[66vh] overflow-scroll text-zinc-700 space-y-6">
             <PlungeTipsCarousel />

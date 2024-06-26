@@ -15,6 +15,7 @@ import { useCallback, useEffect, useState, useTransition } from 'react';
 import { endSession } from '@/actions/actions';
 import EndSessionBtn from './end-session-btn';
 import PlungeTipsDrawer from './plunge-tips-drawer';
+import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 
 export default function SessionDisplay({
   sessionId,
@@ -39,6 +40,7 @@ export default function SessionDisplay({
   const [isTimerPlaying, setIsTimerPlaying] = useState<boolean | null>(null);
   const [sessionSecsLeft, setSessionSecsLeft] = useState(sessionSecs);
   const [isPending, startTransition] = useTransition();
+  const { handleChangeActiveSessionSecs, handleChangeActivePlungeSecs } = usePlungeSessions();
 
   const handleUpdateCountdownSecs = (remainingTime: number) => {
     const storedCountdownSecs = localStorage.getItem('countdownSecs');
@@ -86,23 +88,21 @@ export default function SessionDisplay({
   useEffect(() => {
     const totalPlungeSecsId = setInterval(() => {
       if (isTimerPlaying) {
-        // if (countdownSecs >= 0) {
-        //   setTotalPlungeSecs(plungeTimerSecs - countdownSecs);
-        // } else {
-        setTotalPlungeSecs((prev) => prev + 1);
-        // }
+        setTotalPlungeSecs((prev) => prev + 1); // need to make this persist in local storage
+        handleChangeActivePlungeSecs(totalPlungeSecs);
       } else {
         clearInterval(totalPlungeSecsId);
       }
     }, 1000);
 
     return () => clearInterval(totalPlungeSecsId);
-  }, [isTimerPlaying, plungeTimerSecs]);
+  }, [isTimerPlaying]);
 
   useEffect(() => {
     const sessionTimeId = setInterval(() => {
       if (sessionSecsLeft > 0) {
-        setSessionSecsLeft(sessionSecsLeft - 1);
+        setSessionSecsLeft((prev) => prev - 1);
+        handleChangeActiveSessionSecs(sessionSecsLeft);
       } else {
         clearInterval(sessionTimeId);
       }
@@ -113,7 +113,7 @@ export default function SessionDisplay({
     }
 
     return () => clearInterval(sessionTimeId);
-  }, [sessionSecsLeft, handleEndSession]);
+  }, [sessionSecsLeft, handleEndSession, handleChangeActiveSessionSecs]);
 
   // if (sessionSecsLeft < 0) {
   //   return (
@@ -164,7 +164,7 @@ export default function SessionDisplay({
           isSmoothColorTransition={false}
           onUpdate={handleUpdateCountdownSecs}
         >
-          {({remainingTime}) => (
+          {({ remainingTime }) => (
             <div className="flex flex-col items-center gap-2">
               <p className="text-zinc-500">Plunge timer</p>
               <span className="text-7xl font-semibold w-52 text-start">

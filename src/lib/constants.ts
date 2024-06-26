@@ -39,15 +39,15 @@ export const HOW_IT_WORKS_ARRAY: {
   gifUrl: string;
 }[] = [
   {
-    message: `Set your plunge timer, start your session, and unlock the plunge`,
+    message: `Set your timer & start a new session to unlock the plunge`,
     gifUrl: '',
   },
   {
-    message: `Get ready. Open the lid, and place your phone in the holder`,
+    message: `Get ready. Open the lid & place your phone in the holder`,
     gifUrl: '',
   },
   {
-    message: `It's plunge time. Take some big breaths, and jump in!`,
+    message: `It's plunge time. Take some big breaths & jump in!`,
     gifUrl: '',
   },
   {
@@ -55,7 +55,7 @@ export const HOW_IT_WORKS_ARRAY: {
     gifUrl: '',
   },
   {
-    message: `Ready to get out? End your session, and close the lid when done`,
+    message: `Done? End your session, jump out & close the lid behind you`,
     gifUrl: '',
   },
   {
@@ -69,23 +69,23 @@ export const PLUNGE_TIPS_ARRAY: {
   gifUrl: string;
 }[] = [
   {
-    message: `Breathing is key. Prep for your plunge with a few big breaths`,
+    message: `Breathing is key. Prep for your plunge with 5-10 big breaths`,
     gifUrl: '',
   },
   {
-    message: `Ready? Breathe in. Hold. Get in smoothly as you breathe out`,
+    message: `Ready? Breathe in. Hold. Breathe out as you smoothly get in`,
     gifUrl: '',
   },
   {
-    message: `The first 30 secs can be a shock. Breathe through it as slowly as possible`,
+    message: `The first 30s are a shock. Slow your breath as much as you can`,
     gifUrl: '',
   },
   {
-    message: `Release any tension in your body. The more relaxed, the better`,
+    message: `Release any tension in your body. More relaxed = more benefits`,
     gifUrl: '',
   },
   {
-    message: `You're in control. End your session and get out the moment you're ready`,
+    message: `You're in full control. End your session whenever you need to`,
     gifUrl: '',
   },
 ];

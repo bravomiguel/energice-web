@@ -125,7 +125,7 @@ export default function UnitDetails({
         <div className="flex flex-col gap-3 py-4 border-b">
           <div className="flex gap-3 items-center">
             <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
-            <p>Plunging Tips</p>
+            <p>Plunge Tips</p>
           </div>
 
           <PlungeTipsCarousel />

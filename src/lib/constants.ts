@@ -72,7 +72,7 @@ export const PLUNGE_TIPS_ARRAY: {
     gifUrl: '',
   },
   {
-    message: `Ready to plunge? Big breath in, breathing out as you hit the water.`,
+    message: `Ready to plunge? Big breath in, and breathe out as you hit the water.`,
     gifUrl: '',
   },
   {

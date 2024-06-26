@@ -77,8 +77,8 @@ export default function UnitDetails({
 
           <div className="flex-1 flex flex-col gap-1">
             <div className="flex gap-2">
-              <p className="self-center text-zinc-950">
-                Set your plunge timer:
+              <p className="self-center font-medium">
+                Set your plunge timer
               </p>
 
               <div className="flex-1 flex gap-1 items-start justify-end">
@@ -116,21 +116,21 @@ export default function UnitDetails({
 
         <div className="flex gap-3 items-center py-4 border-b">
           <BsThermometerSnow className="ml-1 h-7 w-7 text-zinc-500" />
-          <p className="text-zinc-950">43F-47F water temp</p>
+          <p className="font-medium">43F-47F water temp</p>
         </div>
 
         <div className="flex flex-col gap-3 py-4 border-b">
           <div className="flex gap-3 items-center">
             <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
-            <p className="text-zinc-950">How it works</p>
+            <p className="font-medium">How it works</p>
           </div>
           <HowItWorksCarousel />
         </div>
 
         <div className="flex flex-col gap-3 py-4 border-b">
           <div className="flex gap-3 items-center">
-            <MdOutlineTipsAndUpdates className="ml-1 h-7 w-7 text-zinc-500 self-start" />
-            <p className="text-zinc-950">Plunge Tips</p>
+            <RiLightbulbFlashLine className="ml-1 h-7 w-7 text-zinc-500 self-start" />
+            <p className="font-medium">Plunge Tips</p>
           </div>
           <PlungeTipsCarousel />
         </div>

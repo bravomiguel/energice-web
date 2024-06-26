@@ -1,6 +1,7 @@
 'use client';
 
-import { IoMdInformationCircleOutline } from 'react-icons/io';
+import { MdOutlineTipsAndUpdates } from "react-icons/md";
+import { RiLightbulbFlashLine } from 'react-icons/ri';
 
 import {
   Drawer,
@@ -22,7 +23,7 @@ export default function PlungeTipsDrawer() {
           size="sm"
           className="p-2 ml-auto bg-indigo-600 hover:bg-indigo-600/90"
         >
-          <IoMdInformationCircleOutline className="w-5 h-5" />
+          <RiLightbulbFlashLine className="w-5 h-5" />
         </Button>
       </DrawerTrigger>
       <DrawerContent className="px-4">
@@ -30,7 +31,7 @@ export default function PlungeTipsDrawer() {
           <DrawerHeader className="px-0 pb-4">
             <DrawerTitle>Plunge tips</DrawerTitle>
           </DrawerHeader>
-          <div className="pt-3 pb-6 max-h-[66vh] overflow-scroll text-zinc-700 space-y-6">
+          <div className="pt-3 pb-6 max-h-[66vh] overflow-scroll text-zinc-600 space-y-6">
             <PlungeTipsCarousel />
           </div>
           <DrawerFooter className="px-0">

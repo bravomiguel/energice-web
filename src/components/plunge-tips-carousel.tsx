@@ -14,7 +14,7 @@ export default function PlungeTipsCarousel() {
               <span className="w-5 h-5 bg-gray-200 rounded-full text-xs flex items-center justify-center text-gray-600 font-extrabold p-2 translate-y-0.5">
                 {index + 1}
               </span>
-              <p className="text-zinc-700 text-left">
+              <p className="text-zinc-600 text-left text-sm">
                 {PLUNGE_TIPS_ARRAY[index].message}
               </p>
             </div>

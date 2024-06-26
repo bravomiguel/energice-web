@@ -63,14 +63,9 @@ function WhatIsItCarousel() {
         {Array.from({ length: PLUNGE_TIME_INFO_ARRAY.length }).map(
           (_, index) => (
             <CarouselItem key={index} className="space-y-5">
-              <div className="flex gap-2 mx-2">
-                <span className="w-5 h-5 bg-gray-200 rounded-full text-xs flex items-center justify-center text-gray-700 font-extrabold p-2 translate-y-0.5">
-                  {index + 1}
-                </span>
-                <p className="text-zinc-700 text-left">
-                  {PLUNGE_TIME_INFO_ARRAY[index].message}
-                </p>
-              </div>
+              <p className="text-zinc-700 text-left">
+                {PLUNGE_TIME_INFO_ARRAY[index].message}
+              </p>
               <div className="flex justify-center items-center w-9/12 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
                 <Image
                   src={PLUNGE_TIME_INFO_ARRAY[index].gifUrl}
@@ -79,19 +74,21 @@ function WhatIsItCarousel() {
                   height={250}
                 />
               </div>
-              {Array.from({ length: PLUNGE_TIME_INFO_ARRAY.length }).map(
-                (_, dotIndex) => (
-                  <div
-                    key={dotIndex}
-                    className={cn(
-                      'w-2 aspect-square rounded-full bg-zinc-300',
-                      {
-                        'bg-indigo-700': dotIndex === index,
-                      },
-                    )}
-                  />
-                ),
-              )}
+              <div className="flex gap-2 items-center justify-center">
+                {Array.from({ length: PLUNGE_TIME_INFO_ARRAY.length }).map(
+                  (_, dotIndex) => (
+                    <div
+                      key={dotIndex}
+                      className={cn(
+                        'w-2 aspect-square rounded-full bg-zinc-300',
+                        {
+                          'bg-indigo-700': dotIndex === index,
+                        },
+                      )}
+                    />
+                  ),
+                )}
+              </div>
             </CarouselItem>
           ),
         )}

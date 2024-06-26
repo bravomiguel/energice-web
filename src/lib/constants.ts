@@ -39,32 +39,53 @@ export const HOW_IT_WORKS_ARRAY: {
   gifUrl: string;
 }[] = [
   {
-    message:
-      `Set your plunge timer, and hit start session to begin`,
+    message: `Set your plunge timer, start your session, and unlock the plunge`,
     gifUrl: '',
   },
   {
-    message: `Wait for the plunge to unlock, open the lid and place your phone in the holder`,
+    message: `Get ready. Open the lid, and place your phone in the holder`,
     gifUrl: '',
   },
   {
-    message: `Take some big breaths for composure... and jump in!`,
+    message: `It's plunge time. Take some big breaths, and jump in!`,
     gifUrl: '',
   },
   {
-    message: `Start your plunge timer to keep track of progress. You can pause any time.`,
+    message: `Use the timer to keep track of your plunge progress`,
     gifUrl: '',
   },
   {
-    message: `Ready to jump out? Just hit end session, and close the lid when you're done`,
+    message: `Ready to get out? End your session, and close the lid when done`,
     gifUrl: '',
   },
   {
-    message: `Note, you can go over your timer but your session will time out after 6 minutes`,
+    message: `You did it! Enjoy feeling great for the rest of the day`,
+    gifUrl: '',
+  },
+];
+
+export const PLUNGE_TIPS_ARRAY: {
+  message: React.ReactNode;
+  gifUrl: string;
+}[] = [
+  {
+    message: `Breathing is key. Prep for your plunge with a few big breaths`,
     gifUrl: '',
   },
   {
-    message: `Make sure to close the lid when you're done to avoid getting charged twice!`,
+    message: `Ready? Breathe in. Hold. Get in smoothly as you breathe out`,
+    gifUrl: '',
+  },
+  {
+    message: `The first 30 secs can be a shock. Breathe through it as slowly as possible`,
+    gifUrl: '',
+  },
+  {
+    message: `Release any tension in your body. The more relaxed, the better`,
+    gifUrl: '',
+  },
+  {
+    message: `You're in control. End your session and get out the moment you're ready`,
     gifUrl: '',
   },
 ];

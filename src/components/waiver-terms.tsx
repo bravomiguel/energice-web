@@ -119,19 +119,13 @@ export default function WaiverTerms({
             // placeholder="Click SIGN below to add your signature"
             className={`${homemadeApple.className} disabled:opacity-100 h-16 text-center`}
           />
-          <div className="flex flex-row gap-2">
-            <p className="w-24">Print Name:</p>
-            <div className="flex flex-col gap-0 w-fit">
-              <span className="px-4 italic">{`${firstName} ${lastName}`}</span>
-              <div className="border-b border-zinc-800 h-0" />
-            </div>
-          </div>
-          <div className="flex flex-row gap-2">
-            <p className="w-24">Date:</p>
-            <div className="flex flex-col gap-0 w-fit">
-              <span className="px-4 italic">{`Add date here`}</span>
-              <div className="border-b border-zinc-800 h-0" />
-            </div>
+          <div className="grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
+            <span className="col-start-1 row-start-1">Print Name:</span>
+            <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2">{`${firstName} ${lastName}`}</span>
+            <span className="col-start-1 row-start-2">Date:</span>
+            <span className="col-start-2 row-start-2 border-b border-zinc-700 px-2">
+              Signed date here
+            </span>
           </div>
         </div>
       )}

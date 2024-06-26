@@ -1,9 +1,7 @@
 'use client';
 
 import {
-  ChangeEvent,
   Dispatch,
-  FormEvent,
   SetStateAction,
   useEffect,
   useMemo,
@@ -57,33 +55,89 @@ export default function ESigBlock({
   return (
     <>
       <div className="flex flex-col gap-3">
-        <Input
-          id="signature"
-          type="text"
-          disabled
-          value={signature}
-          placeholder="Click SIGN below to add your signature"
-          className={cn('disabled:opacity-100 h-16 text-center', {
-            [homemadeApple.className]: signature.length !== 0,
-          })}
-        />
-        <ESigBtn
-          isFormOpen={isFormOpen}
-          setIsFormOpen={setIsFormOpen}
-          setSignature={setSignature}
-          setIsCheckboxVisible={setIsCheckboxVisible}
-          fullName={fullName}
-          setFullName={setFullName}
-          isValid={isValid}
-        >
-          {signature.length === 0 ? 'Sign' : 'Edit signature'}
-        </ESigBtn>
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <DialogTrigger asChild>
+            <div onClick={() => setIsFormOpen(true)}>
+              <Input
+                id="signature"
+                type="text"
+                // disabled
+                value={signature}
+                placeholder="Enter your signature here"
+                className={cn('disabled:opacity-100 h-16 text-center', {
+                  [homemadeApple.className]: signature.length !== 0,
+                })}
+              />
+            </div>
+          </DialogTrigger>
+          <DialogContent className="gap-5">
+            <div className="flex flex-col gap-1">
+              <DialogHeader>
+                <DialogTitle className="text-xl">
+                  Adopt your signature
+                </DialogTitle>
+              </DialogHeader>
+              <Subtitle className="text-center">
+                Confirm your name and signature
+              </Subtitle>
+            </div>
+            <form
+              className="flex flex-col gap-5"
+              onSubmit={(e) => {
+                e.preventDefault();
+                setSignature(fullName);
+                setIsCheckboxVisible(true);
+                setIsFormOpen(false);
+              }}
+            >
+              <div className="space-y-1">
+                <Label htmlFor="fullName">Full Name</Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  value={fullName}
+                  onChange={(e) => {
+                    setFullName(e.target.value);
+                  }}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <Label htmlFor="signaturePreview">Signature Preview</Label>
+                <Input
+                  id="signaturePreview"
+                  type="text"
+                  value={fullName}
+                  disabled
+                  className={`${homemadeApple.className} text-center h-16`}
+                />
+              </div>
+
+              <Button
+                type="submit"
+                variant="koldupBlue"
+                disabled={!isValid}
+                className="w-full"
+              >
+                Adopt and Sign
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
         {isCheckboxVisible && (
           <DisclosureCheckBox
             setIsChecked={setIsChecked}
             checkboxRef={checkboxRef}
           />
         )}
+        <div className="grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
+          <span className="col-start-1 row-start-1">Print Name:</span>
+          <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2">{`${firstName} ${lastName}`}</span>
+          <span className="col-start-1 row-start-2">Date:</span>
+          <span className="col-start-2 row-start-2 border-b border-zinc-700 px-2">
+            {new Date().toLocaleDateString('en-US')}
+          </span>
+        </div>
       </div>
       <BottomNav>
         <Button
@@ -103,89 +157,6 @@ export default function ESigBlock({
         </Button>
       </BottomNav>
     </>
-  );
-}
-
-type ESigBtnProps = {
-  isFormOpen: boolean;
-  setIsFormOpen: Dispatch<SetStateAction<boolean>>;
-  children?: React.ReactNode;
-  setSignature: Dispatch<SetStateAction<string>>;
-  setIsCheckboxVisible: Dispatch<SetStateAction<boolean>>;
-  fullName: string;
-  setFullName: Dispatch<SetStateAction<string>>;
-  isValid: boolean;
-};
-
-function ESigBtn({
-  isFormOpen,
-  setIsFormOpen,
-  children,
-  setSignature,
-  setIsCheckboxVisible,
-  fullName,
-  setFullName,
-  isValid,
-}: ESigBtnProps) {
-  return (
-    <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-      <DialogTrigger asChild>
-        <Button variant={'koldupBlue'} size={'md'}>
-          {children}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="gap-5">
-        <div className="flex flex-col gap-1">
-          <DialogHeader>
-            <DialogTitle className="text-xl">Adopt your signature</DialogTitle>
-          </DialogHeader>
-          <Subtitle className="text-center">
-            Confirm your name and signature
-          </Subtitle>
-        </div>
-        <form
-          className="flex flex-col gap-5"
-          onSubmit={(e: FormEvent<HTMLFormElement>): void => {
-            e.preventDefault();
-            setSignature(fullName);
-            setIsCheckboxVisible(true);
-            setIsFormOpen(false);
-          }}
-        >
-          <div className="space-y-1">
-            <Label htmlFor="fullName">Full Name</Label>
-            <Input
-              id="fullName"
-              type="text"
-              value={fullName}
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                setFullName(e.target.value);
-              }}
-            />
-          </div>
-
-          <div className="space-y-1">
-            <Label htmlFor="signaturePreview">Signature Preview</Label>
-            <Input
-              id="signaturePreview"
-              type="text"
-              value={fullName}
-              disabled
-              className={`${homemadeApple.className} text-center h-16`}
-            />
-          </div>
-
-          <Button
-            type="submit"
-            variant="koldupBlue"
-            disabled={!isValid}
-            className="w-full"
-          >
-            Adopt and Sign
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
   );
 }
 

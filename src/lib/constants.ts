@@ -20,8 +20,7 @@ export const PLUNGE_TIME_INFO_ARRAY: {
   gifUrl: string;
 }[] = [
   {
-    message:
-      `The plunge timer is there to help you track your progress, and have a goal to aim for`,
+    message: `The plunge timer is there to help you track your progress, and have a goal to aim for`,
     gifUrl: '',
   },
   {
@@ -39,7 +38,7 @@ export const HOW_IT_WORKS_ARRAY: {
   gifUrl: string;
 }[] = [
   {
-    message: `Set your timer & start a new session to unlock the plunge`,
+    message: `Set your timer & start new session to unlock the plunge`,
     gifUrl: '',
   },
   {
@@ -88,4 +87,15 @@ export const PLUNGE_TIPS_ARRAY: {
     message: `You're in full control. End your session whenever you need to`,
     gifUrl: '',
   },
+];
+
+export const DURATION_MINS_OPTIONS = ['00', '01', '02', '03', '04', '05', '06'];
+
+export const DURATION_SECS_OPTIONS = [
+  '00',
+  '10',
+  '20',
+  '30',
+  '40',
+  '50',
 ];

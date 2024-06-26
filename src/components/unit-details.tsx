@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useMemo, useState, useTransition } from 'react';
 import { BsThermometerSnow } from 'react-icons/bs';
 import { GoGoal } from 'react-icons/go';
 import { GoChecklist } from 'react-icons/go';
@@ -30,6 +30,7 @@ import {
   PLUNGE_TIPS_ARRAY,
 } from '@/lib/constants';
 import PlungeTipsCarousel from './plunge-tips-carousel';
+import { DurationDropdown } from './duration-dropdown';
 
 export default function UnitDetails({
   unitStatus,
@@ -38,33 +39,36 @@ export default function UnitDetails({
   unitStatus: string;
   unitId: string;
 }) {
-  const [plungeTimerSecs, setPlungeTimerSecs] = useState(90);
+  const [plungeTimerVals, setPlungeTimerVals] = useState({
+    mins: '01',
+    secs: '30',
+  });
   const [validationError, setValidationError] = useState<string | null>(null);
   const isValid = validationError === null;
-  const warningMessage =
-    plungeTimerSecs > 240
-      ? '>4 mins is for advanced plungers'
-      : plungeTimerSecs > 120 && plungeTimerSecs < 240
-      ? 'Beginners advised to do <2 mins'
-      : null;
-  const [isPending, startTransition] = useTransition();
 
-  const handleTimerInput = (e: React.FormEvent<HTMLInputElement>) => {
+  const plungeTimerSecs = useMemo(() => {
     // validation check
     const validatedData = plungeTimerSecsSchema.safeParse(
-      e.currentTarget.value,
+      `${plungeTimerVals.mins}:${plungeTimerVals.secs}`,
     );
     if (!validatedData.success) {
       const errorMessage = validatedData.error.issues[0].message;
       setValidationError(errorMessage ? errorMessage : 'Invalid timer input');
-      return;
+      return null;
     }
 
-    const timerSecs = validatedData.data;
-
     setValidationError(null);
-    setPlungeTimerSecs(timerSecs);
-  };
+
+    return validatedData.data;
+  }, [plungeTimerVals]);
+
+  const warningMessage =
+    plungeTimerSecs && plungeTimerSecs > 240
+      ? '>4 mins is for advanced plungers'
+      : plungeTimerSecs && plungeTimerSecs > 120 && plungeTimerSecs < 240
+      ? 'Beginners advised to do <2 mins'
+      : null;
+  const [isPending, startTransition] = useTransition();
 
   return (
     <>
@@ -81,14 +85,21 @@ export default function UnitDetails({
                 Set your plunge timer:
               </Label>
 
-              <Input
-                id="plungeTimer"
-                type="time"
-                defaultValue={formatSecsToMins(plungeTimerSecs)}
-                // max={'08:00'}
-                className="rounded-lg bg-zinc-200 font-semibold focus-visible:font-semibold text-lg pl-2 w-fit h-8"
-                onChange={handleTimerInput}
-              />
+              <div className="flex-1 flex gap-1 items-center justify-end">
+                <DurationDropdown
+                  type="mins"
+                  value={plungeTimerVals}
+                  setValue={setPlungeTimerVals}
+                  className="bg-zinc-200 font-semibold h-8"
+                />
+                <span className="font-bold">:</span>
+                <DurationDropdown
+                  type="secs"
+                  value={plungeTimerVals}
+                  setValue={setPlungeTimerVals}
+                  className="bg-zinc-200 font-semibold h-8"
+                />
+              </div>
             </div>
 
             {validationError ? (
@@ -140,6 +151,7 @@ export default function UnitDetails({
             className="w-full"
             onClick={async () => {
               startTransition(async () => {
+                if (!plungeTimerSecs) return;
                 const response = await createSession({
                   unitId,
                   plungeTimerSecs,

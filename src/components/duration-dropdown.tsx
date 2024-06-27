@@ -55,9 +55,11 @@ export function DurationDropdown({
         {type === 'mins' &&
           DURATION_MINS_OPTIONS.map((option, index) => (
             <>
-              {index !== 0 && <DropdownMenuSeparator className="bg-zinc-200" />}
+              {index !== 0 && (
+                <DropdownMenuSeparator key={index} className="bg-zinc-200" />
+              )}
               <DropdownMenuItem
-                className="hover:bg-indigo-300 focus:bg-indigo-300"
+                className="hover:bg-indigo-300 focus:bg-indigo-300 text-base"
                 onClick={handleSelectOption}
               >
                 {option}
@@ -69,7 +71,8 @@ export function DurationDropdown({
             <>
               {index !== 0 && <DropdownMenuSeparator className="bg-zinc-200" />}
               <DropdownMenuItem
-                className="hover:bg-indigo-300 focus:bg-indigo-300"
+                key={index}
+                className="hover:bg-indigo-300 focus:bg-indigo-300 text-base"
                 onClick={handleSelectOption}
               >
                 {option}
@@ -78,7 +81,7 @@ export function DurationDropdown({
           ))
         ) : type === 'secs' ? (
           <DropdownMenuItem
-            className="hover:bg-indigo-300 focus:bg-indigo-300"
+            className="hover:bg-indigo-300 focus:bg-indigo-300 text-base"
             onClick={handleSelectOption}
           >
             00

@@ -71,29 +71,29 @@ export default function UnitDetails({
 
   return (
     <>
-      <div className="flex-1 flex flex-col text-sm">
-        <div className="flex gap-3 items-start justify-between py-4 border-b">
+      <div className="flex-1 flex flex-col">
+        <div className="flex gap-3 items-center justify-between py-4 border-b">
           <GoGoal className="h-7 w-7 mr-1 text-zinc-500" />
 
           <div className="flex-1 flex flex-col gap-1">
             <div className="flex gap-2">
-              <p className="self-center font-medium">
+              <p className="translate-y-1">
                 Set your plunge timer
               </p>
 
-              <div className="flex-1 flex gap-1 items-start justify-end">
+              <div className="flex-1 flex gap-1 items-center justify-end">
                 <DurationDropdown
                   type="mins"
                   value={plungeTimerVals}
                   setValue={setPlungeTimerVals}
-                  className="bg-zinc-200 font-semibold h-8 text-sm"
+                  className="bg-zinc-200 font-semibold h-8"
                 />
-                <span className="font-bold translate-y-1">:</span>
+                <span className="font-bold">:</span>
                 <DurationDropdown
                   type="secs"
                   value={plungeTimerVals}
                   setValue={setPlungeTimerVals}
-                  className="bg-zinc-200 font-semibold h-8 text-sm"
+                  className="bg-zinc-200 font-semibold h-8"
                 />
               </div>
             </div>
@@ -116,13 +116,13 @@ export default function UnitDetails({
 
         <div className="flex gap-3 items-center py-4 border-b">
           <BsThermometerSnow className="ml-1 h-7 w-7 text-zinc-500" />
-          <p className="font-medium">43F-47F water temp</p>
+          <p className="">43F-47F water temp</p>
         </div>
 
         <div className="flex flex-col gap-3 py-4 border-b">
           <div className="flex gap-3 items-center">
             <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
-            <p className="font-medium">How it works</p>
+            <p className="">How it works</p>
           </div>
           <HowItWorksCarousel />
         </div>
@@ -130,7 +130,7 @@ export default function UnitDetails({
         <div className="flex flex-col gap-3 py-4 border-b">
           <div className="flex gap-3 items-center">
             <RiLightbulbFlashLine className="ml-1 h-7 w-7 text-zinc-500 self-start" />
-            <p className="font-medium">Plunge Tips</p>
+            <p className="">Plunge Tips</p>
           </div>
           <PlungeTipsCarousel />
         </div>
@@ -169,7 +169,7 @@ function HowItWorksCarousel() {
     <Carousel className="w-full mx-auto">
       <CarouselContent>
         {Array.from({ length: HOW_IT_WORKS_ARRAY.length }).map((_, index) => (
-          <CarouselItem key={index} className="space-y-5 relative">
+          <CarouselItem key={index} className="space-y-5 relative text-sm">
             <div className="flex w-9/12 mx-auto gap-2">
               <span className="w-5 h-5 bg-gray-200 rounded-full text-xs flex items-center justify-center text-gray-700 font-extrabold p-2 translate-y-0.5">
                 {index + 1}

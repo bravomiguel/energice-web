@@ -120,7 +120,7 @@ function PlungeTimeGuide() {
 
         <div className="row-start-2 row-span-1 grid grid-cols-[100px_1fr_80px] grid-rows-1 gap-7 border-b py-3">
           <p>{`Beginner`}</p>
-          <p>{`30 plunges`}</p>
+          <p>{`<30 plunges`}</p>
           <p>{`2 mins`}</p>
         </div>
 

@@ -24,6 +24,7 @@ import { Checkbox } from './ui/checkbox';
 import { cn } from '@/lib/utils';
 import BottomNav from './bottom-nav';
 import { signWaiver } from '@/actions/actions';
+import { toast } from 'sonner';
 
 const homemadeApple = Homemade_Apple({ weight: '400', subsets: ['latin'] });
 
@@ -163,6 +164,7 @@ export default function ESigBlock({
               const response = await signWaiver();
               if (response?.error) {
                 console.error({ error: response.error });
+                toast.error(response.error);
               }
             });
           }}

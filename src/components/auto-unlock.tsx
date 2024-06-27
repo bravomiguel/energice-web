@@ -16,6 +16,7 @@ import Subtitle from './subtitle';
 import { Button } from './ui/button';
 import { IoMdInformationCircleOutline } from 'react-icons/io';
 import H1 from './h1';
+import { toast } from 'sonner';
 
 export default function AutoUnlock({
   unitId,
@@ -35,6 +36,7 @@ export default function AutoUnlock({
       if (unlockResponse?.error) {
         setIsError(unlockResponse.error);
         console.error({ error: unlockResponse.error });
+        toast.error(unlockResponse.error);
         return;
       }
 
@@ -42,6 +44,7 @@ export default function AutoUnlock({
       if (startSessionResp?.error) {
         setIsError(startSessionResp.error);
         console.error({ error: startSessionResp.error });
+        toast.error(startSessionResp.error);
         return;
       }
 

@@ -27,6 +27,7 @@ import Image from 'next/image';
 import { HOW_IT_WORKS_ARRAY } from '@/lib/constants';
 import PlungeTipsCarousel from './plunge-tips-carousel';
 import { DurationDropdown } from './duration-dropdown';
+import { toast } from 'sonner';
 
 export default function UnitDetails({
   unitStatus,
@@ -151,6 +152,7 @@ export default function UnitDetails({
                 });
                 if (response?.error) {
                   console.error({ error: response.error });
+                  toast.error(response.error);
                 }
               });
             }}

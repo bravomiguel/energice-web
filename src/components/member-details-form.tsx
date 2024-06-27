@@ -10,6 +10,7 @@ import { Label } from './ui/label';
 import { Button } from './ui/button';
 import { addMemberDetails } from '@/actions/actions';
 import BottomNav from './bottom-nav';
+import { toast } from 'sonner';
 
 export default function MemberDetailsForm() {
   const {
@@ -25,6 +26,7 @@ export default function MemberDetailsForm() {
     const response = await addMemberDetails(data);
     if (response?.error) {
       console.error({ error: response.error });
+      toast.error(response.error);
       // return;
     }
   });

@@ -60,8 +60,6 @@ export default async function Page({
   const unit = await getUnitById(unitId);
   if (!unit) {
     redirect('/');
-    // console.error('Unit not found');
-    // return;
   }
 
   // get unit lock

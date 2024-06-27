@@ -74,6 +74,7 @@ export default function SessionDisplay({
       });
       if (response?.error) {
         console.error({ error: response.error });
+        toast.error(response.error);
       }
     });
   }, [sessionId, totalPlungeSecs]);

@@ -6,6 +6,7 @@ import { Button, ButtonProps } from './ui/button';
 import { cn } from '@/lib/utils';
 import { startSession, unlockAction } from '@/actions/actions';
 import { TransitionStartFunction } from 'react';
+import { toast } from 'sonner';
 
 export default function UnlockPlungeBtn({
   unitId,
@@ -33,10 +34,12 @@ export default function UnlockPlungeBtn({
           const unlockResponse = await unlockAction({ unitId });
           if (unlockResponse?.error) {
             console.error({ error: unlockResponse.error });
+            toast.error(unlockResponse.error);
           }
           const startSessionResp = await startSession({ sessionId });
           if (startSessionResp.error) {
             console.error({ error: startSessionResp.error });
+            toast.error(startSessionResp.error);
           }
         });
       }}

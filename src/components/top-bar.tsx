@@ -11,6 +11,7 @@ import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { ONBOARDING_PATHNAMES, RESET_PW_PATHNAME } from '@/lib/constants';
 import { getTimeDiffSecs } from '@/lib/utils';
+import { toast } from 'sonner';
 
 export default function TopBar() {
   const activePathname = usePathname();
@@ -39,6 +40,7 @@ export default function TopBar() {
         });
         if (response?.error) {
           console.error({ error: response.error });
+          toast.error(response.error);
         }
       };
 

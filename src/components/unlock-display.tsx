@@ -11,6 +11,7 @@ import { Button } from './ui/button';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import LoadingSpinner from './loading-spinner';
 import { Session } from '@prisma/client';
+import Link from 'next/link';
 
 export default function UnlockDisplay({
   code,
@@ -136,7 +137,11 @@ export default function UnlockDisplay({
             Unlock via app
           </UnlockPlungeBtn>
         ) : null}
-        <Button variant="outline">Report issue</Button>
+        <Link href="https://koldup.com/#help-and-support" className="w-full">
+          <Button className="w-full" variant="outline">
+            Report issue
+          </Button>
+        </Link>
       </BottomNav>
     </>
   );

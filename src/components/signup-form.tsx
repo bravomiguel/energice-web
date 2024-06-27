@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { Dispatch, SetStateAction, useRef, useState } from 'react';
+import { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 import { signupSchemaPwConfirm } from '@/lib/validations';
@@ -13,7 +13,6 @@ import { Label } from './ui/label';
 import { Button } from './ui/button';
 import { signUp } from '@/actions/actions';
 import ShowPasswordToggle from './show-password-toggle';
-import { Checkbox } from './ui/checkbox';
 
 export default function SignupForm() {
   const {
@@ -32,9 +31,6 @@ export default function SignupForm() {
   const [passwordConfirmShow, setPasswordConfirmShow] =
     useState<boolean>(false);
   const [signupError, setSignupError] = useState<string | null>(null);
-
-  const [isChecked, setIsChecked] = useState(false);
-  const checkboxRef = useRef<HTMLDivElement>(null);
 
   const onSubmit = handleSubmit(async (data) => {
     const response = await signUp({ ...data, callbackUrl });
@@ -103,14 +99,30 @@ export default function SignupForm() {
         </div>
       </div>
 
-      <TOSCheckBox checkboxRef={checkboxRef} setIsChecked={setIsChecked} />
+      <div className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-zinc-200">
+        {`By signing up, you agree to KoldUp's `}
+        <Link
+          className="underline"
+          target="_blank"
+          href="https://koldup.com/#terms-of-service"
+        >
+          Terms of Service
+        </Link>
+        {` and `}
+        <Link
+          className="underline"
+          target="_blank"
+          href="https://koldup.com/#privacy-policy"
+        >
+          Privacy Policy
+        </Link>
+      </div>
 
       <div className="flex flex-col gap-1">
         <Button
           type="submit"
           disabled={
             !isValid ||
-            !isChecked ||
             isSubmitting ||
             (isSubmitSuccessful && signupError === null)
           }
@@ -124,40 +136,5 @@ export default function SignupForm() {
         {signupError && <p className="text-red-900 text-sm">{signupError}</p>}
       </div>
     </form>
-  );
-}
-
-function TOSCheckBox({
-  setIsChecked,
-  checkboxRef,
-}: {
-  setIsChecked: Dispatch<SetStateAction<boolean>>;
-  checkboxRef: React.RefObject<HTMLDivElement>;
-}) {
-  return (
-    <div className="flex items-start space-x-2 text-zinc-200" ref={checkboxRef}>
-      <Checkbox
-        className="border-zinc-200"
-        id="tos"
-        onCheckedChange={(checked) => {
-          const isChecked = checked === true ?? false;
-          setIsChecked(isChecked);
-        }}
-      />
-      <Label
-        htmlFor="tos"
-        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-      >
-        {`I agree to KoldUp's `}
-        <Link className="underline" target="_blank" href="https://koldup.com">
-          Terms of Service
-        </Link>
-        {` and `}
-        <Link className="underline" target="_blank" href="https://koldup.com">
-          Privacy Policy
-        </Link>
-        {/* {` *`} */}
-      </Label>
-    </div>
   );
 }

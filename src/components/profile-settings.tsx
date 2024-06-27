@@ -22,12 +22,23 @@ export default function ProfileSettings({
 }: Pick<User, 'firstName' | 'lastName'>) {
   return (
     <>
-      <SettingsItem label="Help and support" href={'https://koldup.com/'} />
-      <SettingsItem label="Terms of service" href={'https://koldup.com/'} />
-      <SettingsItem label="Privacy policy" href={'https://koldup.com/'} />
+      <SettingsItem
+        label="Help and support"
+        href={'https://koldup.com/#help-and-support'}
+      />
+      <SettingsItem
+        label="Terms of service"
+        href={'https://koldup.com/#terms-of-service'}
+      />
+      <SettingsItem
+        label="Privacy policy"
+        href={'https://koldup.com/#privacy-policy'}
+      />
       <SettingsItem label="Retake your Health Quiz" href={'/health-quiz'} />
-      <SettingsItem label="Download your data" href={'https://koldup.com/'} />
-      {/* <SettingsItem label="View your waiver" href={'https://koldup.com/'} /> */}
+      <SettingsItem
+        label="Download your data"
+        href={'https://koldup.com/#download-data'}
+      />
       <ViewWaiverDrawer firstName={firstName} lastName={lastName} />
     </>
   );

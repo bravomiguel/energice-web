@@ -513,6 +513,7 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
     await sleep(8000);
     return;
   } else if (process.env.VERCEL_ENV === 'production') {
+    // unlock unit
     try {
       const actionResponse = await seam.locks.unlockDoor(
         { device_id: lockDeviceId },

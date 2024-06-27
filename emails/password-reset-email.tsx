@@ -29,12 +29,12 @@ export default function passwordResetEmail({
         <Container style={container}>
           <Section style={coverSection}>
             <Section style={imageSection}>
-              <Img
+              {/* <Img
                 src={`https://koldup-preview.vercel.app/koldup_logo_zinc_100_bg_blue.jpg`}
                 width="75"
                 height="45"
                 alt="KoldUp Logo"
-              />  
+              />   */}
             </Section>
             <Section style={upperSection}>
               <Heading style={h1}>{`Let's get you a new password`}</Heading>

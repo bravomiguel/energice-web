@@ -61,6 +61,7 @@ export default function MemberDetailsForm() {
         <div className="space-y-1">
           <Label htmlFor="dob">Date of Birth</Label>
           <Input id="dob" type="date" {...register('dob')} className="text-left" />
+          <p className="text-zinc-400 text-xs">To sign up you need to be at least 18. Your birthday will not be shared with anybody.</p>
           {errors.dob && (
             <p className="text-red-500 text-sm">{errors.dob.message}</p>
           )}

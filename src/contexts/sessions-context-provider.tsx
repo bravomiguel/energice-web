@@ -67,16 +67,25 @@ export default function PlungeSessionsProvider({
   // --- max streak days calc ---
 
   // Convert session dates to Date objects and create a Set to store unique dates
-  const uniqueSessionDates = new Set(
+  const uniqueSessionDatesTimeStamp = new Set(
     sessions
       .filter((session) => session.sessionStart !== null)
-      .map((session) => session.sessionStart) as Date[],
+      .map((session) => {
+        if (!session.sessionStart) return;
+        let sessionStartSetToMidnight = new Date(session.sessionStart);
+        sessionStartSetToMidnight.setHours(0, 0, 0, 0);
+        return sessionStartSetToMidnight.getTime();
+      }) as number[],
   );
 
   // Convert the Set back to an array and sort session dates
-  const sessionDates = Array.from(uniqueSessionDates)
-    // .map((dateStr) => new Date(dateStr))
-    .sort((a, b) => a.getTime() - b.getTime());
+  const sessionDates = Array.from(uniqueSessionDatesTimeStamp)
+    .sort((a, b) => a - b).map((dateTimeStamp) => {
+      const date = new Date(dateTimeStamp);
+      return date;
+    });
+
+  // console.log({ sessionDates });
 
   // Calculate streaks
   let currentStreakDays = 0;

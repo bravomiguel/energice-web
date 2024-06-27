@@ -99,3 +99,5 @@ export const DURATION_SECS_OPTIONS = [
   '40',
   '50',
 ];
+
+export const SESSION_MAX_TIME_SECS = 6 * 60;

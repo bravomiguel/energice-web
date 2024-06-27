@@ -692,7 +692,7 @@ export async function endSession(data: {
   }
 
   // redirect to session screen
-  redirect(`/session/${sessionId}/end`);
+  redirect(`/session/${sessionId}/close`);
 }
 
 // --- payment actions ---

@@ -2,11 +2,10 @@
 
 import { Session } from '@prisma/client';
 
-import { cn, formatSecsToMins, getTimeDiffSecs } from '@/lib/utils';
+import { cn, formatSecsToMins } from '@/lib/utils';
 import { IoIosTimer } from 'react-icons/io';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
-import { IoWarningOutline } from 'react-icons/io5';
-// import { IoIosThumbsUp } from 'react-icons/io';
+
 import Subtitle from './subtitle';
 import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
@@ -18,6 +17,7 @@ import PlungeTipsDrawer from './plunge-tips-drawer';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import Image from 'next/image';
 import { toast } from 'sonner';
+import { SESSION_MAX_TIME_SECS } from '@/lib/constants';
 
 export default function SessionDisplay({
   sessionId,
@@ -40,8 +40,10 @@ export default function SessionDisplay({
   });
   const [totalPlungeSecs, setTotalPlungeSecs] = useState(0);
   const [isTimerPlaying, setIsTimerPlaying] = useState<boolean | null>(null);
+
   const [sessionSecsLeft, setSessionSecsLeft] = useState(sessionSecs);
   console.log({sessionSecsLeft});
+
   const [isPending, startTransition] = useTransition();
   const { handleChangeActiveSessionSecs, handleChangeActivePlungeSecs } =
     usePlungeSessions();
@@ -105,7 +107,7 @@ export default function SessionDisplay({
 
   useEffect(() => {
     const sessionTimeId = setInterval(() => {
-      if (sessionSecsLeft > -60) {
+      if (sessionSecsLeft > 0) {
         setSessionSecsLeft((prev) => prev - 1);
         handleChangeActiveSessionSecs(sessionSecsLeft);
       } else {
@@ -113,18 +115,18 @@ export default function SessionDisplay({
       }
     }, 1000);
 
-    if (sessionSecsLeft === 362) {
+    if (sessionSecsLeft === SESSION_MAX_TIME_SECS) {
       toast.success('Session started');
     }
 
-    if (sessionSecsLeft <= -60) {
+    if (sessionSecsLeft <= 0) {
       handleEndSession();
     }
 
     return () => clearInterval(sessionTimeId);
   }, [sessionSecsLeft, handleEndSession, handleChangeActiveSessionSecs]);
 
-  if (sessionSecsLeft > 362) {
+  if (sessionSecsLeft > SESSION_MAX_TIME_SECS) {
     return (
       <div className="flex-1 w-full h-full flex flex-col justify-center items-center gap-6 -translate-y-[10%]">
         <div className="flex flex-col gap-1 items-center text-center">
@@ -144,47 +146,6 @@ export default function SessionDisplay({
           />
         </div>
       </div>
-    );
-  }
-
-  if (sessionSecsLeft <= 0) {
-    return (
-      <>
-        <div className="flex-1 w-full h-full flex flex-col justify-center items-center gap-6 -translate-y-[10%]">
-          <Subtitle className="text-3xl text-zinc-900 font-medium flex gap-1">
-            {`Close the lid in `}
-            <span className="w-24 flex justify-start items-center">
-              {formatSecsToMins(60 + sessionSecsLeft)}
-            </span>
-          </Subtitle>
-          <div className="w-[300px] h-[220px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
-            <Image
-              src="/koldup_plunge.jpeg"
-              alt="cold plunge closed image"
-              width={300}
-              height={50}
-            />
-          </div>
-          <div className="flex gap-3 items-center justify-center w-full px-5 mx-auto">
-            <IoWarningOutline className="h-16 w-16 text-red-500" />
-            <Subtitle className="text-xl text-red-500 font-semibold w-fit text-start leading-tight">
-              {`to avoid an extra`} <br />
-              {`session charge`}
-            </Subtitle>
-          </div>
-        </div>
-        <BottomNav>
-          <Button
-            variant="destructive"
-            className="w-full h-16"
-            disabled={isPending}
-            isLoading={isPending}
-            onClick={async () => await handleEndSession()}
-          >
-            Done
-          </Button>
-        </BottomNav>
-      </>
     );
   }
 
@@ -222,22 +183,6 @@ export default function SessionDisplay({
             </div>
           )}
         </CountdownCircleTimer>
-
-        {/* <div className="ml-12 self-start flex flex-col border-[0.5px] rounded-lg py-2 px-4 shadow">
-          <Subtitle className="text-zinc-600 font-normal">
-            Session time left
-          </Subtitle>
-          <p
-            className={cn('text-2xl text-zinc-600', {
-              'text-amber-500': sessionSecsLeft > 60 && sessionSecsLeft <= 120,
-              'text-red-500': sessionSecsLeft <= 60,
-            })}
-          >
-            {sessionSecsLeft >= 10 * 60
-              ? '10:00'
-              : formatSecsToMins(sessionSecsLeft)}
-          </p>
-        </div> */}
       </div>
       <BottomNav>
         <Button

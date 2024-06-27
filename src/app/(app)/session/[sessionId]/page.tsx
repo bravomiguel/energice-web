@@ -1,11 +1,11 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { Session } from '@prisma/client';
 
-import H1 from '@/components/h1';
 import { checkPlungeSession, checkAuth } from '@/lib/server-utils';
 import { redirect } from 'next/navigation';
 import SessionDisplay from '@/components/session-display';
 import { getTimeDiffSecs } from '@/lib/utils';
+import { SESSION_MAX_TIME_SECS } from '@/lib/constants';
 
 export default async function Page({
   params: { sessionId },
@@ -36,11 +36,11 @@ export default async function Page({
   // calculate session seconds left, before passing it to client (put this into session context?)
   const now = new Date();
   const sessionEnd = new Date(
-    plungeSession.sessionStart.getTime() + 6 * 60 * 1000 + 6 * 1000,
+    plungeSession.sessionStart.getTime() + SESSION_MAX_TIME_SECS * 1000 + 4 * 1000,
   );
   const sessionSecsLeft = getTimeDiffSecs(now, sessionEnd);
 
-  if (!sessionSecsLeft) redirect('/'); // add redirect if session secs is zero?
+  if (!sessionSecsLeft) redirect('/');
 
   return (
     <main className="relative flex-1 flex flex-col gap-6">

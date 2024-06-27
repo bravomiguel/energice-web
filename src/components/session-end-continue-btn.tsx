@@ -15,7 +15,8 @@ export default function SessionEndContinueBtn() {
     });
   };
   return (
-    <BottomNav className="gap-0">
+    <BottomNav className="gap-2">
+      <PenaltyChargeWarning />
       <Button
         disabled={isPending}
         isLoading={isPending}
@@ -23,7 +24,6 @@ export default function SessionEndContinueBtn() {
       >
         Continue
       </Button>
-      <PenaltyChargeWarning />
     </BottomNav>
   );
 }

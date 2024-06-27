@@ -16,6 +16,8 @@ import { endSession } from '@/actions/actions';
 import EndSessionBtn from './end-session-btn';
 import PlungeTipsDrawer from './plunge-tips-drawer';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
+import Image from 'next/image';
+import { toast } from 'sonner';
 
 export default function SessionDisplay({
   sessionId,
@@ -39,8 +41,10 @@ export default function SessionDisplay({
   const [totalPlungeSecs, setTotalPlungeSecs] = useState(0);
   const [isTimerPlaying, setIsTimerPlaying] = useState<boolean | null>(null);
   const [sessionSecsLeft, setSessionSecsLeft] = useState(sessionSecs);
+  console.log({sessionSecsLeft});
   const [isPending, startTransition] = useTransition();
-  const { handleChangeActiveSessionSecs, handleChangeActivePlungeSecs } = usePlungeSessions();
+  const { handleChangeActiveSessionSecs, handleChangeActivePlungeSecs } =
+    usePlungeSessions();
 
   const handleUpdateCountdownSecs = (remainingTime: number) => {
     const storedCountdownSecs = localStorage.getItem('countdownSecs');
@@ -100,7 +104,7 @@ export default function SessionDisplay({
 
   useEffect(() => {
     const sessionTimeId = setInterval(() => {
-      if (sessionSecsLeft > 0) {
+      if (sessionSecsLeft > -60) {
         setSessionSecsLeft((prev) => prev - 1);
         handleChangeActiveSessionSecs(sessionSecsLeft);
       } else {
@@ -108,48 +112,86 @@ export default function SessionDisplay({
       }
     }, 1000);
 
-    if (sessionSecsLeft <= 0) {
+    if (sessionSecsLeft === 362) {
+      toast.success('Session started');
+    }
+
+    if (sessionSecsLeft <= -60) {
       handleEndSession();
     }
 
     return () => clearInterval(sessionTimeId);
   }, [sessionSecsLeft, handleEndSession, handleChangeActiveSessionSecs]);
 
-  // if (sessionSecsLeft < 0) {
-  //   return (
-  //     <>
-  //       <div className="flex-1 flex flex-col justify-center items-center gap-4">
-  //         <IoWarningOutline className="h-16 w-16 text-red-600" />
-  //         <div className="text-2xl text-red-600 flex gap-2">
-  //           <p className="font-medium">Close the lid in</p>{' '}
-  //           <span className="w-20 font-medium text-start">
-  //             {formatSecsToMins(30 + sessionSecsLeft)}
-  //           </span>
-  //         </div>
-  //         <Subtitle className="text-zinc-800">
-  //           To avoid an extra <span>$10</span> charge
-  //         </Subtitle>
-  //       </div>
-  //       <BottomNav>
-  //         <Button
-  //           variant="destructive"
-  //           className="w-full h-16"
-  //           disabled={isPending}
-  //           isLoading={isPending}
-  //           onClick={async () => await handleEndSession()}
-  //         >
-  //           Done
-  //         </Button>
-  //       </BottomNav>
-  //     </>
-  //   );
-  // }
+  if (sessionSecsLeft > 362) {
+    return (
+      <div className="flex-1 w-full h-full flex flex-col justify-center items-center gap-6 -translate-y-[10%]">
+        <div className="flex flex-col gap-1 items-center text-center">
+          <Subtitle className="text-3xl text-zinc-900 font-medium">
+            Plunge unlocked
+          </Subtitle>
+          <Subtitle className="text-xl px-5">
+            Open the lid, and take the plunge!
+          </Subtitle>
+        </div>
+        <div className="w-[300px] h-[220px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
+          <Image
+            src="/koldup_plunge_open.jpeg"
+            alt="cold plunge open image"
+            width={300}
+            height={50}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  if (sessionSecsLeft <= 0) {
+    return (
+      <>
+        <div className="flex-1 w-full h-full flex flex-col justify-center items-center gap-6 -translate-y-[10%]">
+          <Subtitle className="text-3xl text-zinc-900 font-medium flex gap-1">
+            {`Close the lid in `}
+            <span className="w-24 flex justify-start items-center">
+              {formatSecsToMins(60 + sessionSecsLeft)}
+            </span>
+          </Subtitle>
+          <div className="w-[300px] h-[220px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
+            <Image
+              src="/koldup_plunge.jpeg"
+              alt="cold plunge closed image"
+              width={300}
+              height={50}
+            />
+          </div>
+          <div className="flex gap-3 items-center justify-center w-full px-5 mx-auto">
+            <IoWarningOutline className="h-16 w-16 text-red-500" />
+            <Subtitle className="text-xl text-red-500 font-semibold w-fit text-start leading-tight">
+              {`to avoid an extra`} <br />
+              {`session charge`}
+            </Subtitle>
+          </div>
+        </div>
+        <BottomNav>
+          <Button
+            variant="destructive"
+            className="w-full h-16"
+            disabled={isPending}
+            isLoading={isPending}
+            onClick={async () => await handleEndSession()}
+          >
+            Done
+          </Button>
+        </BottomNav>
+      </>
+    );
+  }
 
   return (
     <>
       <div className="w-full flex justify-between items-center">
         <H1>Session</H1>
-        <PlungeTipsDrawer />
+        <PlungeTipsDrawer className="w-10 h-10 bg-green-koldup" />
       </div>
       <div className={cn(className)}>
         <CountdownCircleTimer

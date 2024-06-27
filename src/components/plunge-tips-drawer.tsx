@@ -1,6 +1,6 @@
 'use client';
 
-import { MdOutlineTipsAndUpdates } from "react-icons/md";
+import { MdOutlineTipsAndUpdates } from 'react-icons/md';
 import { RiLightbulbFlashLine } from 'react-icons/ri';
 
 import {
@@ -14,14 +14,22 @@ import {
 } from './ui/drawer';
 import { Button } from './ui/button';
 import PlungeTipsCarousel from './plunge-tips-carousel';
+import { cn } from '@/lib/utils';
 
-export default function PlungeTipsDrawer() {
+export default function PlungeTipsDrawer({
+  className,
+}: {
+  className?: string;
+}) {
   return (
     <Drawer>
       <DrawerTrigger asChild>
         <Button
           size="sm"
-          className="p-2 ml-auto bg-indigo-600 hover:bg-indigo-600/90"
+          className={cn(
+            'p-2 ml-auto bg-indigo-600 hover:bg-indigo-600/90',
+            className,
+          )}
         >
           <RiLightbulbFlashLine className="w-5 h-5" />
         </Button>

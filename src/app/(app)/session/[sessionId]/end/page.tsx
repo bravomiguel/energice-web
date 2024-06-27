@@ -15,11 +15,11 @@ export default async function Page({
   return (
     <main className="relative flex-1 flex flex-col">
       <div className="flex-1 flex flex-col justify-center items-center gap-6 w-[270px] mx-auto text-center">
-        {session && (
+        {session?.totalPlungeSecs && (
           <div className="space-y-4 w-full">
             <H1>Total plunge time</H1>
             <div className="relative rounded-md border-8 border-green-koldup bg-transparent text-center py-5 w-full flex items-center justify-center text-6xl font-semibold">
-              formatSecsToMins(session.totalPlungeSecs)
+              {formatSecsToMins(session.totalPlungeSecs)}
             </div>
           </div>
         )}

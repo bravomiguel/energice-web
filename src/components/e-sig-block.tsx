@@ -4,6 +4,7 @@ import {
   Dispatch,
   SetStateAction,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -42,6 +43,7 @@ export default function ESigBlock({
   const [signature, setSignature] = useState('');
   const [isCheckboxVisible, setIsCheckboxVisible] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [hasInputFocused, setHasInputFocused] = useState(false);
 
   const checkboxRef = useRef<HTMLDivElement>(null);
   const [isPending, startTransition] = useTransition();
@@ -51,6 +53,12 @@ export default function ESigBlock({
       checkboxRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   }, [isCheckboxVisible]);
+
+  useEffect(() => {
+    if (!isFormOpen) {
+      setHasInputFocused(false);
+    }
+  }, [isFormOpen]);
 
   return (
     <>
@@ -98,6 +106,12 @@ export default function ESigBlock({
                   value={fullName}
                   onChange={(e) => {
                     setFullName(e.target.value);
+                  }}
+                  onFocus={(event) => {
+                    if (!hasInputFocused) {
+                      event.target.blur();
+                      setHasInputFocused(true);
+                    }
                   }}
                 />
               </div>

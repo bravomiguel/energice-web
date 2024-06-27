@@ -72,16 +72,16 @@ export default function UnitDetails({
   return (
     <>
       <div className="flex-1 flex flex-col">
-        <div className="flex gap-3 items-center justify-between py-4 border-b">
+        <div className="flex gap-3 items-start justify-between py-4 border-b">
           <GoGoal className="h-7 w-7 mr-1 text-zinc-500" />
 
           <div className="flex-1 flex flex-col gap-1">
-            <div className="flex gap-2">
-              <p className="translate-y-1">
+            <div className="flex gap-2 items-center">
+              <p className="">
                 Set your plunge timer
               </p>
 
-              <div className="flex-1 flex gap-1 items-center justify-end">
+              <div className="flex-1 flex gap-0.5 mb-auto items-center justify-end">
                 <DurationDropdown
                   type="mins"
                   value={plungeTimerVals}
@@ -96,6 +96,8 @@ export default function UnitDetails({
                   className="bg-zinc-200 font-semibold h-8"
                 />
               </div>
+
+              <PlungeTimerInfo />
             </div>
 
             {validationError ? (
@@ -110,8 +112,6 @@ export default function UnitDetails({
               </div>
             ) : null}
           </div>
-
-          <PlungeTimerInfo />
         </div>
 
         <div className="flex gap-3 items-center py-4 border-b">

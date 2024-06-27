@@ -30,7 +30,7 @@ export default function PlungeTimerInfo() {
       <DrawerTrigger asChild>
         <Button
           size="sm"
-          className="p-2 ml-auto bg-indigo-600 hover:bg-indigo-600/90"
+          className="p-2 mb-auto bg-indigo-600 hover:bg-indigo-600/90"
         >
           <IoMdInformationCircleOutline className="w-5 h-5" />
         </Button>

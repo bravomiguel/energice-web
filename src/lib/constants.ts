@@ -20,7 +20,7 @@ export const PLUNGE_TIME_INFO_ARRAY: {
   gifUrl: string;
 }[] = [
   {
-    message: `The plunge timer is there to help you track your progress, and have a goal to aim for.`,
+    message: `The plunge timer (mm:ss) indicates how long you're aiming to plunge for during your session.`,
     gifUrl: '',
   },
   {
@@ -80,7 +80,7 @@ export const PLUNGE_TIPS_ARRAY: {
     gifUrl: '',
   },
   {
-    message: `After 30 secs, you'll notice your body relaxing. Lean in, don't fight it!`,
+    message: `After 30 secs, you'll notice your body relaxing. Let go, and enjoy it!`,
     gifUrl: '',
   },
   {

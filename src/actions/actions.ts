@@ -889,7 +889,7 @@ export async function sendPwResetEmail(data: { email: User['email'] }) {
     user = await prisma.user.findUnique({ where: { email } });
   } catch (e) {
     return {
-      error: 'Account lookup failed, please try again',
+      error: 'Account does not exist, please try again',
     };
   }
   if (!user) {

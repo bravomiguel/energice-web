@@ -40,11 +40,11 @@ export default function EmailConfirmForm() {
         toast.warning(response.error);
         setIsCodeSent(false);
         return;
+      } else {
+        toast.success('Code sent successfully');
+        setIsCodeSent(true);
       }
     });
-
-    toast.success('Code sent successfully');
-    setIsCodeSent(true);
   };
 
   const onSubmit = handleSubmit(async (data) => {

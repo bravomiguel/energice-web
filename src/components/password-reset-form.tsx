@@ -4,10 +4,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 
-import {
-  pwResetCodeSchema,
-  pwResetCodeSchemaPwConfirm,
-} from '@/lib/validations';
+import { pwResetCodeSchemaPwConfirm } from '@/lib/validations';
 import { TPasswordResetForm } from '@/lib/types';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
@@ -52,11 +49,11 @@ export default function PasswordResetForm() {
         toast.warning(response.error);
         setIsCodeSent(false);
         return;
+      } else {
+        toast.success('Code sent successfully');
+        setIsCodeSent(true);
       }
     });
-
-    toast.success('Code sent successfully');
-    setIsCodeSent(true);
   };
 
   const handleConfirmCode = async (e: React.MouseEvent<HTMLButtonElement>) => {

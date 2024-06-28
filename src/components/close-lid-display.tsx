@@ -40,6 +40,13 @@ export default function CloseLidDisplay({
   }, [sessionId, router]);
 
   useEffect(() => {
+    // clean out local storage
+    localStorage.removeItem('countdownSecs');
+    localStorage.removeItem('isTimerPlaying');
+    localStorage.removeItem('totalPlungeSecs');
+  }, []);
+
+  useEffect(() => {
     const closeTimeId = setInterval(() => {
       if (closeSecsLeft > 0) {
         setCloseSecsLeft((prev) => prev - 1);

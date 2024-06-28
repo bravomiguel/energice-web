@@ -27,8 +27,6 @@ export default function TopBar() {
     ? activeSessionSecsLeft <= 30
     : false;
 
-  console.log({ activeSessionSecsLeft });
-
   useEffect(() => {
     if (isSessionEnding && activeSessionId) {
       const endSessionAction = async () => {

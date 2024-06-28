@@ -30,20 +30,19 @@ export default function SessionDisplay({
   sessionSecs: number;
   className?: string;
 }) {
+  const [sessionSecsLeft, setSessionSecsLeft] = useState(sessionSecs);
+  console.log({ sessionSecsLeft });
+
   const [countdownSecs, setCountdownSecs] = useState<number | undefined>();
   const [totalPlungeSecs, setTotalPlungeSecs] = useState(0);
+
   const [isTimerPlaying, setIsTimerPlaying] = useState<boolean | null>(null);
-  const [sessionSecsLeft, setSessionSecsLeft] = useState(sessionSecs);
-  const [isSessionEnding, setIsSessionEnding] = useState<boolean>(false);
 
   const [isPending, startTransition] = useTransition();
   const { handleChangeActiveSessionSecs } = usePlungeSessions();
 
-  const storeRemainingTime = (remainingTime: number) => {
-    if (!isSessionEnding) {
-      localStorage.setItem('countdownSecs', JSON.stringify(remainingTime));
-    }
-
+  const handleCountdownUpdate = (remainingTime: number) => {
+    localStorage.setItem('countdownSecs', JSON.stringify(remainingTime));
     setCountdownSecs(remainingTime);
   };
 
@@ -52,10 +51,7 @@ export default function SessionDisplay({
   };
 
   const handleEndSession = useCallback(async () => {
-    setIsSessionEnding(true);
-    // clean out local storage
-    localStorage.removeItem('countdownSecs');
-    localStorage.removeItem('isTimerPlaying');
+    setIsTimerPlaying(false);
     startTransition(async () => {
       // run end session server action
       const response = await endSession({
@@ -79,19 +75,32 @@ export default function SessionDisplay({
   }, []);
 
   useEffect(() => {
-    if (isTimerPlaying !== null && !isSessionEnding) {
+    const storedTotalPlungeSecs = localStorage.getItem('totalPlungeSecs');
+    if (storedTotalPlungeSecs) {
+      setTotalPlungeSecs(JSON.parse(storedTotalPlungeSecs));
+    } else {
+      setTotalPlungeSecs(0);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isTimerPlaying !== null) {
       localStorage.setItem('isTimerPlaying', JSON.stringify(isTimerPlaying));
     }
 
     const storedIsTimerPlaying = localStorage.getItem('isTimerPlaying');
     if (storedIsTimerPlaying)
       setIsTimerPlaying(JSON.parse(storedIsTimerPlaying));
-  }, [isTimerPlaying, isSessionEnding]);
+  }, [isTimerPlaying]);
 
   useEffect(() => {
     const totalPlungeSecsId = setInterval(() => {
       if (isTimerPlaying) {
-        setTotalPlungeSecs((prev) => prev + 1); // need to make this persist in local storage
+        setTotalPlungeSecs(totalPlungeSecs + 1);
+        localStorage.setItem(
+          'totalPlungeSecs',
+          JSON.stringify(totalPlungeSecs + 1),
+        );
       } else {
         clearInterval(totalPlungeSecsId);
       }
@@ -103,8 +112,8 @@ export default function SessionDisplay({
   useEffect(() => {
     const sessionTimeId = setInterval(() => {
       if (sessionSecsLeft > 0) {
-        setSessionSecsLeft((prev) => prev - 1);
-        handleChangeActiveSessionSecs(sessionSecsLeft);
+        setSessionSecsLeft(sessionSecsLeft - 1);
+        handleChangeActiveSessionSecs(sessionSecsLeft - 1);
       } else {
         clearInterval(sessionTimeId);
         handleChangeActiveSessionSecs(0);
@@ -129,7 +138,7 @@ export default function SessionDisplay({
           <Subtitle className="text-3xl text-zinc-900 font-medium">
             Plunge unlocked
           </Subtitle>
-          <Subtitle className="text-xl px-5">
+          <Subtitle className="text-xl px-8">
             Open the lid, and take the plunge!
           </Subtitle>
         </div>
@@ -143,7 +152,9 @@ export default function SessionDisplay({
         </div>
         <Subtitle className="flex gap-1 justify-center items-center translate-x-1">
           <p>{`Session starts in `}</p>
-          <span className='w-14 flex justify-start items-center'>{formatSecsToMins(sessionSecsLeft - SESSION_MAX_TIME_SECS)}</span>
+          <span className="w-14 flex justify-start items-center">
+            {formatSecsToMins(sessionSecsLeft - SESSION_MAX_TIME_SECS)}
+          </span>
         </Subtitle>
       </div>
     );
@@ -156,7 +167,7 @@ export default function SessionDisplay({
         <PlungeTipsDrawer className="w-10 h-10 bg-green-koldup" />
       </div>
       <div className={cn(className)}>
-        {countdownSecs ? (
+        {countdownSecs || countdownSecs === 0 ? (
           <CountdownCircleTimer
             isPlaying={isTimerPlaying || false}
             duration={plungeTimerSecs}
@@ -167,7 +178,7 @@ export default function SessionDisplay({
             trailColor="#e5e7eb"
             size={300}
             isSmoothColorTransition={false}
-            onUpdate={storeRemainingTime}
+            onUpdate={handleCountdownUpdate}
           >
             {({ remainingTime }) => (
               <div className="flex flex-col items-center gap-2">

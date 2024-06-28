@@ -30,30 +30,19 @@ export default function SessionDisplay({
   sessionSecs: number;
   className?: string;
 }) {
-  const [countdownSecs, setCountdownSecs] = useState(() => {
-    const storedCountdownSecs = localStorage.getItem('countdownSecs');
-    return storedCountdownSecs
-      ? JSON.parse(storedCountdownSecs)
-      : plungeTimerSecs;
-  });
+  const [countdownSecs, setCountdownSecs] = useState<number | undefined>();
   const [totalPlungeSecs, setTotalPlungeSecs] = useState(0);
   const [isTimerPlaying, setIsTimerPlaying] = useState<boolean | null>(null);
-
   const [sessionSecsLeft, setSessionSecsLeft] = useState(sessionSecs);
-  // console.log({sessionSecsLeft});
+  const [isSessionEnding, setIsSessionEnding] = useState<boolean>(false);
 
   const [isPending, startTransition] = useTransition();
-  const { handleChangeActiveSessionSecs, handleChangeActivePlungeSecs } =
-    usePlungeSessions();
+  const { handleChangeActiveSessionSecs } = usePlungeSessions();
 
-  const handleUpdateCountdownSecs = (remainingTime: number) => {
-    const storedCountdownSecs = localStorage.getItem('countdownSecs');
-
-    if (!storedCountdownSecs) {
+  const storeRemainingTime = (remainingTime: number) => {
+    if (!isSessionEnding) {
       localStorage.setItem('countdownSecs', JSON.stringify(remainingTime));
     }
-
-    localStorage.setItem('countdownSecs', JSON.stringify(remainingTime));
 
     setCountdownSecs(remainingTime);
   };
@@ -63,10 +52,11 @@ export default function SessionDisplay({
   };
 
   const handleEndSession = useCallback(async () => {
+    setIsSessionEnding(true);
+    // clean out local storage
+    localStorage.removeItem('countdownSecs');
+    localStorage.removeItem('isTimerPlaying');
     startTransition(async () => {
-      // clean out local storage
-      localStorage.removeItem('countdownSecs');
-      localStorage.removeItem('isTimerPlaying');
       // run end session server action
       const response = await endSession({
         sessionId,
@@ -80,28 +70,35 @@ export default function SessionDisplay({
   }, [sessionId, totalPlungeSecs]);
 
   useEffect(() => {
-    if (isTimerPlaying !== null) {
+    const storedCountdownSecs = localStorage.getItem('countdownSecs');
+    if (storedCountdownSecs) {
+      setCountdownSecs(JSON.parse(storedCountdownSecs));
+    } else {
+      setCountdownSecs(plungeTimerSecs);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isTimerPlaying !== null && !isSessionEnding) {
       localStorage.setItem('isTimerPlaying', JSON.stringify(isTimerPlaying));
     }
 
-    setIsTimerPlaying(() => {
-      const storedIsTimerPlaying = localStorage.getItem('isTimerPlaying');
-      return storedIsTimerPlaying ? JSON.parse(storedIsTimerPlaying) : null;
-    });
-  }, [isTimerPlaying]);
+    const storedIsTimerPlaying = localStorage.getItem('isTimerPlaying');
+    if (storedIsTimerPlaying)
+      setIsTimerPlaying(JSON.parse(storedIsTimerPlaying));
+  }, [isTimerPlaying, isSessionEnding]);
 
   useEffect(() => {
     const totalPlungeSecsId = setInterval(() => {
       if (isTimerPlaying) {
         setTotalPlungeSecs((prev) => prev + 1); // need to make this persist in local storage
-        handleChangeActivePlungeSecs(totalPlungeSecs);
       } else {
         clearInterval(totalPlungeSecsId);
       }
     }, 1000);
 
     return () => clearInterval(totalPlungeSecsId);
-  }, [isTimerPlaying, handleChangeActivePlungeSecs, totalPlungeSecs]);
+  }, [isTimerPlaying, totalPlungeSecs]);
 
   useEffect(() => {
     const sessionTimeId = setInterval(() => {
@@ -155,33 +152,35 @@ export default function SessionDisplay({
         <PlungeTipsDrawer className="w-10 h-10 bg-green-koldup" />
       </div>
       <div className={cn(className)}>
-        <CountdownCircleTimer
-          isPlaying={isTimerPlaying || false}
-          duration={plungeTimerSecs}
-          initialRemainingTime={countdownSecs}
-          colors={['#4338ca', '#4338ca']}
-          colorsTime={[plungeTimerSecs, 0]}
-          rotation="counterclockwise"
-          trailColor="#e5e7eb"
-          size={300}
-          isSmoothColorTransition={false}
-          onUpdate={handleUpdateCountdownSecs}
-        >
-          {({ remainingTime }) => (
-            <div className="flex flex-col items-center gap-2">
-              <p className="text-zinc-500">Plunge timer</p>
-              <span className="text-7xl font-semibold w-52 text-start">
-                {formatSecsToMins(remainingTime)}
-              </span>
-              <div className="flex justify-center items-center gap-1">
-                <IoIosTimer className="text-gray-500 h-5 w-5" />
-                <p className="text-gray-500 w-12 text-start">
-                  {formatSecsToMins(totalPlungeSecs)}
-                </p>
+        {countdownSecs ? (
+          <CountdownCircleTimer
+            isPlaying={isTimerPlaying || false}
+            duration={plungeTimerSecs}
+            initialRemainingTime={countdownSecs}
+            colors={['#4338ca', '#4338ca']}
+            colorsTime={[plungeTimerSecs, 0]}
+            rotation="counterclockwise"
+            trailColor="#e5e7eb"
+            size={300}
+            isSmoothColorTransition={false}
+            onUpdate={storeRemainingTime}
+          >
+            {({ remainingTime }) => (
+              <div className="flex flex-col items-center gap-2">
+                <p className="text-zinc-500">Plunge timer</p>
+                <span className="text-7xl font-semibold w-52 text-start">
+                  {formatSecsToMins(remainingTime)}
+                </span>
+                <div className="flex justify-center items-center gap-1">
+                  <IoIosTimer className="text-gray-500 h-5 w-5" />
+                  <p className="text-gray-500 w-12 text-start">
+                    {formatSecsToMins(totalPlungeSecs)}
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
-        </CountdownCircleTimer>
+            )}
+          </CountdownCircleTimer>
+        ) : null}
       </div>
       <BottomNav>
         <Button

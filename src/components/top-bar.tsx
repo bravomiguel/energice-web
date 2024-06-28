@@ -10,7 +10,7 @@ import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
 import { ONBOARDING_PATHNAMES, RESET_PW_PATHNAME } from '@/lib/constants';
-import { getTimeDiffSecs } from '@/lib/utils';
+import { formatSecsToMins, getTimeDiffSecs } from '@/lib/utils';
 import { toast } from 'sonner';
 
 export default function TopBar() {
@@ -24,8 +24,10 @@ export default function TopBar() {
   const { activeSessionId, activeSessionSecsLeft, activePlungeSecs } =
     usePlungeSessions();
   const isSessionEnding = activeSessionSecsLeft
-    ? activeSessionId && activeSessionSecsLeft <= 60
+    ? activeSessionSecsLeft <= 30
     : false;
+
+  console.log({ activeSessionSecsLeft });
 
   useEffect(() => {
     if (isSessionEnding && activeSessionId) {
@@ -48,13 +50,23 @@ export default function TopBar() {
         endSessionAction();
       }
     }
-  }, [isSessionEnding, activeSessionSecsLeft, activeSessionId, activePlungeSecs]);
+  }, [
+    isSessionEnding,
+    activeSessionSecsLeft,
+    activeSessionId,
+    activePlungeSecs,
+  ]);
+
+  if (isSessionEnding) {
+    return (
+      <header className="relative w-full flex justify-between items-center mb-2 transition-all">
+        <SessionEndingBanner sessionStartSecs={activeSessionSecsLeft} />
+      </header>
+    );
+  }
 
   return (
     <header className="relative w-full flex justify-between items-center">
-      {isSessionEnding && (
-        <SessionEndingBanner sessionStartSecs={activeSessionSecsLeft} />
-      )}
       <nav className="w-full pt-3">
         <ul className="w-full flex gap-2 text-xs justify-between items-center text-indigo-800 ">
           <>
@@ -87,11 +99,15 @@ function SessionEndingBanner({
   sessionStartSecs: number | null;
 }) {
   return (
-    <div className="transition w-screen -mx-4 px-4 py-4 bg-red-500 text-zinc-200 text-lg font-medium text-center flex justify-between items-center">
-      <p>
-        Session ending in{' '}
-        <span className="text-2xl font-semibold">{sessionStartSecs}</span>
-      </p>
+    <div className="transition w-screen -mx-4 px-4 py-3 bg-red-500 text-zinc-200 text-lg font-medium text-center flex justify-center items-center gap-1.5">
+      <p className="self-end">Session ending in </p>
+      <>
+        {sessionStartSecs ? (
+          <span className="text-2xl font-semibold w-20 flex justify-start items-center text-start">
+            {formatSecsToMins(sessionStartSecs)}
+          </span>
+        ) : null}
+      </>
     </div>
   );
 }

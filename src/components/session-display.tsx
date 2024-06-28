@@ -30,8 +30,6 @@ export default function SessionDisplay({
   sessionSecs: number;
   className?: string;
 }) {
-  // const { id: sessionId, plungeTimerSecs } = sessionData;
-  // const plungeTimerSecs = 10;
   const [countdownSecs, setCountdownSecs] = useState(() => {
     const storedCountdownSecs = localStorage.getItem('countdownSecs');
     return storedCountdownSecs
@@ -42,7 +40,7 @@ export default function SessionDisplay({
   const [isTimerPlaying, setIsTimerPlaying] = useState<boolean | null>(null);
 
   const [sessionSecsLeft, setSessionSecsLeft] = useState(sessionSecs);
-  console.log({sessionSecsLeft});
+  // console.log({sessionSecsLeft});
 
   const [isPending, startTransition] = useTransition();
   const { handleChangeActiveSessionSecs, handleChangeActivePlungeSecs } =
@@ -112,6 +110,7 @@ export default function SessionDisplay({
         handleChangeActiveSessionSecs(sessionSecsLeft);
       } else {
         clearInterval(sessionTimeId);
+        handleChangeActiveSessionSecs(0);
       }
     }, 1000);
 

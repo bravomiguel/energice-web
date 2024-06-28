@@ -1,6 +1,12 @@
 'use client';
 
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+  useTransition,
+} from 'react';
 import Image from 'next/image';
 import { Session } from '@prisma/client';
 import { IoWarningOutline } from 'react-icons/io5';
@@ -10,6 +16,7 @@ import { formatSecsToMins } from '@/lib/utils';
 import Subtitle from './subtitle';
 import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
+import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 
 export default function CloseLidDisplay({
   sessionId,
@@ -23,6 +30,8 @@ export default function CloseLidDisplay({
 
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+
+  const { handleChangeActiveSessionSecs } = usePlungeSessions();
 
   const handleConfirm = useCallback(async () => {
     startTransition(async () => {
@@ -45,6 +54,11 @@ export default function CloseLidDisplay({
 
     return () => clearInterval(closeTimeId);
   }, [closeSecsLeft, handleConfirm]);
+
+  useLayoutEffect(() => {
+    // reset active session secs in local state
+    handleChangeActiveSessionSecs(null);
+  }, []);
 
   return (
     <>

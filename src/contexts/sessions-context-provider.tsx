@@ -15,7 +15,7 @@ type TPlungeSessions = {
   handleChangeActiveSessionId: (id: Session['id']) => void;
   activeSession?: Session;
   activeSessionSecsLeft: number | null;
-  handleChangeActiveSessionSecs: (sessionSecsLeft: number) => void;
+  handleChangeActiveSessionSecs: (sessionSecsLeft: number | null) => void;
   activePlungeSecs: number | null;
   handleChangeActivePlungeSecs: (plungeSecs: number) => void;
   numberOfSessions: number;
@@ -39,7 +39,7 @@ export default function PlungeSessionsProvider({
     (session) => session.id === activeSessionId,
   );
 
-  const handleChangeActiveSessionSecs = (sessionSecsLeft: number) => {
+  const handleChangeActiveSessionSecs = (sessionSecsLeft: number | null) => {
     setActiveSessionSecsLeft(sessionSecsLeft);
   };
 

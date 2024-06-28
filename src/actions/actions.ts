@@ -41,6 +41,7 @@ import {
 import { ONBOARDING_URLS } from '@/lib/constants';
 import confirmEmail from '../../emails/confirm-email';
 import passwordResetEmail from '../../emails/password-reset-email';
+import { userAgent } from 'next/server';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const seam = new Seam();
@@ -235,6 +236,8 @@ export async function deleteAccount() {
         deletedAt: new Date(),
       },
     });
+
+    await prisma.session.deleteMany({ where: { userId: session.user.id } });
   } catch (e) {
     console.log(e);
     return {

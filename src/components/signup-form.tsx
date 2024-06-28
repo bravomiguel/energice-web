@@ -99,25 +99,6 @@ export default function SignupForm() {
         </div>
       </div>
 
-      <div className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-zinc-200">
-        {`By signing up, you agree to KoldUp's `}
-        <Link
-          className="underline"
-          target="_blank"
-          href="https://koldup.com/#terms-of-service"
-        >
-          Terms of Service
-        </Link>
-        {` and `}
-        <Link
-          className="underline"
-          target="_blank"
-          href="https://koldup.com/#privacy-policy"
-        >
-          Privacy Policy
-        </Link>
-      </div>
-
       <div className="flex flex-col gap-1">
         <Button
           type="submit"

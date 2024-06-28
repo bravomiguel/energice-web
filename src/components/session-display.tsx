@@ -141,6 +141,10 @@ export default function SessionDisplay({
             height={50}
           />
         </div>
+        <Subtitle className="flex gap-1 justify-center items-center translate-x-1">
+          <p>{`Session starts in `}</p>
+          <span className='w-14 flex justify-start items-center'>{formatSecsToMins(sessionSecsLeft - SESSION_MAX_TIME_SECS)}</span>
+        </Subtitle>
       </div>
     );
   }

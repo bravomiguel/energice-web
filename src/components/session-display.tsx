@@ -35,6 +35,7 @@ export default function SessionDisplay({
 
   const [countdownSecs, setCountdownSecs] = useState<number | undefined>();
   const [totalPlungeSecs, setTotalPlungeSecs] = useState(0);
+  const [isFirstOverTimeSec, setIsFirstOverTimeSec] = useState(true);
 
   const [isTimerPlaying, setIsTimerPlaying] = useState<boolean | null>(null);
 
@@ -44,6 +45,13 @@ export default function SessionDisplay({
   const handleCountdownUpdate = (remainingTime: number) => {
     localStorage.setItem('countdownSecs', JSON.stringify(remainingTime));
     setCountdownSecs(remainingTime);
+    if (remainingTime > 0) {
+      setTotalPlungeSecs(plungeTimerSecs - remainingTime);
+      localStorage.setItem(
+        'totalPlungeSecs',
+        JSON.stringify(plungeTimerSecs - remainingTime),
+      );
+    }
   };
 
   const handleIsTimerPlaying = () => {
@@ -94,20 +102,31 @@ export default function SessionDisplay({
   }, [isTimerPlaying]);
 
   useEffect(() => {
-    const totalPlungeSecsId = setInterval(() => {
-      if (isTimerPlaying) {
+    let totalPlungeSecsId: NodeJS.Timeout;
+    if (countdownSecs === 0) {
+      if (isFirstOverTimeSec) {
         setTotalPlungeSecs(totalPlungeSecs + 1);
         localStorage.setItem(
           'totalPlungeSecs',
           JSON.stringify(totalPlungeSecs + 1),
         );
-      } else {
-        clearInterval(totalPlungeSecsId);
+        setIsFirstOverTimeSec(false);
       }
-    }, 1000);
+      totalPlungeSecsId = setInterval(() => {
+        if (isTimerPlaying) {
+          setTotalPlungeSecs(totalPlungeSecs + 1);
+          localStorage.setItem(
+            'totalPlungeSecs',
+            JSON.stringify(totalPlungeSecs + 1),
+          );
+        } else {
+          clearInterval(totalPlungeSecsId);
+        }
+      }, 1000);
+    }
 
     return () => clearInterval(totalPlungeSecsId);
-  }, [isTimerPlaying, totalPlungeSecs]);
+  }, [isTimerPlaying, totalPlungeSecs, countdownSecs]);
 
   useEffect(() => {
     const sessionTimeId = setInterval(() => {

@@ -33,7 +33,7 @@
     "next-auth": "^5.0.0-beta.19",
     "next-themes": "^0.3.0",
     "react": "^18",
-    "react-confetti": "^6.1.0",
+    "react-confetti-explosion": "^2.1.2",
     "react-countdown-circle-timer": "^3.2.1",
     "react-dom": "^18",
     "react-email": "2.1.4",

@@ -21,6 +21,7 @@ import {
   plungeTimerSecsSchema,
   pwResetCodeSchema,
   signinSchema,
+  waiverDataSchema,
 } from '@/lib/validations';
 import { signIn, signOut } from '@/lib/auth-no-edge';
 import {
@@ -305,14 +306,25 @@ export async function saveHealthQuiz(data: HealthQuizData) {
 
 // --- waiver actions ---
 
-export async function signWaiver() {
+export async function signWaiver(data: Pick<User, 'waiverSigName'>) {
   // authentication check
   const session = await checkAuth();
+
+  // validation check
+  const validatedWaiverData = waiverDataSchema.safeParse(data);
+
+  if (!validatedWaiverData.success) {
+    return {
+      error: validatedWaiverData.error.issues[0].message,
+    };
+  }
+
+  const { waiverSigName } = validatedWaiverData.data;
 
   try {
     await prisma.user.update({
       where: { id: session.user.id },
-      data: { isWaiverSigned: true },
+      data: { isWaiverSigned: true, waiverSigName, waiverSignedAt: new Date() },
     });
   } catch (e) {
     return {
@@ -321,11 +333,11 @@ export async function signWaiver() {
   }
 
   // redirect to callback url, if available
-  const data = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { id: session.user.id },
     select: { authCallbackUrl: true },
   });
-  const callbackUrl = data?.authCallbackUrl;
+  const callbackUrl = user?.authCallbackUrl;
 
   if (!callbackUrl) redirect('/');
 

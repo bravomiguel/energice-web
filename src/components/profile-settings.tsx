@@ -19,7 +19,9 @@ import { User } from '@prisma/client';
 export default function ProfileSettings({
   firstName,
   lastName,
-}: Pick<User, 'firstName' | 'lastName'>) {
+  waiverSignedAt,
+  waiverSigName,
+}: Pick<User, 'firstName' | 'lastName' | 'waiverSignedAt' | 'waiverSigName'>) {
   return (
     <>
       <SettingsItem
@@ -39,7 +41,7 @@ export default function ProfileSettings({
         label="Download your data"
         href={'https://koldup.com/#download-data'}
       />
-      <ViewWaiverDrawer firstName={firstName} lastName={lastName} />
+      <ViewWaiverDrawer firstName={firstName} lastName={lastName} waiverSignedAt={waiverSignedAt} waiverSigName={waiverSigName} />
     </>
   );
 }
@@ -59,7 +61,9 @@ function SettingsItem({ label, href }: { label: string; href?: any }) {
 function ViewWaiverDrawer({
   firstName,
   lastName,
-}: Pick<User, 'firstName' | 'lastName'>) {
+  waiverSignedAt,
+  waiverSigName,
+}: Pick<User, 'firstName' | 'lastName' | 'waiverSignedAt' | 'waiverSigName'>) {
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -83,7 +87,8 @@ function ViewWaiverDrawer({
             <WaiverTerms
               firstName={firstName}
               lastName={lastName}
-              isSigned={true}
+              waiverSignedAt={waiverSignedAt}
+              waiverSigName={waiverSigName}
             />
           </div>
           <DrawerFooter className="px-0">

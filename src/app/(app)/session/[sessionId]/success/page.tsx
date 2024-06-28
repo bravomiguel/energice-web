@@ -1,6 +1,7 @@
 import H1 from '@/components/h1';
 import SessionEndContinueBtn from '@/components/session-end-continue-btn';
 import Subtitle from '@/components/subtitle';
+import SuccessPlungeTime from '@/components/success-plunge-time';
 import { getSessionById } from '@/lib/server-utils';
 import { formatSecsToMins } from '@/lib/utils';
 import { Session } from '@prisma/client';
@@ -21,6 +22,7 @@ export default async function Page({
             <div className="relative rounded-md border-8 border-green-koldup bg-transparent text-center py-4 px-9 flex items-center justify-center text-5xl font-semibold">
               {formatSecsToMins(session.totalPlungeSecs)}
             </div>
+            {/* <SuccessPlungeTime plungeSecs={session.totalPlungeSecs} /> */}
           </div>
         ) : null}
         <Subtitle className="text-3xl text-zinc-900 font-medium">

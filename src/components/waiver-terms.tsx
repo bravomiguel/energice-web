@@ -3,18 +3,21 @@ import { Homemade_Apple } from 'next/font/google';
 
 import H2 from './h2';
 import { Input } from './ui/input';
-import { cn } from '@/lib/utils';
 
 const homemadeApple = Homemade_Apple({ weight: '400', subsets: ['latin'] });
 
 export default function WaiverTerms({
   firstName,
   lastName,
-  isSigned,
+  // isSigned,
+  waiverSignedAt,
+  waiverSigName,
 }: {
   firstName: User['firstName'];
   lastName: User['lastName'];
-  isSigned?: boolean;
+  // isSigned?: boolean;
+  waiverSignedAt?: User['waiverSignedAt'];
+  waiverSigName?: User['waiverSigName'];
 }) {
   return (
     <div className="flex-1 flex flex-col gap-5">
@@ -109,14 +112,13 @@ export default function WaiverTerms({
       </div>
       <p className="font-semibold">{`Participant acknowledges that Participant has read this Waiver carefully and understands its terms. Participant agrees to be bound by this Waiver and signs it freely and voluntarily.`}</p>
 
-      {isSigned && (
+      {waiverSignedAt && waiverSigName && (
         <div className="space-y-3 mt-4">
           <Input
             id="signature"
             type="text"
             disabled
-            value={'Signature Name'}
-            // placeholder="Click SIGN below to add your signature"
+            value={waiverSigName}
             className={`${homemadeApple.className} disabled:opacity-100 h-16 text-center`}
           />
           <div className="grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
@@ -124,7 +126,7 @@ export default function WaiverTerms({
             <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">{`${firstName} ${lastName}`}</span>
             <span className="col-start-1 row-start-2">Date:</span>
             <span className="col-start-2 row-start-2 border-b border-zinc-700 px-2 font-medium">
-              Signed date here
+              {waiverSignedAt.toLocaleDateString('en-US')}
             </span>
           </div>
         </div>

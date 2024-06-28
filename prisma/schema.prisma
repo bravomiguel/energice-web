@@ -7,7 +7,7 @@ generator client {
 
 // datasource db {
 //   provider = "sqlite"
-//   url = "file:./dev.db"
+//   url      = "file:./dev.db"
 // }
 
 datasource db {
@@ -27,11 +27,13 @@ model User {
   lastName         String?
   dob              DateTime?
   isWaiverSigned   Boolean   @default(false)
+  waiverSignedAt   DateTime?
+  waiverSigName    String?
   healthQuiz       String?
   authCallbackUrl  String?
   sessions         Session[]
-  pwResetCode          String?
-  pwResetCodeAt        DateTime?
+  pwResetCode      String?
+  pwResetCodeAt    DateTime?
   deleted          Boolean   @default(false)
   deletedAt        DateTime?
   createdAt        DateTime  @default(now())

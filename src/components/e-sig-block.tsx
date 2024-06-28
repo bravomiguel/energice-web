@@ -4,7 +4,6 @@ import {
   Dispatch,
   SetStateAction,
   useEffect,
-  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -25,6 +24,7 @@ import { cn } from '@/lib/utils';
 import BottomNav from './bottom-nav';
 import { signWaiver } from '@/actions/actions';
 import { toast } from 'sonner';
+import { waiverDataSchema } from '@/lib/validations';
 
 const homemadeApple = Homemade_Apple({ weight: '400', subsets: ['latin'] });
 
@@ -38,8 +38,8 @@ export default function ESigBlock({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [fullName, setFullName] = useState(`${firstName} ${lastName}`);
   const isValid = useMemo(() => {
-    const fullNameRegex = /^[a-zA-Z]{2,} [a-zA-Z]+(?: [a-zA-Z]*)*$/;
-    return fullNameRegex.test(fullName);
+    const validatedData = waiverDataSchema.safeParse({waiverSigName: fullName});
+    return validatedData.success;
   }, [fullName]);
   const [signature, setSignature] = useState('');
   const [isCheckboxVisible, setIsCheckboxVisible] = useState(false);
@@ -145,7 +145,7 @@ export default function ESigBlock({
             checkboxRef={checkboxRef}
           />
         )}
-        <div className="grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
+        <div className="mt-4 grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
           <span className="col-start-1 row-start-1">Print Name:</span>
           <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">{`${firstName} ${lastName}`}</span>
           <span className="col-start-1 row-start-2">Date:</span>
@@ -161,7 +161,7 @@ export default function ESigBlock({
           onClick={async () => {
             // router.push('/unit');
             startTransition(async () => {
-              const response = await signWaiver();
+              const response = await signWaiver({ waiverSigName: fullName });
               if (response?.error) {
                 console.error({ error: response.error });
                 toast.error(response.error);

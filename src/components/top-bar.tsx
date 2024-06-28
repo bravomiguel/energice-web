@@ -5,12 +5,11 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { FaUser } from 'react-icons/fa';
 import Link from 'next/link';
 
-import { endSession, signOutAction, startSession } from '@/actions/actions';
+import { endSession, signOutAction } from '@/actions/actions';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
-import { useEffect, useState } from 'react';
-import { Button } from './ui/button';
+import { useEffect } from 'react';
 import { ONBOARDING_PATHNAMES, RESET_PW_PATHNAME } from '@/lib/constants';
-import { formatSecsToMins, getTimeDiffSecs } from '@/lib/utils';
+import { formatSecsToMins } from '@/lib/utils';
 import { toast } from 'sonner';
 
 export default function TopBar() {
@@ -125,7 +124,7 @@ function BackArrow({
     return (
       <li className="flex items-center -mt-1 mb-3">
         <Link href={href} className="w-full">
-          <IoIosArrowBack className="h-8 w-8 text-indigo-700 -translate-x-2" />
+          <IoIosArrowBack className="h-7 w-7 text-indigo-700 -translate-x-2" />
           {label && <p className="-translate-x-3">{label}</p>}
         </Link>
       </li>

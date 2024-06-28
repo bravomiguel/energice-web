@@ -51,13 +51,16 @@ export default function PlungeSessionsProvider({
     setActiveSessionId(id);
   };
 
-  const numberOfSessions = sessions.length;
+  const numberOfSessions = sessions.filter(
+    (session) => session.sessionStart !== null,
+  ).length;
 
   let overallPlungeSecs;
   if (sessions.length === 0) {
     overallPlungeSecs = 0;
   } else {
     overallPlungeSecs = sessions
+      .filter((session) => session.sessionStart !== null)
       .map((session) => (session.totalPlungeSecs ? session.totalPlungeSecs : 0))
       .reduce((accumulator, currentValue) => {
         return accumulator + currentValue;
@@ -80,7 +83,8 @@ export default function PlungeSessionsProvider({
 
   // Convert the Set back to an array and sort session dates
   const sessionDates = Array.from(uniqueSessionDatesTimeStamp)
-    .sort((a, b) => a - b).map((dateTimeStamp) => {
+    .sort((a, b) => a - b)
+    .map((dateTimeStamp) => {
       const date = new Date(dateTimeStamp);
       return date;
     });

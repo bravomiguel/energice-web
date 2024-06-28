@@ -36,7 +36,7 @@ export default async function Page({
   // calculate session seconds left, before passing it to client (put this into session context?)
   const now = new Date();
   const sessionEnd = new Date(
-    plungeSession.sessionStart.getTime() + SESSION_MAX_TIME_SECS * 1000 + 4 * 1000,
+    plungeSession.sessionStart.getTime() + SESSION_MAX_TIME_SECS * 1000 + 8 * 1000,
   );
   const sessionSecsLeft = getTimeDiffSecs(now, sessionEnd);
 

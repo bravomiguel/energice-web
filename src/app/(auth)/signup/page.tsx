@@ -33,7 +33,7 @@ export default function Page() {
           Privacy Policy
         </Link>
       </div>
-      <p className="mt-8 text-zinc-200 text-sm text-center">
+      <p className="mt-6 text-zinc-200 text-sm text-center">
         Already have an account?{' '}
         <Link
           href={

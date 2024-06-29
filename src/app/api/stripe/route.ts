@@ -1,14 +1,6 @@
-import { IS_STRIPE_LIVE_ENV, IS_STRIPE_TEST_ENV } from '@/lib/constants';
 import prisma from '@/lib/db';
 
-let stripeSecretKey;
-if (IS_STRIPE_TEST_ENV) {
-  stripeSecretKey = process.env.STRIPE_SECRET_KEY_TEST;
-} else if (IS_STRIPE_LIVE_ENV) {
-  stripeSecretKey = process.env.STRIPE_SECRET_KEY_LIVE;
-}
-
-const stripe = require('stripe')(stripeSecretKey);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(request: Request) {
   const body = await request.text();
@@ -16,18 +8,11 @@ export async function POST(request: Request) {
 
   // verify webhook came from stripe
   let event;
-  let stripeWebhookSecret;
-  if (IS_STRIPE_TEST_ENV) {
-    stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET_TEST;
-  } else if (IS_STRIPE_LIVE_ENV) {
-    stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET_LIVE;
-  }
-
   try {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      stripeWebhookSecret,
+      process.env.STRIPE_WEBHOOK_SECRET,
     );
   } catch (error) {
     console.log('Webhook verification failed', error);

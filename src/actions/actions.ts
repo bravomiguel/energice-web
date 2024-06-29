@@ -38,27 +38,11 @@ import {
   TMemberDetailsForm,
   TSigninForm,
 } from '@/lib/types';
-import {
-  BASE_URL,
-  IS_SEAM_LIVE_ENV,
-  IS_SEAM_TEST_ENV,
-  IS_STRIPE_LIVE_ENV,
-  IS_STRIPE_TEST_ENV,
-  ONBOARDING_URLS,
-} from '@/lib/constants';
+import { BASE_URL, ONBOARDING_URLS } from '@/lib/constants';
 import confirmEmail from '../../emails/confirm-email';
 import passwordResetEmail from '../../emails/password-reset-email';
 
-let stripeSecretKey;
-if (IS_STRIPE_TEST_ENV) {
-  stripeSecretKey = process.env.STRIPE_SECRET_KEY_TEST;
-} else if (IS_STRIPE_LIVE_ENV) {
-  stripeSecretKey = process.env.STRIPE_SECRET_KEY_LIVE;
-}
-
-console.log({stripeSecretKey});
-
-const stripe = require('stripe')(stripeSecretKey);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const seam = new Seam();
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -253,7 +237,6 @@ export async function deleteAccount() {
 
     await prisma.session.deleteMany({ where: { userId: session.user.id } });
   } catch (e) {
-    console.log(e);
     return {
       error: 'Failed to delete user',
     };
@@ -535,11 +518,13 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
   }
 
   // unlock action
-  if (IS_SEAM_TEST_ENV) {
-    console.log('seam test env...')
+  if (
+    process.env.VERCEL_ENV === 'development' ||
+    process.env.VERCEL_ENV === 'preview'
+  ) {
     await sleep(8000);
     return;
-  } else if (IS_SEAM_LIVE_ENV) {
+  } else if (process.env.VERCEL_ENV === 'production') {
     // unlock unit
     try {
       const actionResponse = await seam.locks.unlockDoor(
@@ -557,13 +542,11 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
       });
     } catch (e) {
       if (isSeamActionAttemptFailedError(e)) {
-        // console.log('Locking unsuccessful');
         return {
           error: 'Unlocking unsuccessful, try again',
         };
       }
       if (isSeamActionAttemptTimeoutError(e)) {
-        // console.log('Lock action took too long to resolve.');
         return {
           error: 'Locking took too long',
         };
@@ -629,7 +612,6 @@ export async function startSession(data: { sessionId: Session['id'] }) {
     .safeParse(data);
 
   if (!validatedData.success) {
-    console.log({ error: validatedData.error.issues[0].message });
     return {
       error: validatedData.error.issues[0].message,
     };
@@ -684,7 +666,6 @@ export async function endSession(data: {
     .safeParse(data);
 
   if (!validatedData.success) {
-    console.log({ error: validatedData.error.issues[0].message });
     return {
       error: validatedData.error.issues[0].message,
     };
@@ -748,15 +729,6 @@ export async function createCheckoutSession(data: {
 
   const { unitId, sessionId } = validatedData.data;
 
-  let productPriceId;
-  if (IS_STRIPE_TEST_ENV) {
-    productPriceId = process.env.STRIPE_PRODUCT_PRICE_ID_TEST;
-  } else if (IS_STRIPE_LIVE_ENV) {
-    productPriceId = process.env.STRIPE_PRODUCT_PRICE_ID_LIVE;
-  }
-
-  console.log({productPriceId});
-
   // create checkout session
   let checkoutSession;
   try {
@@ -764,7 +736,7 @@ export async function createCheckoutSession(data: {
       customer_email: session.user.email,
       line_items: [
         {
-          price: productPriceId,
+          price: process.env.STRIPE_PRODUCT_PRICE_ID,
           quantity: 1,
         },
       ],

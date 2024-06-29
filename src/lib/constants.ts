@@ -7,30 +7,14 @@ export const ONBOARDING_PATHNAMES = [
 
 export const RESET_PW_PATHNAME = '/reset-password';
 
-export const IS_STRIPE_TEST_ENV =
-  process.env.VERCEL_ENV === 'development' ||
-  process.env.VERCEL_URL === 'koldup-preview.vercel.app' ||
-  process.env.VERCEL_URL === 'koldup-preview-lock.vercel.app';
-
-export const IS_STRIPE_LIVE_ENV =
-  process.env.VERCEL_ENV === 'production' ||
-  process.env.VERCEL_URL === 'koldup-preview-pay.vercel.app' ||
-  process.env.VERCEL_URL === 'koldup-preview-pay-lock.vercel.app';
-
-export const IS_SEAM_TEST_ENV =
-  process.env.VERCEL_ENV === 'development' ||
-  process.env.VERCEL_URL === 'koldup-preview.vercel.app' ||
-  process.env.VERCEL_URL === 'koldup-preview-pay.vercel.app';
-
-export const IS_SEAM_LIVE_ENV =
-  process.env.VERCEL_ENV === 'production' ||
-  process.env.VERCEL_URL === 'koldup-preview-lock.vercel.app' ||
-  process.env.VERCEL_URL === 'koldup-preview-pay-lock.vercel.app';
-
 export const BASE_URL =
-  process.env.VERCEL_ENV === 'development'
+  process.env.VERCEL_ENV === 'production'
+    ? `https://app.koldup.com`
+    : process.env.VERCEL_ENV === 'preview'
+    ? `https://koldup-preview.app`
+    : process.env.VERCEL_ENV === 'development'
     ? `http://localhost:${process.env.PORT}`
-    : `https://${process.env.VERCEL_URL}`;
+    : `http://localhost:${process.env.PORT}`;
 
 export const ONBOARDING_URLS = ONBOARDING_PATHNAMES.map((pathName) => {
   return `${BASE_URL}${pathName}`;

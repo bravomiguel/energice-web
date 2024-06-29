@@ -7,10 +7,33 @@ export const ONBOARDING_PATHNAMES = [
 
 export const RESET_PW_PATHNAME = '/reset-password';
 
+export const IS_STRIPE_TEST_ENV =
+  process.env.VERCEL_ENV === 'development' ||
+  process.env.VERCEL_URL === 'koldup-preview.vercel.app' ||
+  process.env.VERCEL_URL === 'koldup-preview-lock.vercel.app';
+
+export const IS_STRIPE_LIVE_ENV =
+  process.env.VERCEL_ENV === 'production' ||
+  process.env.VERCEL_URL === 'koldup-preview-pay.vercel.app' ||
+  process.env.VERCEL_URL === 'koldup-preview-pay-lock.vercel.app';
+
+export const IS_SEAM_TEST_ENV =
+  process.env.VERCEL_ENV === 'development' ||
+  process.env.VERCEL_URL === 'koldup-preview.vercel.app' ||
+  process.env.VERCEL_URL === 'koldup-preview-pay.vercel.app';
+
+export const IS_SEAM_LIVE_ENV =
+  process.env.VERCEL_ENV === 'production' ||
+  process.env.VERCEL_URL === 'koldup-preview-lock.vercel.app' ||
+  process.env.VERCEL_URL === 'koldup-preview-pay-lock.vercel.app';
+
+export const BASE_URL =
+  process.env.VERCEL_ENV === 'development'
+    ? `http://localhost:${process.env.PORT}`
+    : `https://${process.env.VERCEL_URL}`;
+
 export const ONBOARDING_URLS = ONBOARDING_PATHNAMES.map((pathName) => {
-  if (!process.env.CANONICAL_URL)
-    return `http://localhost:${process.env.PORT}${pathName}`;
-  return `${process.env.CANONICAL_URL}${pathName}`;
+  return `${BASE_URL}${pathName}`;
 });
 
 export const APP_PATHNAMES = ['/', '/profile', '/unit'];
@@ -50,7 +73,7 @@ export const HOW_IT_WORKS_ARRAY: {
     gifUrl: '',
   },
   {
-    message: `Use the timer to keep track of your plunge progress.`,
+    message: `Start the timer to keep track of your plunge progress.`,
     gifUrl: '',
   },
   {
@@ -91,13 +114,6 @@ export const PLUNGE_TIPS_ARRAY: {
 
 export const DURATION_MINS_OPTIONS = ['00', '01', '02', '03', '04', '05', '06'];
 
-export const DURATION_SECS_OPTIONS = [
-  '00',
-  '10',
-  '20',
-  '30',
-  '40',
-  '50',
-];
+export const DURATION_SECS_OPTIONS = ['00', '10', '20', '30', '40', '50'];
 
 export const SESSION_MAX_TIME_SECS = 6 * 60;

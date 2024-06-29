@@ -14,10 +14,6 @@ import {
 } from '@react-email/components';
 import * as React from 'react';
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : '';
-
 export default function passwordResetEmail({
   pwResetCode = '596853',
 }: {pwResetCode: User['pwResetCode']}) {

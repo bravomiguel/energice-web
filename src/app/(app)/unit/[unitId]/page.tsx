@@ -19,6 +19,7 @@ import Image from 'next/image';
 import Subtitle from '@/components/subtitle';
 import UnitDetails from '@/components/unit-details';
 import { cn } from '@/lib/utils';
+import { IS_SEAM_LIVE_ENV } from '@/lib/constants';
 
 export default async function Page({
   params: { unitId },
@@ -65,7 +66,7 @@ export default async function Page({
   // get unit lock
   const lock = await getLockByLockId(unit.lockDeviceId);
   let unitStatus: 'Ready' | 'Offline' | 'In use' = 'Ready';
-  if (process.env.VERCEL_ENV === 'production') {
+  if (IS_SEAM_LIVE_ENV) {
     unitStatus = !lock.properties.online
       ? 'Offline'
       : lock.properties.door_open

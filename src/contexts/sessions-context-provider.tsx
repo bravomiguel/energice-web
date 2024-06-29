@@ -56,7 +56,7 @@ export default function PlungeSessionsProvider({
   ).length;
 
   let overallPlungeSecs;
-  if (sessions.length === 0) {
+  if (numberOfSessions === 0) {
     overallPlungeSecs = 0;
   } else {
     overallPlungeSecs = sessions

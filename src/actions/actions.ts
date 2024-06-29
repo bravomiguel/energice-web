@@ -38,15 +38,27 @@ import {
   TMemberDetailsForm,
   TSigninForm,
 } from '@/lib/types';
-import { ONBOARDING_URLS } from '@/lib/constants';
+import {
+  BASE_URL,
+  IS_SEAM_LIVE_ENV,
+  IS_SEAM_TEST_ENV,
+  IS_STRIPE_LIVE_ENV,
+  IS_STRIPE_TEST_ENV,
+  ONBOARDING_URLS,
+} from '@/lib/constants';
 import confirmEmail from '../../emails/confirm-email';
 import passwordResetEmail from '../../emails/password-reset-email';
-import { userAgent } from 'next/server';
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+let stripeSecretKey;
+if (IS_STRIPE_TEST_ENV) {
+  stripeSecretKey = process.env.STRIPE_SECRET_KEY_TEST;
+} else if (IS_STRIPE_LIVE_ENV) {
+  stripeSecretKey = process.env.STRIPE_SECRET_KEY_LIVE;
+}
+
+const stripe = require('stripe')(stripeSecretKey);
 const seam = new Seam();
 const resend = new Resend(process.env.RESEND_API_KEY);
-// const recipient = process.env.RECIPIENT_ACCOUNT ?? 'delivered@resend.dev';
 
 // --- user actions ---
 
@@ -521,13 +533,10 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
   }
 
   // unlock action
-  if (
-    process.env.VERCEL_ENV === 'development' ||
-    process.env.VERCEL_ENV === 'preview'
-  ) {
+  if (IS_SEAM_TEST_ENV) {
     await sleep(8000);
     return;
-  } else if (process.env.VERCEL_ENV === 'production') {
+  } else if (IS_SEAM_LIVE_ENV) {
     // unlock unit
     try {
       const actionResponse = await seam.locks.unlockDoor(
@@ -736,6 +745,13 @@ export async function createCheckoutSession(data: {
 
   const { unitId, sessionId } = validatedData.data;
 
+  let productPriceId;
+  if (IS_STRIPE_TEST_ENV) {
+    productPriceId = process.env.STRIPE_PRODUCT_PRICE_ID_TEST;
+  } else if (IS_STRIPE_LIVE_ENV) {
+    productPriceId = process.env.STRIPE_PRODUCT_PRICE_ID_LIVE;
+  }
+
   // create checkout session
   let checkoutSession;
   try {
@@ -743,13 +759,13 @@ export async function createCheckoutSession(data: {
       customer_email: session.user.email,
       line_items: [
         {
-          price: process.env.STRIPE_PRODUCT_PRICE_ID,
+          price: productPriceId,
           quantity: 1,
         },
       ],
       mode: 'payment',
-      success_url: `${process.env.CANONICAL_URL}/session/${sessionId}/unlock`,
-      cancel_url: `${process.env.CANONICAL_URL}/unit/${unitId}`,
+      success_url: `${BASE_URL}/session/${sessionId}/unlock`,
+      cancel_url: `${BASE_URL}/unit/${unitId}`,
       metadata: { session_id: sessionId },
     });
   } catch (e) {

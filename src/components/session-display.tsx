@@ -126,7 +126,7 @@ export default function SessionDisplay({
     }
 
     return () => clearInterval(totalPlungeSecsId);
-  }, [isTimerPlaying, totalPlungeSecs, countdownSecs]);
+  }, [isTimerPlaying, totalPlungeSecs, countdownSecs, isFirstOverTimeSec]);
 
   useEffect(() => {
     const sessionTimeId = setInterval(() => {

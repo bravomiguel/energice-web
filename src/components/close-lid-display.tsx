@@ -41,9 +41,7 @@ export default function CloseLidDisplay({
 
   useEffect(() => {
     // clean out local storage
-    localStorage.removeItem('countdownSecs');
-    localStorage.removeItem('isTimerPlaying');
-    localStorage.removeItem('totalPlungeSecs');
+    localStorage.clear();
   }, []);
 
   useEffect(() => {
@@ -95,7 +93,7 @@ export default function CloseLidDisplay({
       <BottomNav>
         <Button
           variant="destructive"
-          className="w-full h-16"
+          className="w-full"
           disabled={isPending}
           isLoading={isPending}
           onClick={handleConfirm}

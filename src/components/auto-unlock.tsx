@@ -53,6 +53,8 @@ export default function AutoUnlock({
   }, [unitId, sessionId]);
 
   useLayoutEffect(() => {
+    // clean out local storage
+    localStorage.clear();
     handleUnlock();
   }, [handleUnlock]);
 

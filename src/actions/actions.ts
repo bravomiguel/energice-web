@@ -56,6 +56,8 @@ if (IS_STRIPE_TEST_ENV) {
   stripeSecretKey = process.env.STRIPE_SECRET_KEY_LIVE;
 }
 
+console.log({stripeSecretKey});
+
 const stripe = require('stripe')(stripeSecretKey);
 const seam = new Seam();
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -534,6 +536,7 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
 
   // unlock action
   if (IS_SEAM_TEST_ENV) {
+    console.log('seam test env...')
     await sleep(8000);
     return;
   } else if (IS_SEAM_LIVE_ENV) {
@@ -751,6 +754,8 @@ export async function createCheckoutSession(data: {
   } else if (IS_STRIPE_LIVE_ENV) {
     productPriceId = process.env.STRIPE_PRODUCT_PRICE_ID_LIVE;
   }
+
+  console.log({productPriceId});
 
   // create checkout session
   let checkoutSession;

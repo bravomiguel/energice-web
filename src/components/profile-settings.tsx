@@ -39,7 +39,7 @@ export default function ProfileSettings({
       <SettingsItem label="Retake your Health Quiz" href={'/health-quiz'} />
       <SettingsItem
         label="Download your data"
-        href={'https://koldup.com/#download-data'}
+        href={'https://koldup.com/#download-your-data'}
       />
       <ViewWaiverDrawer firstName={firstName} lastName={lastName} waiverSignedAt={waiverSignedAt} waiverSigName={waiverSigName} />
     </>

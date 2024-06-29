@@ -80,7 +80,7 @@ export default function SessionDisplay({
     } else {
       setCountdownSecs(plungeTimerSecs);
     }
-  }, []);
+  }, [plungeTimerSecs]);
 
   useEffect(() => {
     const storedTotalPlungeSecs = localStorage.getItem('totalPlungeSecs');

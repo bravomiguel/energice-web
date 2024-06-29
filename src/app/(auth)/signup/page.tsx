@@ -12,7 +12,7 @@ export default function Page() {
 
   return (
     <main className="w-full">
-      <H1 className="text-zinc-200 text-lg font-medium mb-4">Sign Up</H1>
+      <H1 className="text-zinc-200 text-base font-medium mb-4">Sign Up</H1>
       <SignupForm />
       <div className="mt-3 text-xs text-center peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-zinc-200">
         {`By signing up, you agree to the `}

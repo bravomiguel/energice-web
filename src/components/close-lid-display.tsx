@@ -65,7 +65,7 @@ export default function CloseLidDisplay({
   useLayoutEffect(() => {
     // reset active session secs in local state
     handleChangeActiveSessionSecs(null);
-  }, []);
+  }, [handleChangeActiveSessionSecs]);
 
   return (
     <>

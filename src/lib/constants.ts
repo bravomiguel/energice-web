@@ -8,17 +8,13 @@ export const ONBOARDING_PATHNAMES = [
 export const RESET_PW_PATHNAME = '/reset-password';
 
 export const BASE_URL =
-  process.env.VERCEL_ENV === 'production'
-    ? `https://app.koldup.com`
-    : process.env.VERCEL_ENV === 'preview'
-    ? `https://koldup-preview.app`
-    : process.env.VERCEL_ENV === 'development'
+  process.env.VERCEL_ENV === 'development'
     ? `http://localhost:${process.env.PORT}`
-    : `http://localhost:${process.env.PORT}`;
+    : process.env.CANONICAL_URL;
 
-export const ONBOARDING_URLS = ONBOARDING_PATHNAMES.map((pathName) => {
-  return `${BASE_URL}${pathName}`;
-});
+export const ONBOARDING_URLS = ONBOARDING_PATHNAMES.map(
+  (pathName) => `${BASE_URL}${pathName}`,
+);
 
 export const APP_PATHNAMES = ['/', '/profile', '/unit'];
 

@@ -69,9 +69,9 @@ export default function CloseLidDisplay({
     <>
       <div className="flex-1 w-full h-full flex flex-col justify-center items-center gap-6 -translate-y-[10%]">
         <IoWarningOutline className="h-16 w-16 text-red-500" />
-        <Subtitle className="text-3xl text-zinc-900 font-medium flex gap-1 ">
+        <Subtitle className="text-3xl text-zinc-900 font-medium flex gap-2">
           {`Close the lid in`}
-          <span className="w-24 flex justify-start items-center">
+          <span className="w-24 flex justify-start items-center text-red-500">
             {formatSecsToMins(closeSecsLeft)}
           </span>
         </Subtitle>

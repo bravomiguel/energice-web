@@ -234,7 +234,7 @@ export default function SessionDisplay({
             ? 'Resume timer'
             : 'Pause timer'}
         </Button>
-        <EndSessionBtn handleEndSession={handleEndSession} />
+        <EndSessionBtn isPending={isPending} handleEndSession={handleEndSession} />
       </BottomNav>
     </>
   );

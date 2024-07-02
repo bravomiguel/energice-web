@@ -22,16 +22,14 @@ export default function TopBar() {
 
   const { activeSessionId, activeSessionSecsLeft, activePlungeSecs } =
     usePlungeSessions();
+  console.log({activeSessionSecsLeft});
   const isSessionEnding = activeSessionSecsLeft
     ? activeSessionSecsLeft <= 30
     : false;
 
   useEffect(() => {
     if (isSessionEnding && activeSessionId) {
-      const endSessionAction = async () => {
-        // clean out local storage
-        localStorage.removeItem('countdownSecs');
-        localStorage.removeItem('isTimerPlaying');
+      const handlEndSession = async () => {
         // run end session server action
         const response = await endSession({
           sessionId: activeSessionId,
@@ -44,7 +42,7 @@ export default function TopBar() {
       };
 
       if (activeSessionSecsLeft === 0) {
-        endSessionAction();
+        handlEndSession();
       }
     }
   }, [

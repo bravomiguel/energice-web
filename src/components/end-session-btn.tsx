@@ -17,11 +17,12 @@ import { cn } from '@/lib/utils';
 const buttonClassNames = 'w-full h-16';
 
 export default function EndSessionBtn({
+  isPending,
   handleEndSession,
 }: {
+  isPending: boolean;
   handleEndSession: () => Promise<void>;
 }) {
-  const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -30,6 +31,8 @@ export default function EndSessionBtn({
           className={cn(buttonClassNames)}
           variant="destructive"
           onClick={() => setIsOpen(true)}
+          disabled={isPending}
+          isLoading={isPending}
         >
           End session
         </Button>
@@ -47,11 +50,7 @@ export default function EndSessionBtn({
           <Button
             variant="destructive"
             className={cn(buttonClassNames)}
-            onClick={async () => {
-              startTransition(async () => {
-                await handleEndSession();
-              });
-            }}
+            onClick={async () => await handleEndSession()}
             disabled={isPending}
             isLoading={isPending}
           >

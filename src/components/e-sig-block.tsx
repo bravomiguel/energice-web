@@ -200,7 +200,7 @@ function DisclosureCheckBox({
         <Link
           className="underline"
           target="_blank"
-          href="https://support.docusign.com/s/document-item?language=en_US&rsc_301&bundleId=pik1583277475390&topicId=cwz1663702052434.html&_LANG=enus"
+          href="https://koldup.com/#electronic-signatures-disclosure"
         >
           electronic records and signatures
         </Link>

@@ -68,7 +68,8 @@ export default function CloseLidDisplay({
   return (
     <>
       <div className="flex-1 w-full h-full flex flex-col justify-center items-center gap-6 -translate-y-[10%]">
-        <Subtitle className="text-3xl text-zinc-900 font-medium flex gap-1">
+        <IoWarningOutline className="h-16 w-16 text-red-500" />
+        <Subtitle className="text-3xl text-zinc-900 font-medium flex gap-1 ">
           {`Close the lid in`}
           <span className="w-24 flex justify-start items-center">
             {formatSecsToMins(closeSecsLeft)}
@@ -82,13 +83,13 @@ export default function CloseLidDisplay({
             height={50}
           />
         </div>
-        <div className="flex gap-3 items-center justify-center w-full px-5 mx-auto">
+        {/* <div className="flex gap-3 items-center justify-center w-full px-5 mx-auto">
           <IoWarningOutline className="h-16 w-16 text-red-500" />
           <Subtitle className="text-xl text-red-500 font-semibold w-fit text-start leading-tight">
             {`to avoid an extra`} <br />
             {`session charge`}
           </Subtitle>
-        </div>
+        </div> */}
       </div>
       <BottomNav>
         <Button

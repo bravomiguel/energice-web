@@ -6,8 +6,8 @@ import { GoGoal } from 'react-icons/go';
 import { GoChecklist } from 'react-icons/go';
 import { IoWarningOutline } from 'react-icons/io5';
 import { PiWarningCircle } from 'react-icons/pi';
-import { MdOutlineTipsAndUpdates } from "react-icons/md";
-import { RiLightbulbFlashLine } from "react-icons/ri";
+import { MdOutlineTipsAndUpdates } from 'react-icons/md';
+import { RiLightbulbFlashLine } from 'react-icons/ri';
 
 import { Button } from './ui/button';
 import BottomNav from './bottom-nav';
@@ -78,9 +78,7 @@ export default function UnitDetails({
 
           <div className="flex-1 flex flex-col gap-1">
             <div className="flex gap-2 items-center">
-              <p className="">
-                Set your plunge timer
-              </p>
+              <p className="">Set your plunge timer</p>
 
               <div className="flex-1 flex gap-0.5 mb-auto items-center justify-end">
                 <DurationDropdown
@@ -136,7 +134,7 @@ export default function UnitDetails({
           <PlungeTipsCarousel />
         </div>
       </div>
-      <BottomNav className="gap-0 pt-3">
+      <BottomNav className="gap-1 pt-3">
         <div className="flex flex-row w-full gap-4">
           <p className="text-4xl font-bold">$15</p>
           <Button

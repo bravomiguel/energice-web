@@ -3,6 +3,7 @@ import { Homemade_Apple } from 'next/font/google';
 
 import H2 from './h2';
 import { Input } from './ui/input';
+import { Label } from './ui/label';
 
 const homemadeApple = Homemade_Apple({ weight: '400', subsets: ['latin'] });
 
@@ -114,17 +115,20 @@ export default function WaiverTerms({
 
       {waiverSignedAt && waiverSigName && (
         <div className="space-y-3 mt-4">
-          <Input
-            id="signature"
-            type="text"
-            disabled
-            value={waiverSigName}
-            className={`${homemadeApple.className} disabled:opacity-100 h-16 text-center`}
-          />
+          <div className='space-y-1'>
+            <Label htmlFor="signature" className='font-normal'>Participant signature:</Label>
+            <Input
+              id="signature"
+              type="text"
+              disabled
+              value={waiverSigName}
+              className={`${homemadeApple.className} disabled:opacity-100 pl-6 h-16 text-left`}
+            />
+          </div>
           <div className="grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
-            <span className="col-start-1 row-start-1">Print Name:</span>
+            <span className="col-start-1 row-start-1">Participant Name:</span>
             <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">{`${firstName} ${lastName}`}</span>
-            <span className="col-start-1 row-start-2">Date:</span>
+            <span className="col-start-1 row-start-2">Date signed:</span>
             <span className="col-start-2 row-start-2 border-b border-zinc-700 px-2 font-medium">
               {waiverSignedAt.toLocaleDateString('en-US')}
             </span>

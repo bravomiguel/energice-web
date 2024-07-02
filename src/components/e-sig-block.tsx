@@ -38,7 +38,9 @@ export default function ESigBlock({
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [fullName, setFullName] = useState(`${firstName} ${lastName}`);
   const isValid = useMemo(() => {
-    const validatedData = waiverDataSchema.safeParse({waiverSigName: fullName});
+    const validatedData = waiverDataSchema.safeParse({
+      waiverSigName: fullName,
+    });
     return validatedData.success;
   }, [fullName]);
   const [signature, setSignature] = useState('');
@@ -66,7 +68,8 @@ export default function ESigBlock({
       <div className="flex flex-col gap-3">
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogTrigger asChild>
-            <div onClick={() => setIsFormOpen(true)}>
+            <div onClick={() => setIsFormOpen(true)} className="space-y-1 cursor-pointer">
+              <span>Participant signature:</span>
               <Input
                 id="signature"
                 type="text"
@@ -74,7 +77,9 @@ export default function ESigBlock({
                 value={signature}
                 placeholder="Enter your signature here"
                 className={cn('disabled:opacity-100 h-16 text-center', {
+                  'border-2 border-blue-koldup': signature.length === 0,
                   [homemadeApple.className]: signature.length !== 0,
+                  'pl-6 text-left': signature.length !== 0,
                 })}
               />
             </div>
@@ -124,7 +129,7 @@ export default function ESigBlock({
                   type="text"
                   value={fullName}
                   disabled
-                  className={`${homemadeApple.className} text-center h-16`}
+                  className={`${homemadeApple.className} text-left pl-4 h-16`}
                 />
               </div>
 
@@ -146,9 +151,9 @@ export default function ESigBlock({
           />
         )}
         <div className="mt-4 grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
-          <span className="col-start-1 row-start-1">Print Name:</span>
+          <span className="col-start-1 row-start-1">Participant Name:</span>
           <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">{`${firstName} ${lastName}`}</span>
-          <span className="col-start-1 row-start-2">Date:</span>
+          <span className="col-start-1 row-start-2">Date signed:</span>
           <span className="col-start-2 row-start-2 border-b border-zinc-700 px-2 font-medium">
             {new Date().toLocaleDateString('en-US')}
           </span>

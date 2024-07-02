@@ -14,16 +14,15 @@ export default function Page() {
     <main className="w-full">
       <H1 className="text-zinc-200 text-base font-medium mb-4">Sign Up</H1>
       <SignupForm />
-      <div className="mt-3 text-xs text-center peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-zinc-200">
-        {`By signing up, you agree to the `}
+      <div className="mt-3 text-xs text-center peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-zinc-200/70">
+        {`By using the app, you agree to the `} <br />
         <Link
           className="underline font-medium"
           target="_blank"
           href="https://koldup.com/#terms-of-service"
         >
           Terms of Service
-        </Link>{' '}
-        <br />
+        </Link>
         {` and `}
         <Link
           className="underline font-medium"

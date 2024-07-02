@@ -590,6 +590,7 @@ export async function createSession(data: {
       data: { userId: session.user.id, unitId, plungeTimerSecs },
     });
   } catch (e) {
+    // console.log(e);
     return {
       error: 'Failed to create new session',
     };

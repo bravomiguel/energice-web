@@ -102,6 +102,11 @@ export default function SessionDisplay({
   }, [isTimerPlaying]);
 
   useEffect(() => {
+    const storedIsFirstOverTimeSec = localStorage.getItem('isFirstOverTimeSec');
+    if (storedIsFirstOverTimeSec) {
+      setIsFirstOverTimeSec(JSON.parse(storedIsFirstOverTimeSec));
+    }
+
     let totalPlungeSecsId: NodeJS.Timeout;
     if (countdownSecs === 0) {
       if (isFirstOverTimeSec) {
@@ -111,6 +116,7 @@ export default function SessionDisplay({
           JSON.stringify(totalPlungeSecs + 1),
         );
         setIsFirstOverTimeSec(false);
+        localStorage.setItem('isFirstOverTimeSec', JSON.stringify(false));
       }
       totalPlungeSecsId = setInterval(() => {
         if (isTimerPlaying) {

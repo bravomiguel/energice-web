@@ -520,11 +520,14 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
   // unlock action
   if (
     process.env.VERCEL_ENV === 'development' ||
-    process.env.VERCEL_ENV === 'preview'
+    process.env.PREVIEW_ENV === 'preview'
   ) {
     await sleep(8000);
     return;
-  } else if (process.env.VERCEL_ENV === 'production') {
+  } else if (
+    process.env.VERCEL_ENV === 'production' ||
+    process.env.PREVIEW_ENV === 'preview-lock'
+  ) {
     // unlock unit
     try {
       const actionResponse = await seam.locks.unlockDoor(

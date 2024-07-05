@@ -520,7 +520,8 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
   // unlock action
   if (
     process.env.VERCEL_ENV === 'development' ||
-    process.env.PREVIEW_ENV === 'preview'
+    process.env.PREVIEW_ENV === 'preview' ||
+    process.env.PREVIEW_ENV === 'preview-pay' 
   ) {
     await sleep(8000);
     return;

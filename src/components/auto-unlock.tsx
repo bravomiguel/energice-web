@@ -1,14 +1,9 @@
 'use client';
 
-import {
-  useCallback,
-  useLayoutEffect,
-  useState,
-  useTransition,
-} from 'react';
+import { useCallback, useLayoutEffect, useState, useTransition } from 'react';
 import Link from 'next/link';
-import { IoMdInformationCircleOutline } from 'react-icons/io';
-import { PiArrowClockwiseBold } from "react-icons/pi";
+import { IoIosArrowBack, IoMdInformationCircleOutline } from 'react-icons/io';
+import { PiArrowClockwiseBold } from 'react-icons/pi';
 import { toast } from 'sonner';
 import { Session, Unit } from '@prisma/client';
 
@@ -78,6 +73,10 @@ export default function AutoUnlock({
   if (!isPending && isError) {
     return (
       <>
+        <Link href={"/profile"} className="w-full flex gap-0.5 text-indigo-800 items-center text-xs">
+          <IoIosArrowBack className="h-7 w-7 text-indigo-700 -translate-x-2" />
+          <p className="-translate-x-3">Home</p>
+        </Link>
         <div className={cn(className)}>
           <H1>Unlock Plunge</H1>
           <UnlockRetry handleUnlock={handleUnlock} isPending={isPending} />

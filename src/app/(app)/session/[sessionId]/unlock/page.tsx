@@ -29,7 +29,7 @@ export default async function Page({
   }
 
   return (
-    <main className="flex-1 flex flex-col gap-10">
+    <main className="flex-1 flex flex-col gap-3">
       <AutoUnlock
         className="flex-1 flex flex-col gap-10"
         unitId={plungeSession.unitId}

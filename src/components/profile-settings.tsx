@@ -21,7 +21,10 @@ export default function ProfileSettings({
   lastName,
   waiverSignedAt,
   waiverSigName,
-}: Pick<User, 'firstName' | 'lastName' | 'waiverSignedAt' | 'waiverSigName'>) {
+  isOnboarded,
+}: Pick<User, 'firstName' | 'lastName' | 'waiverSignedAt' | 'waiverSigName'> & {
+  isOnboarded: boolean;
+}) {
   return (
     <>
       <SettingsItem
@@ -41,7 +44,14 @@ export default function ProfileSettings({
         label="Download your data"
         href={'https://koldup.com/#download-your-data'}
       />
-      <ViewWaiverDrawer firstName={firstName} lastName={lastName} waiverSignedAt={waiverSignedAt} waiverSigName={waiverSigName} />
+      {isOnboarded ? (
+        <ViewWaiverDrawer
+          firstName={firstName}
+          lastName={lastName}
+          waiverSignedAt={waiverSignedAt}
+          waiverSigName={waiverSigName}
+        />
+      ) : null}
     </>
   );
 }

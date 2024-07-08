@@ -10,7 +10,7 @@ import Subtitle from './subtitle';
 import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
 import H1 from './h1';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
 import { endSession } from '@/actions/actions';
 import EndSessionBtn from './end-session-btn';
 import PlungeTipsDrawer from './plunge-tips-drawer';
@@ -41,6 +41,27 @@ export default function SessionDisplay({
 
   const [isPending, startTransition] = useTransition();
   const { handleChangeActiveSessionSecs } = usePlungeSessions();
+
+  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+
+  const requestWakeLock = async () => {
+    try {
+      wakeLockRef.current = await navigator.wakeLock.request('screen');
+      wakeLockRef.current.addEventListener('release', () => {
+        console.log('Screen Wake Lock was released');
+      });
+      console.log('Screen Wake Lock is active');
+    } catch (err: any) {
+      console.error(`${err.name}, ${err.message}`);
+    }
+  };
+
+  const releaseWakeLock = () => {
+    if (wakeLockRef.current) {
+      wakeLockRef.current.release();
+      wakeLockRef.current = null;
+    }
+  };
 
   const handleCountdownUpdate = (remainingTime: number) => {
     localStorage.setItem('countdownSecs', JSON.stringify(remainingTime));
@@ -155,6 +176,16 @@ export default function SessionDisplay({
 
     return () => clearInterval(sessionTimeId);
   }, [sessionSecsLeft, handleEndSession, handleChangeActiveSessionSecs]);
+
+  useEffect(() => {
+    // Request the wake lock when the component mounts
+    requestWakeLock();
+
+    // Release the wake lock when the component unmounts
+    return () => {
+      releaseWakeLock();
+    };
+  }, []);
 
   if (sessionSecsLeft > SESSION_MAX_TIME_SECS) {
     return (

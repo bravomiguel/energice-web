@@ -22,7 +22,6 @@ export default function TopBar() {
 
   const { activeSessionId, activeSessionSecsLeft, activePlungeSecs } =
     usePlungeSessions();
-  console.log({activeSessionSecsLeft});
   const isSessionEnding = activeSessionSecsLeft
     ? activeSessionSecsLeft <= 30
     : false;

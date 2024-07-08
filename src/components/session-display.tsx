@@ -5,6 +5,7 @@ import { Session } from '@prisma/client';
 import { cn, formatSecsToMins } from '@/lib/utils';
 import { IoIosTimer } from 'react-icons/io';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
+import useWakeLock from "react-use-wake-lock";
 
 import Subtitle from './subtitle';
 import BottomNav from './bottom-nav';
@@ -42,26 +43,17 @@ export default function SessionDisplay({
   const [isPending, startTransition] = useTransition();
   const { handleChangeActiveSessionSecs } = usePlungeSessions();
 
-  const wakeLockRef = useRef<WakeLockSentinel | null>(null);
-
-  const requestWakeLock = async () => {
-    try {
-      wakeLockRef.current = await navigator.wakeLock.request('screen');
-      wakeLockRef.current.addEventListener('release', () => {
-        console.log('Screen Wake Lock was released');
-      });
-      console.log('Screen Wake Lock is active');
-    } catch (err: any) {
-      console.error(`${err.name}, ${err.message}`);
-    }
-  };
-
-  const releaseWakeLock = () => {
-    if (wakeLockRef.current) {
-      wakeLockRef.current.release();
-      wakeLockRef.current = null;
-    }
-  };
+  const { request, release, isLocked, isSupported } = useWakeLock({
+    onError(e, type) {
+      console.error("Wake Lock Error: REQUEST: ", e);
+    },
+    onLock(lock) {
+      console.log("Wake Lock Acquired: ", lock);
+    },
+    onRelease(lock) {
+      console.log("Wake Lock Released: ", lock);
+    },
+  });
 
   const handleCountdownUpdate = (remainingTime: number) => {
     localStorage.setItem('countdownSecs', JSON.stringify(remainingTime));
@@ -77,10 +69,12 @@ export default function SessionDisplay({
 
   const handleIsTimerPlaying = () => {
     setIsTimerPlaying((prev) => (prev === null ? true : !prev));
+    if (isSupported && !isLocked) request();
   };
 
   const handleEndSession = useCallback(async () => {
     setIsTimerPlaying(false);
+    if (isSupported && isLocked) release();
     startTransition(async () => {
       // run end session server action
       const response = await endSession({
@@ -92,7 +86,7 @@ export default function SessionDisplay({
         toast.error(response.error);
       }
     });
-  }, [sessionId, totalPlungeSecs]);
+  }, [sessionId, totalPlungeSecs, isSupported, isLocked, release]);
 
   useEffect(() => {
     const storedCountdownSecs = localStorage.getItem('countdownSecs');
@@ -177,15 +171,15 @@ export default function SessionDisplay({
     return () => clearInterval(sessionTimeId);
   }, [sessionSecsLeft, handleEndSession, handleChangeActiveSessionSecs]);
 
-  useEffect(() => {
-    // Request the wake lock when the component mounts
-    requestWakeLock();
+  // useEffect(() => {
+  //   // Request the wake lock when the component mounts
+  //   requestWakeLock();
 
-    // Release the wake lock when the component unmounts
-    return () => {
-      releaseWakeLock();
-    };
-  }, []);
+  //   // Release the wake lock when the component unmounts
+  //   return () => {
+  //     releaseWakeLock();
+  //   };
+  // }, []);
 
   if (sessionSecsLeft > SESSION_MAX_TIME_SECS) {
     return (

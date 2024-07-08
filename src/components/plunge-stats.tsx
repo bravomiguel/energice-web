@@ -97,9 +97,9 @@ function StartFirstPlungeAlert() {
     <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
       <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
       <div className="space-y-3">
-        <AlertTitle>Start your first plunge</AlertTitle>
+        <AlertTitle>No plunges yet</AlertTitle>
         <AlertDescription>
-          {`Get ready for the ultimate workout recovery!`}
+          {`Let's get you doing your first plunge, and feeling sky high!`}
         </AlertDescription>
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start first plunge</StartPlungeBtn>

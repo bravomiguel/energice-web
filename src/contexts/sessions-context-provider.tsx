@@ -67,7 +67,7 @@ export default function PlungeSessionsProvider({
       });
   }
 
-  // --- max streak days calc ---
+  // --- Streak days calc ---
 
   // Convert session dates to Date objects and create a Set to store unique dates
   const uniqueSessionDatesTimeStamp = new Set(
@@ -83,48 +83,55 @@ export default function PlungeSessionsProvider({
 
   // Convert the Set back to an array and sort session dates
   const sessionDates = Array.from(uniqueSessionDatesTimeStamp)
-    .sort((a, b) => a - b)
+    .sort((a, b) => b - a)
     .map((dateTimeStamp) => {
       const date = new Date(dateTimeStamp);
       return date;
     });
 
-  // console.log({ sessionDates });
+  // const sessionDates = [
+  //   new Date('2024-07-08'),
+  //   new Date('2024-07-07'),
+  //   new Date('2024-07-06'),
+  //   new Date('2024-07-05'),
+  //   new Date('2024-07-03'),
+  // ]
 
-  // Calculate streaks
-  let currentStreakDays = 0;
-  let lastDate = null;
-  for (const date of sessionDates) {
-    if (lastDate) {
-      const diffTime = Math.abs(date.getTime() - lastDate.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      if (diffDays === 1) {
-        currentStreakDays++;
-      } else {
-        currentStreakDays = 1;
-      }
-    } else {
-      currentStreakDays = 1;
-    }
-    lastDate = date;
-  }
-
-  // console.log({sessions});
-  // console.log({uniqueSessionDates});
   // console.log({sessionDates});
 
-  if (sessionDates.length > 0) {
-    // Check if the last session was today
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set to the start of today
-    if (
-      sessionDates[sessionDates.length - 1].toDateString() !==
-      today.toDateString()
-    ) {
-      currentStreakDays = 0;
-    }
+  // initialise streak days
+  let currentStreakDays = 0;
+  let nextDate = null;
+  const now = new Date();
+  const yesterday = new Date(now.setDate(now.getDate() - 1));
+  yesterday.setUTCHours(0, 0, 0, 0); // set to start of yesterday
+
+  // if no sessions, set streak to 0 and stop.
+  if (sessionDates.length === 0) {
+    currentStreakDays = 0;
   } else {
-    currentStreakDays === 0;
+    // if latest session is before yesterday, set streak to 0 and stop.
+    if (sessionDates[0].getTime() < yesterday.getTime()) {
+      currentStreakDays = 0;
+    } else {
+      // loop through sessions
+      for (const date of sessionDates) {
+        // if there is only 1 session, set streak to 1 and stop.
+        if (nextDate === null) {
+          currentStreakDays = 1;
+        } else {
+          // count up streak days, starting with most recent one first
+          const diffTime = Math.abs(nextDate.getTime() - date.getTime());
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          if (diffDays === 1) {
+            currentStreakDays = currentStreakDays + 1;
+          } else if (diffDays > 1) {
+            break; // exit loop, as soon as diff days is greater than 1 (i.e. streak gets broken)
+          }
+        }
+        nextDate = date;
+      }
+    }
   }
 
   return (

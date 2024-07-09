@@ -19,7 +19,7 @@ export default function PlungeStats({ isOnboarded }: { isOnboarded: boolean }) {
     currentStreakDays,
   } = usePlungeSessions();
 
-  const overallPlungeMins = Math.ceil(overallPlungeSecs / 60);
+  const overallPlungeMins = parseFloat((overallPlungeSecs / 60).toFixed(1));
 
   if (!isOnboarded) {
     return <CompleteOnboardingAlert />;

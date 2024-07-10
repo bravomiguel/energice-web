@@ -69,11 +69,14 @@ export default async function Page({
     process.env.VERCEL_ENV === 'production'
     // || process.env.PREVIEW_ENV === 'preview-lock'
   ) {
-    unitStatus = !lock.properties.online
-      ? 'Offline'
-      : lock.properties.door_open
-      ? 'In use'
-      : 'Ready';
+    unitStatus =
+      lock.data === null
+        ? 'Offline'
+        : !lock.data.properties.online
+        ? 'Offline'
+        : lock.data.properties.door_open
+        ? 'In use'
+        : 'Ready';
   }
 
   const hostGMapsUrl = `https://www.google.com/maps/search/?api=1&query=${unit.hostAddress

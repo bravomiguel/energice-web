@@ -75,10 +75,22 @@ export async function getUnitById(unitId: Unit['id']) {
 }
 
 export async function getLockByLockId(deviceId: Unit['lockDeviceId']) {
-  const lock = await seam.locks.get({
-    device_id: deviceId,
-  });
-  return lock;
+  let lock;
+  try {
+    lock = await seam.locks.get({
+      device_id: deviceId,
+    });
+  } catch (e) {
+    return {
+      error: 'Lock not found',
+      data: null,
+    };
+  }
+
+  return {
+    error: null,
+    data: lock,
+  };
 }
 
 export async function getCodesbyLockId(deviceId: Unit['lockDeviceId']) {

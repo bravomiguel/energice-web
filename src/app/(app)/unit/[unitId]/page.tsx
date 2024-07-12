@@ -19,6 +19,7 @@ import Image from 'next/image';
 import Subtitle from '@/components/subtitle';
 import UnitDetails from '@/components/unit-details';
 import { cn } from '@/lib/utils';
+import FreeCreditModal from '@/components/free-credit-modal';
 
 export default async function Page({
   params: { unitId },
@@ -103,7 +104,8 @@ export default async function Page({
         <PlungeStatus unitStatus={unitStatus} />
         <PlungeImage imageUrl={unit.imageUrl} />
       </div>
-      <UnitDetails unitId={unitId} unitStatus={unitStatus} />
+      <FreeCreditModal hasFreeCredit={user.hasFreeCredit} />
+      <UnitDetails unitId={unitId} unitStatus={unitStatus} hasFreeCredit={user.hasFreeCredit} />
     </main>
   );
 }

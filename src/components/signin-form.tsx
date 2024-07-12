@@ -20,7 +20,7 @@ export default function SigninForm() {
     formState: { errors, isValid, isSubmitting, isSubmitSuccessful, isSubmitted },
   } = useForm<TSigninForm>({
     resolver: zodResolver(signinSchema),
-    mode: 'all',
+    mode: 'onBlur',
   });
 
   const searchParams = useSearchParams();

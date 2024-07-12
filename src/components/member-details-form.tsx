@@ -19,7 +19,7 @@ export default function MemberDetailsForm() {
     formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
   } = useForm<TMemberDetailsForm>({
     resolver: zodResolver(memberDetailsSchema),
-    mode: 'all',
+    mode: 'onBlur',
   });
 
   const onSubmit = handleSubmit(async (data) => {

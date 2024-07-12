@@ -13,7 +13,6 @@ import { Button } from './ui/button';
 import { checkEmailConfirmCode, sendConfirmEmail } from '@/actions/actions';
 import BottomNav from './bottom-nav';
 import { useState, useTransition } from 'react';
-import { cn } from '@/lib/utils';
 import H1 from './h1';
 import Subtitle from './subtitle';
 
@@ -24,7 +23,7 @@ export default function EmailConfirmForm() {
     formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
   } = useForm<EmailConfirmCode>({
     resolver: zodResolver(emailConfirmCodeSchema),
-    mode: 'onChange',
+    mode: 'onBlur',
   });
 
   const [isCodeSent, setIsCodeSent] = useState(false);

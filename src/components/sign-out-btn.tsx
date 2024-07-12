@@ -24,10 +24,6 @@ export default function SignOutBtn() {
       <DialogContent>
         <DialogHeader className='mb-5'>
           <DialogTitle>Are you sure you want to log out?</DialogTitle>
-          {/* <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
-          </AlertDialogDescription> */}
         </DialogHeader>
         <DialogFooter className='flex flex-col gap-2 mb-5'>
           <Button

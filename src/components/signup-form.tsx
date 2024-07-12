@@ -21,7 +21,7 @@ export default function SignupForm() {
     formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
   } = useForm<TSignupForm>({
     resolver: zodResolver(signupSchemaPwConfirm),
-    mode: 'all',
+    mode: 'onBlur',
   });
 
   const searchParams = useSearchParams();

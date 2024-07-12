@@ -31,6 +31,7 @@ model User {
   waiverSigName    String?
   healthQuiz       String?
   authCallbackUrl  String?
+  hasFreeCredit    Boolean   @default(true)
   sessions         Session[]
   pwResetCode      String?
   pwResetCodeAt    DateTime?

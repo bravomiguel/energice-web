@@ -30,7 +30,7 @@ export default function PasswordResetForm() {
     formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
   } = useForm<TPasswordResetForm>({
     resolver: zodResolver(pwResetCodeSchemaPwConfirm),
-    mode: 'all',
+    mode: 'onBlur',
   });
 
   const email = watch('email');

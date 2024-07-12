@@ -41,14 +41,14 @@ export default function PlungeStats({ isOnboarded }: { isOnboarded: boolean }) {
           }
         />
         <StatCard
-          stat={overallPlungeMins}
-          statLabel="Plunge mins"
-          statIcon={<BsStopwatchFill className="w-9 h-9 fill-green-koldup" />}
-        />
-        <StatCard
           stat={plungeSessionsNum}
           statLabel="Total plunges"
           statIcon={<FaPlay className="w-9 h-9 fill-green-koldup" />}
+        />
+        <StatCard
+          stat={overallPlungeMins}
+          statLabel="Plunge mins"
+          statIcon={<BsStopwatchFill className="w-9 h-9 fill-green-koldup" />}
         />
       </div>
       <StartNewPlungeAlert />

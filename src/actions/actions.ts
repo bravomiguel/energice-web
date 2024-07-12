@@ -745,9 +745,9 @@ export async function createCheckoutSession(data: {
           quantity: 1,
         },
       ],
-      automatic_tax: {
-        enabled: true,
-      },
+      // automatic_tax: {
+      //   enabled: true,
+      // },
       mode: 'payment',
       success_url: `${BASE_URL}/session/${sessionId}/unlock`,
       cancel_url: `${BASE_URL}/unit/${unitId}`,

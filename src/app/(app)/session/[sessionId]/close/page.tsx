@@ -18,7 +18,7 @@ export default async function Page({
 
   const now = new Date();
   const closeLidDeadline = new Date(
-    plungeSession.sessionEnd.getTime() + 61 * 1000,
+    plungeSession.sessionEnd.getTime() + 91 * 1000,
   );
   const closeSecsLeft = getTimeDiffSecs(now, closeLidDeadline);
 

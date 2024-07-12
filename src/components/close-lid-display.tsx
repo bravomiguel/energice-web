@@ -67,13 +67,10 @@ export default function CloseLidDisplay({
 
   return (
     <>
-      <div className="flex-1 w-full h-full flex flex-col justify-center items-center gap-6 -translate-y-[10%]">
+      <div className="flex-1 h-full flex flex-col justify-center items-center gap-6 -translate-y-[10%] w-[300px] mx-auto">
         <IoWarningOutline className="h-16 w-16 text-red-500" />
-        <Subtitle className="text-3xl text-zinc-900 font-medium flex gap-2">
-          {`Close the lid in`}
-          <span className="w-24 flex justify-start items-center text-red-500">
-            {formatSecsToMins(closeSecsLeft)}
-          </span>
+        <Subtitle className="text-2xl text-zinc-600 font-normal text-center">
+          Please give the plunge a quick skim
         </Subtitle>
         <div className="w-[300px] h-[220px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
           <Image
@@ -83,13 +80,12 @@ export default function CloseLidDisplay({
             height={50}
           />
         </div>
-        {/* <div className="flex gap-3 items-center justify-center w-full px-5 mx-auto">
-          <IoWarningOutline className="h-16 w-16 text-red-500" />
-          <Subtitle className="text-xl text-red-500 font-semibold w-fit text-start leading-tight">
-            {`to avoid an extra`} <br />
-            {`session charge`}
-          </Subtitle>
-        </div> */}
+        <Subtitle className="text-3xl text-zinc-900 font-medium flex flex-col gap-3 items-center">
+          {`and close the lid in`}
+          <span className="w-24 flex justify-start items-center text-red-500">
+            {formatSecsToMins(closeSecsLeft)}
+          </span>
+        </Subtitle>
       </div>
       <BottomNav>
         <Button

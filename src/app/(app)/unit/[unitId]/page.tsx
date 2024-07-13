@@ -104,7 +104,7 @@ export default async function Page({
         <PlungeStatus unitStatus={unitStatus} />
         <PlungeImage imageUrl={unit.imageUrl} />
       </div>
-      <FreeCreditModal hasFreeCredit={user.hasFreeCredit} />
+      {/* <FreeCreditModal hasFreeCredit={user.hasFreeCredit} /> */}
       <UnitDetails unitId={unitId} unitStatus={unitStatus} hasFreeCredit={user.hasFreeCredit} />
     </main>
   );

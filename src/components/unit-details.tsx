@@ -138,7 +138,8 @@ export default function UnitDetails({
       </div>
       <BottomNav className="gap-1 pt-3">
         <div className="flex flex-row w-full gap-4 items-start">
-          {hasFreeCredit ? <span className='text-xl font-bold w-min text-center'>Free credit</span> : <span className="text-4xl font-bold">$15</span>}
+          {/* {hasFreeCredit ? <span className='text-xl font-bold w-min text-center'>Free credit</span> : <span className="text-4xl font-bold">$15</span>} */}
+          <span className="text-4xl font-bold">$15</span>
           <div className='flex flex-col w-full gap-1'>
             <Button
               disabled={unitStatus !== 'Ready' || !isValid || isPending}

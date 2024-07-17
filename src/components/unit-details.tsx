@@ -191,7 +191,7 @@ export default function UnitDetails({
               free credit
             </span>
           ) : (
-            <span className="text-4xl font-bold">$15</span>
+            <span className="text-4xl font-bold">$10</span>
           )}
           <Button
             disabled={unitStatus !== 'Ready' || !isValid || isPending}

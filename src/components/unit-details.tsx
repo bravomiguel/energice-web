@@ -184,7 +184,7 @@ export default function UnitDetails({
           <PlungeTipsCarousel />
         </div>
       </div>
-      <BottomNav className="gap-1 pt-2">
+      <BottomNav className="gap-1 pt-2 pb-3">
         <div className="flex flex-row w-full gap-4 items-center">
           {hasFreeCredit ? (
             <span className="text-lg font-bold w-fit text-center whitespace-nowrap">

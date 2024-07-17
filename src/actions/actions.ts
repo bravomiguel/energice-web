@@ -521,7 +521,7 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
   if (
     process.env.VERCEL_ENV === 'development' ||
     process.env.PREVIEW_ENV === 'preview' ||
-    process.env.PREVIEW_ENV === 'preview-pay' 
+    process.env.PREVIEW_ENV === 'preview-pay'
   ) {
     await sleep(8000);
     return;
@@ -582,6 +582,7 @@ export async function createSession(data: {
   if (!validatedData.success) {
     return {
       error: validatedData.error.issues[0].message,
+      data: null,
     };
   }
 
@@ -597,12 +598,83 @@ export async function createSession(data: {
     // console.log(e);
     return {
       error: 'Failed to create new session',
+      data: null,
     };
   }
 
   // create checkout session
-  await createCheckoutSession({ unitId, sessionId: newSession.id });
+  // await createCheckoutSession({ unitId, sessionId: newSession.id });
   // redirect(`/unit/${unitId}/unlock`);
+
+  return {
+    error: null,
+    data: { newSessionId: newSession.id },
+  };
+}
+
+export async function applySessionFreeCredit(data: {
+  sessionId: Session['id'];
+}) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      sessionId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { sessionId } = validatedData.data;
+
+  // authorization check
+  const plungeSession = await getSessionById(sessionId);
+
+  if (!plungeSession) {
+    return {
+      error: 'Session not found',
+    };
+  }
+  if (plungeSession.userId !== session.user.id) {
+    return {
+      error: 'Not authorized',
+    };
+  }
+
+  try {
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: {
+        hasUsedCredit: true,
+      },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to apply free credit',
+    };
+  }
+
+  try {
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        hasFreeCredit: false,
+      },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to apply free credit.',
+    };
+  }
+
+  // redirect to unlock screen
+  redirect(`/session/${sessionId}/unlock`);
 }
 
 export async function startSession(data: { sessionId: Session['id'] }) {

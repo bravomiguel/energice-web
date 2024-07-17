@@ -46,7 +46,7 @@ export default async function Page({
     authCallbackUrl: user.authCallbackUrl,
   });
 
-  // valid session check (i.e. paid for, and within time limit)
+  // valid session check (i.e. paid for / used credit, and within time limit)
   const { data: plungeSession, status: plungeSessionStatus } =
     await checkPlungeSession(session.user.id);
   // redirect to session screen, if session is valid and has already started
@@ -104,7 +104,7 @@ export default async function Page({
         <PlungeStatus unitStatus={unitStatus} />
         <PlungeImage imageUrl={unit.imageUrl} />
       </div>
-      {/* <FreeCreditModal hasFreeCredit={user.hasFreeCredit} /> */}
+      <FreeCreditModal hasFreeCredit={user.hasFreeCredit} />
       <UnitDetails unitId={unitId} unitStatus={unitStatus} hasFreeCredit={user.hasFreeCredit} />
     </main>
   );

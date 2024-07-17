@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 
-import { signOutAction } from '@/actions/actions';
 import { Button } from './ui/button';
 import {
   Dialog,
@@ -12,30 +11,30 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog';
+import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 
 export default function FreeCreditModal({
   hasFreeCredit,
 }: {
   hasFreeCredit: boolean;
 }) {
-  const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(hasFreeCredit);
+  const { numberOfSessions } = usePlungeSessions();
+  const dialogDescription =
+    numberOfSessions === 0
+      ? `Enjoy your first plunge on us! 💙`
+      : `Enjoy a free plunge on us! 💙`;
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      {/* <DialogTrigger asChild>
-        <Button onClick={() => setIsOpen(true)}>Log out</Button>
-      </DialogTrigger> */}
       <DialogContent>
-        <DialogHeader className="mb-5">
-          <DialogTitle>Free plunge credit</DialogTitle>
+        <DialogHeader className="mb-3">
+          <DialogTitle className='text-xl'>1x free plunge credit</DialogTitle>
         </DialogHeader>
         <DialogDescription className="text-xl text-zinc-800 text-center mb-5">
-          Enjoy your first plunge on us! 💙
+          {dialogDescription}
         </DialogDescription>
-        <DialogFooter className="flex flex-col gap-2 mb-5">
-          <Button onClick={() => setIsOpen(false)}>
-            Continue
-          </Button>
+        <DialogFooter className="flex flex-col gap-2 mb-3">
+          <Button onClick={() => setIsOpen(false)}>Continue</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

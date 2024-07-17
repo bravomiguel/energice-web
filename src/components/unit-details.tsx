@@ -6,13 +6,16 @@ import { GoGoal } from 'react-icons/go';
 import { GoChecklist } from 'react-icons/go';
 import { IoWarningOutline } from 'react-icons/io5';
 import { PiWarningCircle } from 'react-icons/pi';
-import { MdOutlineTipsAndUpdates } from 'react-icons/md';
 import { RiLightbulbFlashLine } from 'react-icons/ri';
 
 import { Button } from './ui/button';
 import BottomNav from './bottom-nav';
 import PenaltyChargeWarning from './penalty-charge-warning';
-import { createSession } from '@/actions/actions';
+import {
+  applySessionFreeCredit,
+  createCheckoutSession,
+  createSession,
+} from '@/actions/actions';
 import { plungeTimerSecsSchema } from '@/lib/validations';
 import { cn } from '@/lib/utils';
 import PlungeTimerInfo from './plunge-timer-info';
@@ -71,6 +74,51 @@ export default function UnitDetails({
       : null;
 
   const [isPending, startTransition] = useTransition();
+
+  const handleStartSession = async () => {
+    startTransition(async () => {
+      if (!plungeTimerSecs) return;
+      const respSession = await createSession({
+        unitId,
+        plungeTimerSecs,
+      });
+      if (respSession?.error) {
+        console.error({ error: respSession.error });
+        toast.error(respSession.error);
+      }
+
+      let sessionId;
+      if (respSession?.data) {
+        sessionId = respSession.data.newSessionId;
+      }
+
+      if (sessionId) {
+        if (hasFreeCredit) {
+          // if free credit available, apply it in the back-end, and redirect to unlock screen
+          const respApplyCredit = await applySessionFreeCredit({
+            sessionId,
+          });
+          if (respApplyCredit?.error) {
+            console.error({ error: respApplyCredit.error });
+            toast.error(respApplyCredit.error);
+          }
+        } else {
+          // if no free credit, redirect to stripe checkout page for payment
+          const respCheckout = await createCheckoutSession({
+            unitId,
+            sessionId,
+          });
+          if (respCheckout?.error) {
+            console.error({ error: respCheckout.error });
+            toast.error(respCheckout.error);
+          }
+        }
+      } else {
+        // if no session id, return error
+        toast.error('No session created, please try again.');
+      }
+    });
+  };
 
   return (
     <>
@@ -137,25 +185,20 @@ export default function UnitDetails({
         </div>
       </div>
       <BottomNav className="gap-1 pt-3">
-        <div className="flex flex-row w-full gap-4 items-start">
-          {/* {hasFreeCredit ? <span className='text-xl font-bold w-min text-center'>Free credit</span> : <span className="text-4xl font-bold">$15</span>} */}
-          <span className="text-4xl font-bold">$15</span>
+        <div className="flex flex-row w-full gap-4 items-center">
+          {hasFreeCredit ? (
+            <span className="text-lg font-bold w-fit text-center whitespace-nowrap">
+              free credit
+            </span>
+          ) : (
+            <span className="text-4xl font-bold">$15</span>
+          )}
           <Button
             disabled={unitStatus !== 'Ready' || !isValid || isPending}
             isLoading={isPending}
             className="w-full"
             onClick={async () => {
-              startTransition(async () => {
-                if (!plungeTimerSecs) return;
-                const response = await createSession({
-                  unitId,
-                  plungeTimerSecs,
-                });
-                if (response?.error) {
-                  console.error({ error: response.error });
-                  toast.error(response.error);
-                }
-              });
+              startTransition(async () => await handleStartSession());
             }}
           >
             Start session

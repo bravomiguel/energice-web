@@ -17,7 +17,7 @@ export default async function Page({
   // auth check
   const session = await checkAuth();
 
-  // valid session check (i.e. paid for, and within time limit)
+  // valid session check (i.e. paid for / used credit, and within time limit)
   const { data: plungeSession, status: plungeSessionStatus } =
     await checkPlungeSession(session.user.id);
   // redirect to home screen, if no valid session

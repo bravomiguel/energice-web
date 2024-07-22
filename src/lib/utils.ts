@@ -23,6 +23,14 @@ export function formatSecsToMins(seconds: number) {
   return `${formattedMinutes}:${formattedSeconds}`;
 }
 
+export function formatPlungeTime(seconds: number) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  // const formattedMinutes = String(minutes).padStart(2, '0');
+  const formattedSeconds = String(remainingSeconds).padStart(2, '0');
+  return `${String(minutes)}:${formattedSeconds}`;
+}
+
 export function getTimeDiffSecs(startDate: Date | null, endDate: Date | null) {
   if (!startDate || !endDate) return null;
   return Math.floor((endDate.getTime() - startDate.getTime()) / 1000);

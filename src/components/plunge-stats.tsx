@@ -11,6 +11,8 @@ import StartPlungeBtn from './start-plunge-btn';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import H2 from './h2';
 import OnboardReturnBtn from './onboard-return-btn';
+import { cn } from '@/lib/utils';
+import { useMemo } from 'react';
 
 export default function PlungeStats({ isOnboarded }: { isOnboarded: boolean }) {
   const {
@@ -19,7 +21,7 @@ export default function PlungeStats({ isOnboarded }: { isOnboarded: boolean }) {
     currentStreakDays,
   } = usePlungeSessions();
 
-  const overallPlungeMins = parseFloat((overallPlungeSecs / 60).toFixed(1));
+  // const overallPlungeMins = parseFloat((overallPlungeSecs / 60).toFixed(1));
 
   if (!isOnboarded) {
     return <CompleteOnboardingAlert />;
@@ -46,8 +48,8 @@ export default function PlungeStats({ isOnboarded }: { isOnboarded: boolean }) {
           statIcon={<FaPlay className="w-9 h-9 fill-green-koldup" />}
         />
         <StatCard
-          stat={overallPlungeMins}
-          statLabel="Plunge mins"
+          stat={overallPlungeSecs}
+          statLabel="Plunge time"
           statIcon={<BsStopwatchFill className="w-9 h-9 fill-green-koldup" />}
         />
       </div>
@@ -63,12 +65,73 @@ function StatCard({
   statIcon,
 }: {
   stat: number;
-  statLabel: string;
+  statLabel: 'Streak days' | 'Total plunges' | 'Plunge time';
   statIcon: React.ReactNode;
 }) {
+  const plungeTime = useMemo(() => {
+    if (statLabel === 'Plunge time') {
+      const minutes = Math.floor(stat / 60);
+      const remainingSeconds = stat % 60;
+      const hours = Math.floor(stat / (60 * 60));
+      const remainingMinutes = Math.floor((stat % (60 * 60)) / 60);
+      if (minutes === 0) {
+        return (
+          <>
+            {remainingSeconds}
+            <span className="text-sm font-normal">s</span>
+          </>
+        );
+      } 
+      else if (minutes >= 100) {
+        return (
+          <div className="flex items-end">
+            {hours}
+            <span className="text-sm font-normal leading-none -translate-y-[4.5px]">h</span>
+            <span className="text-sm font-normal px-[1px] leading-none -translate-y-[4.5px]">
+              :
+            </span>
+            <span className="text-xl leading-none -translate-y-[4.5px]">
+              {String(remainingMinutes).padStart(2, '0')}
+            </span>
+            <span className="text-sm font-normal leading-none -translate-y-[4.5px]">m</span>
+          </div>
+        );
+      } else if (remainingSeconds === 0) {
+        return (
+          <>
+            {minutes}
+            <span className="text-sm font-normal">m</span>
+          </>
+        );
+      } else {
+        return (
+          <div className="flex items-end">
+            {minutes}
+            <span className="text-sm font-normal leading-none -translate-y-[4.5px]">m</span>
+            <span className="text-sm font-normal px-[1px] leading-none -translate-y-[4.5px]">
+              :
+            </span>
+            <span className="text-xl leading-none -translate-y-[4.5px]">
+              {String(remainingSeconds).padStart(2, '0')}
+            </span>
+            <span className="text-sm font-normal leading-none -translate-y-[4.5px]">s</span>
+          </div>
+        );
+      }
+    } else {
+      return null;
+    }
+  }, [stat, statLabel]);
+
   return (
     <div className="flex flex-col gap-3 w-full items-center">
-      <span className="text-4xl font-semibold">{stat}</span>
+      <span
+        className={cn('text-4xl font-semibold', {
+          'mx-3': statLabel === 'Plunge time',
+        })}
+      >
+        {statLabel === 'Plunge time' ? plungeTime : stat}
+      </span>
       <p className="text-sm font-medium">{statLabel}</p>
       {statIcon}
     </div>

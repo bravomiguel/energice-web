@@ -42,27 +42,27 @@ export const HOW_IT_WORKS_ARRAY: {
 }[] = [
   {
     message: `Set your timer, and start a new session to unlock the plunge.`,
-    gifUrl: '',
+    gifUrl: '/how-it-works-01.gif',
   },
   {
     message: `Open the lid and place your phone in the holder to prep for your plunge.`,
-    gifUrl: '',
+    gifUrl: '/how-it-works-02.gif',
   },
   {
     message: `It's plunge time. Take a few big breaths and jump in!`,
-    gifUrl: '',
+    gifUrl: '/how-it-works-03.gif',
   },
   {
     message: `Start the timer to keep track of your plunge progress.`,
-    gifUrl: '',
+    gifUrl: '/how-it-works-04.gif',
   },
   {
     message: `Done? End your session, jump out and close the lid behind you.`,
-    gifUrl: '',
+    gifUrl: '/how-it-works-05.gif',
   },
   {
     message: `You did it! Enjoy feeling great for the rest of the day.`,
-    gifUrl: '',
+    gifUrl: '/how-it-works-06.gif',
   },
 ];
 
@@ -72,23 +72,23 @@ export const PLUNGE_TIPS_ARRAY: {
 }[] = [
   {
     message: `Breathing is key. Prep for your plunge with 5-10 big breaths.`,
-    gifUrl: '',
+    gifUrl: '/plunge-tips-01.gif',
   },
   {
     message: `Ready to plunge? Big breath in, and breathe out as you hit the water.`,
-    gifUrl: '',
+    gifUrl: '/plunge-tips-02.gif',
   },
   {
     message: `The first 30 secs can be a shock. Slow the breath as much as you can.`,
-    gifUrl: '',
+    gifUrl: '/plunge-tips-03.gif',
   },
   {
     message: `After 30 secs, you'll notice your body relaxing. Let go, and enjoy it!`,
-    gifUrl: '',
+    gifUrl: '/plunge-tips-04.gif',
   },
   {
     message: `You're in control at all times. End your session whenever you need to.`,
-    gifUrl: '',
+    gifUrl: '/plunge-tips-05.gif',
   },
 ];
 

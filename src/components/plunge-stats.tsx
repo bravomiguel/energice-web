@@ -12,7 +12,7 @@ import StartPlungeBtn from './start-plunge-btn';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import H2 from './h2';
 import OnboardReturnBtn from './onboard-return-btn';
-import { cn } from '@/lib/utils';
+import { cn} from '@/lib/utils';
 
 export default function PlungeStats({ isOnboarded }: { isOnboarded: boolean }) {
   const {

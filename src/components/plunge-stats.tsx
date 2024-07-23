@@ -100,9 +100,7 @@ function PlungeTimeStat({ stat }: { stat: number }) {
         <span className="text-sm font-normal leading-none -translate-y-[4.5px] pr-1">
           h
         </span>
-        <span className="text-3xl leading-none -translate-y-[2.5px]">
-          {remainingMinutes}
-        </span>
+        {remainingMinutes}
         <span className="text-sm font-normal leading-none -translate-y-[4.5px]">
           m
         </span>
@@ -119,10 +117,10 @@ function PlungeTimeStat({ stat }: { stat: number }) {
     return (
       <div className="flex items-end">
         {minutes}
-        <span className="text-sm font-normal leading-none -translate-y-[4.5px] pr-1">m</span>
-        <span className="text-3xl leading-none -translate-y-[2.5px]">
-          {remainingSeconds}
+        <span className="text-sm font-normal leading-none -translate-y-[4.5px] pr-1">
+          m
         </span>
+        {remainingSeconds}
         <span className="text-sm font-normal leading-none -translate-y-[4.5px]">
           s
         </span>

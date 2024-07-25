@@ -74,7 +74,7 @@ export default function CloseLidDisplay({
         </Subtitle>
         <div className="w-[300px] h-[220px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
           <Image
-            src="/koldup_plunge.jpeg"
+            src="https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/how-it-works-5.gif?t=2024-07-25T23%3A22%3A07.469Z"
             alt="cold plunge closed image"
             width={300}
             height={50}

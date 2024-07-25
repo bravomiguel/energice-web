@@ -138,6 +138,7 @@ function PlungeImage({ imageUrl }: { imageUrl: Unit['imageUrl'] }) {
         // className="max-w-full max-h-full"
         width={300}
         height={50}
+        className='w-full'
       />
     </div>
   );

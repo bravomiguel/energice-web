@@ -65,6 +65,7 @@ export default async function Page({
 
   // get unit lock
   const lock = await getLockByLockId(unit.lockDeviceId);
+  // console.log({lockProperties: lock.data?.properties});
   let unitStatus: 'Ready' | 'Offline' | 'In use' = 'Ready';
   if (
     process.env.VERCEL_ENV === 'production'
@@ -75,7 +76,7 @@ export default async function Page({
         ? 'Offline'
         : !lock.data.properties.online
         ? 'Offline'
-        : lock.data.properties.door_open
+        : !lock.data.properties.locked
         ? 'In use'
         : 'Ready';
   }

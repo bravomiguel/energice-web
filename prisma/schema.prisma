@@ -47,9 +47,6 @@ model Session {
   hasUsedCredit    Boolean   @default(false)
   amountSubtotal   Int?
   amountTotal      Int?
-  accessCodeId     String?
-  accessCode       String?
-  accessCodeEndsAt DateTime?
   plungeTimerSecs  Int
   sessionStart     DateTime?
   sessionEnd       DateTime?

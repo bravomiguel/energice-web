@@ -835,6 +835,38 @@ export async function createCheckoutSession(data: {
   redirect(checkoutSession.url);
 }
 
+export async function createPackCheckoutSession() {
+  // authentication check
+  const session = await checkAuth();
+
+  // create checkout session
+  let checkoutSession;
+  try {
+    checkoutSession = await stripe.checkout.sessions.create({
+      customer_email: session.user.email,
+      line_items: [
+        {
+          price: process.env.STRIPE_PACK_PRICE_ID,
+          quantity: 8,
+        },
+      ],
+      // automatic_tax: {
+      //   enabled: true,
+      // },
+      mode: 'payment',
+      success_url: `${BASE_URL}/profile`,
+      cancel_url: `${BASE_URL}/profile`,
+    });
+  } catch (e) {
+    return {
+      error: 'Checkout failed, please try again',
+    };
+  }
+
+  // redirect user
+  redirect(checkoutSession.url);
+}
+
 // --- email confirmation actions ---
 
 export async function sendConfirmEmail() {

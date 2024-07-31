@@ -7,12 +7,11 @@ import { FaPlay } from 'react-icons/fa6';
 import { IoArrowUndoSharp } from 'react-icons/io5';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from './ui/button';
 import StartPlungeBtn from './start-plunge-btn';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import H2 from './h2';
 import OnboardReturnBtn from './onboard-return-btn';
-import { cn} from '@/lib/utils';
+import { cn } from '@/lib/utils';
 
 export default function PlungeStats({ isOnboarded }: { isOnboarded: boolean }) {
   const {
@@ -52,7 +51,6 @@ export default function PlungeStats({ isOnboarded }: { isOnboarded: boolean }) {
         />
       </div>
       <StartNewPlungeAlert />
-      {/* <Buy10PackAlert /> */}
     </>
   );
 }
@@ -158,6 +156,9 @@ function StartFirstPlungeAlert() {
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start first plunge</StartPlungeBtn>
         </div>
+        <AlertDescription>
+          Plunge credits: <span className="font-semibold">8</span>
+        </AlertDescription>
       </div>
     </Alert>
   );
@@ -169,26 +170,11 @@ function StartNewPlungeAlert() {
       <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
       <div className="space-y-3">
         <AlertTitle>Start new plunge session</AlertTitle>
-        {/* <AlertDescription>
-          {`Let's get you doing your first plunge, and feeling sky high!`}
-        </AlertDescription> */}
+        <AlertDescription>
+          Plunge credits: <span className="font-semibold">8</span>
+        </AlertDescription>
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start session</StartPlungeBtn>
-        </div>
-      </div>
-    </Alert>
-  );
-}
-
-function Buy10PackAlert() {
-  return (
-    <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
-      <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
-      <div className="space-y-3">
-        <AlertTitle>Plunge 10-Pack</AlertTitle>
-        <AlertDescription>{`Buy 10 plunges and save 30%`}</AlertDescription>
-        <div className="flex flex-col w-full">
-          <Button>Get deal</Button>
         </div>
       </div>
     </Alert>

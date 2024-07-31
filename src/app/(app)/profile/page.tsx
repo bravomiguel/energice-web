@@ -13,6 +13,7 @@ import Subtitle from '@/components/subtitle';
 import H2 from '@/components/h2';
 import PlungeStats from '@/components/plunge-stats';
 import ProfileSettings from '@/components/profile-settings';
+import PlungePackAlert from '@/components/plunge-pack-alert';
 
 export default async function Page() {
   noStore();
@@ -53,6 +54,7 @@ export default async function Page() {
         </div>
         <section className="space-y-7">
           <PlungeStats isOnboarded={isOnboarded} />
+          <PlungePackAlert isOnboarded={isOnboarded} />
         </section>
         <section>
           <H2 className="mb-3">Settings</H2>

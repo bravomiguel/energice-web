@@ -32,6 +32,7 @@ model User {
   healthQuiz       String?
   authCallbackUrl  String?
   hasFreeCredit    Boolean   @default(false)
+  paidCredits      Int       @default(0)
   sessions         Session[]
   pwResetCode      String?
   pwResetCodeAt    DateTime?
@@ -42,22 +43,22 @@ model User {
 }
 
 model Session {
-  id               String    @id @default(cuid())
-  hasPaid          Boolean   @default(false)
-  hasUsedCredit    Boolean   @default(false)
-  amountSubtotal   Int?
-  amountTotal      Int?
-  plungeTimerSecs  Int
-  sessionStart     DateTime?
-  sessionEnd       DateTime?
-  isLidLeftOpen    Boolean   @default(false)
-  totalPlungeSecs  Int?
-  User             User      @relation(fields: [userId], references: [id])
-  userId           String
-  Unit             Unit      @relation(fields: [unitId], references: [id])
-  unitId           String
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  id              String    @id @default(cuid())
+  hasPaid         Boolean   @default(false)
+  hasUsedCredit   Boolean   @default(false)
+  amountSubtotal  Int?
+  amountTotal     Int?
+  plungeTimerSecs Int
+  sessionStart    DateTime?
+  sessionEnd      DateTime?
+  isLidLeftOpen   Boolean   @default(false)
+  totalPlungeSecs Int?
+  User            User      @relation(fields: [userId], references: [id])
+  userId          String
+  Unit            Unit      @relation(fields: [unitId], references: [id])
+  unitId          String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 model Unit {

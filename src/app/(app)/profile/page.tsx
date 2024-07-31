@@ -53,12 +53,21 @@ export default async function Page() {
           )}
         </div>
         <section className="space-y-7">
-          <PlungeStats isOnboarded={isOnboarded} />
+          <PlungeStats
+            isOnboarded={isOnboarded}
+            paidCredits={user?.paidCredits}
+          />
           <PlungePackAlert isOnboarded={isOnboarded} />
         </section>
         <section>
           <H2 className="mb-3">Settings</H2>
-          <ProfileSettings firstName={user?.firstName ?? null} lastName={user?.lastName ?? null} waiverSignedAt={user?.waiverSignedAt ?? null} waiverSigName={user?.waiverSigName ?? null} isOnboarded={isOnboarded} />
+          <ProfileSettings
+            firstName={user?.firstName ?? null}
+            lastName={user?.lastName ?? null}
+            waiverSignedAt={user?.waiverSignedAt ?? null}
+            waiverSigName={user?.waiverSigName ?? null}
+            isOnboarded={isOnboarded}
+          />
         </section>
         <section className="flex flex-col w-full gap-2">
           <SignOutBtn />

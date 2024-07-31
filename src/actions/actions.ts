@@ -823,7 +823,10 @@ export async function createCheckoutSession(data: {
       mode: 'payment',
       success_url: `${BASE_URL}/session/${sessionId}/unlock`,
       cancel_url: `${BASE_URL}/unit/${unitId}`,
-      metadata: { session_id: sessionId },
+      metadata: {
+        price_id: process.env.STRIPE_PRODUCT_PRICE_ID,
+        session_id: sessionId,
+      },
     });
   } catch (e) {
     return {
@@ -856,6 +859,7 @@ export async function createPackCheckoutSession() {
       mode: 'payment',
       success_url: `${BASE_URL}/profile`,
       cancel_url: `${BASE_URL}/profile`,
+      metadata: { price_id: process.env.STRIPE_PACK_PRICE_ID, quantity: 8 },
     });
   } catch (e) {
     return {

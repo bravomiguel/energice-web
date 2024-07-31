@@ -12,8 +12,17 @@ import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import H2 from './h2';
 import OnboardReturnBtn from './onboard-return-btn';
 import { cn } from '@/lib/utils';
+import { User } from '@prisma/client';
+import { toast } from 'sonner';
 
-export default function PlungeStats({ isOnboarded }: { isOnboarded: boolean }) {
+export default function PlungeStats({
+  isOnboarded,
+  paidCredits,
+}: {
+  isOnboarded: boolean;
+  paidCredits?: User['paidCredits'];
+  paymentSuccess?: boolean | boolean[];
+}) {
   const {
     numberOfSessions: plungeSessionsNum,
     overallPlungeSecs,
@@ -25,7 +34,7 @@ export default function PlungeStats({ isOnboarded }: { isOnboarded: boolean }) {
   }
 
   if (plungeSessionsNum === 0) {
-    return <StartFirstPlungeAlert />;
+    return <StartFirstPlungeAlert paidCredits={paidCredits} />;
   }
 
   return (
@@ -50,7 +59,7 @@ export default function PlungeStats({ isOnboarded }: { isOnboarded: boolean }) {
           statIcon={<BsStopwatchFill className="w-9 h-9 fill-green-koldup" />}
         />
       </div>
-      <StartNewPlungeAlert />
+      <StartNewPlungeAlert paidCredits={paidCredits} />
     </>
   );
 }
@@ -144,38 +153,48 @@ function CompleteOnboardingAlert() {
   );
 }
 
-function StartFirstPlungeAlert() {
+function StartFirstPlungeAlert({
+  paidCredits,
+}: {
+  paidCredits?: User['paidCredits'];
+}) {
   return (
     <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
       <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
       <div className="space-y-3">
         <AlertTitle>No plunges yet</AlertTitle>
-        <AlertDescription>
-          {`Let's get you doing your first plunge, and feeling sky high!`}
-        </AlertDescription>
+        <AlertDescription>{`Time to take your first plunge!`}</AlertDescription>
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start first plunge</StartPlungeBtn>
         </div>
-        <AlertDescription>
-          Plunge credits: <span className="font-semibold">8</span>
-        </AlertDescription>
+        {paidCredits && paidCredits > 0 ? (
+          <AlertDescription>
+            Plunge credits: <span className="font-semibold">{paidCredits}</span>
+          </AlertDescription>
+        ) : null}
       </div>
     </Alert>
   );
 }
 
-function StartNewPlungeAlert() {
+function StartNewPlungeAlert({
+  paidCredits,
+}: {
+  paidCredits?: User['paidCredits'];
+}) {
   return (
     <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
       <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
       <div className="space-y-3">
         <AlertTitle>Start new plunge session</AlertTitle>
-        <AlertDescription>
-          Plunge credits: <span className="font-semibold">8</span>
-        </AlertDescription>
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start session</StartPlungeBtn>
         </div>
+        {paidCredits && paidCredits > 0 ? (
+          <AlertDescription>
+            Plunge credits: <span className="font-semibold">{paidCredits}</span>
+          </AlertDescription>
+        ) : null}
       </div>
     </Alert>
   );

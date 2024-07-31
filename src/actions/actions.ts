@@ -677,6 +677,81 @@ export async function applySessionFreeCredit(data: {
   redirect(`/session/${sessionId}/unlock`);
 }
 
+export async function applySessionPaidCredit(data: {
+  sessionId: Session['id'];
+}) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      sessionId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { sessionId } = validatedData.data;
+
+  // authorization check
+  const plungeSession = await getSessionById(sessionId);
+
+  if (!plungeSession) {
+    return {
+      error: 'Session not found',
+    };
+  }
+  if (plungeSession.userId !== session.user.id) {
+    return {
+      error: 'Not authorized',
+    };
+  }
+
+  try {
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: {
+        hasUsedCredit: true,
+      },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to apply credit',
+    };
+  }
+
+  try {
+    const userRecord = await prisma.user.findFirst({
+      where: { id: session.user.id },
+    });
+
+    if (!userRecord) {
+      return {
+        error: "Failed to apply plunge credit"
+      }
+    }
+
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        paidCredits: userRecord.paidCredits - 1,
+      },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to apply credit.',
+    };
+  }
+
+  // redirect to unlock screen
+  redirect(`/session/${sessionId}/unlock`);
+}
+
 export async function startSession(data: { sessionId: Session['id'] }) {
   // auth check
   const session = await checkAuth();

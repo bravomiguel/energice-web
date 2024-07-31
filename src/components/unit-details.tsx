@@ -13,6 +13,7 @@ import BottomNav from './bottom-nav';
 import PenaltyChargeWarning from './penalty-charge-warning';
 import {
   applySessionFreeCredit,
+  applySessionPaidCredit,
   createCheckoutSession,
   createSession,
 } from '@/actions/actions';
@@ -35,10 +36,12 @@ import { toast } from 'sonner';
 export default function UnitDetails({
   unitStatus,
   unitId,
+  paidCredits,
   hasFreeCredit,
 }: {
   unitStatus: string;
   unitId: string;
+  paidCredits: number;
   hasFreeCredit: boolean;
 }) {
   const [plungeTimerVals, setPlungeTimerVals] = useState({
@@ -93,7 +96,16 @@ export default function UnitDetails({
       }
 
       if (sessionId) {
-        if (hasFreeCredit) {
+        if (paidCredits > 0) {
+          // if paid credit available, apply it in the back-end, and redirect to unlock screen
+          const respApplyCredit = await applySessionPaidCredit({
+            sessionId,
+          });
+          if (respApplyCredit?.error) {
+            console.error({ error: respApplyCredit.error });
+            toast.error(respApplyCredit.error);
+          }
+        } else if (hasFreeCredit) {
           // if free credit available, apply it in the back-end, and redirect to unlock screen
           const respApplyCredit = await applySessionFreeCredit({
             sessionId,
@@ -186,9 +198,11 @@ export default function UnitDetails({
       </div>
       <BottomNav className="gap-1 pt-2 pb-3">
         <div className="flex flex-row w-full gap-4 items-center">
-          {hasFreeCredit ? (
+          {paidCredits > 0 || hasFreeCredit ? (
             <span className="text-lg font-bold w-fit text-center whitespace-nowrap">
-              free credit
+              {paidCredits > 0
+                ? `${paidCredits} credit${paidCredits > 1 ? 's' : ''}`
+                : 'free credit'}
             </span>
           ) : (
             <span className="text-4xl font-bold">$12</span>
@@ -230,7 +244,7 @@ function HowItWorksCarousel() {
                 alt="explainer gif"
                 width={250}
                 height={250}
-                className='w-full'
+                className="w-full"
               />
             </div>
             <div className="flex gap-2 items-center justify-center">

@@ -106,7 +106,12 @@ export default async function Page({
         <PlungeImage imageUrl={unit.imageUrl} />
       </div>
       <FreeCreditModal hasFreeCredit={user.hasFreeCredit} />
-      <UnitDetails unitId={unitId} unitStatus={unitStatus} hasFreeCredit={user.hasFreeCredit} />
+      <UnitDetails
+        unitId={unitId}
+        unitStatus={unitStatus}
+        paidCredits={user.paidCredits}
+        hasFreeCredit={user.hasFreeCredit}
+      />
     </main>
   );
 }
@@ -138,7 +143,7 @@ function PlungeImage({ imageUrl }: { imageUrl: Unit['imageUrl'] }) {
         // className="max-w-full max-h-full"
         width={300}
         height={50}
-        className='w-full'
+        className="w-full"
       />
     </div>
   );

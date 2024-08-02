@@ -72,6 +72,7 @@ function WhatIsItCarousel() {
                   alt="explainer gif"
                   width={250}
                   height={250}
+                  className="w-full"
                 />
               </div>
               <div className="flex gap-2 items-center justify-center">

@@ -12,35 +12,23 @@ import { User } from '@prisma/client';
 
 export default function PlungePlansSection({
   isOnboarded,
-  paidCredits,
 }: {
   isOnboarded: boolean;
-  paidCredits?: User['paidCredits'];
 }) {
   if (!isOnboarded) return null;
 
   return (
     <section>
       <H2 className="mb-3">Plans</H2>
-      <PlungePackAlert paidCredits={paidCredits} />
+      <PlungePackAlert />
     </section>
   );
 }
 
-function PlungePackAlert({
-  paidCredits,
-}: {
-  paidCredits?: User['paidCredits'];
-}) {
+function PlungePackAlert() {
   return (
     <Alert className="bg-orange-100 text-zinc-700 pr-10 pt-5 flex gap-2">
-      {paidCredits && paidCredits === 0 ? (
-        <div className="h-5 w-5 bg-orange-800 rounded-full flex items-center justify-center text-orange-100 text-xs font-bold -translate-y-0.5">
-          2
-        </div>
-      ) : (
-        <BsFillBox2HeartFill className="h-5 w-5 fill-orange-800" />
-      )}
+      <BsFillBox2HeartFill className="h-5 w-5 fill-orange-800" />
       <div className="space-y-3 w-full">
         <AlertTitle>Plunge 8-Pack</AlertTitle>
         <AlertDescription>{`Get 8 plunges and save $3.50 per plunge`}</AlertDescription>

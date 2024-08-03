@@ -31,7 +31,7 @@ export default function StartPlungeSection({
 
   return (
     <section>
-      {/* <H2 className="mb-3">Start new plunge</H2> */}
+      <H2 className="mb-3">Start plunge</H2>
       <StartNewPlungeAlert paidCredits={paidCredits} />
     </section>
   );
@@ -70,7 +70,7 @@ function StartNewPlungeAlert({
     <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
       <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
       <div className="space-y-3">
-        <AlertTitle>Start new plunge</AlertTitle>
+        <AlertTitle>New plunge session</AlertTitle>
         <AlertDescription>Feel amazing in just a few minutes</AlertDescription>
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start session</StartPlungeBtn>

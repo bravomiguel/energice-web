@@ -61,10 +61,7 @@ export default async function Page() {
           paidCredits={user?.paidCredits}
         />
 
-        <PlungePlansSection
-          isOnboarded={isOnboarded}
-          paidCredits={user?.paidCredits}
-        />
+        <PlungePlansSection isOnboarded={isOnboarded} />
 
         <section>
           <H2 className="mb-3">Settings</H2>

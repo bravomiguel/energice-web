@@ -1,28 +1,17 @@
 'use client';
 
-import { RiWaterFlashFill } from 'react-icons/ri';
 import { AiFillThunderbolt } from 'react-icons/ai';
 import { BsStopwatchFill } from 'react-icons/bs';
 import { FaPlay } from 'react-icons/fa6';
 import { IoArrowUndoSharp } from 'react-icons/io5';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import StartPlungeBtn from './start-plunge-btn';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import H2 from './h2';
 import OnboardReturnBtn from './onboard-return-btn';
 import { cn } from '@/lib/utils';
-import { User } from '@prisma/client';
-import { toast } from 'sonner';
 
-export default function PlungeStats({
-  isOnboarded,
-  paidCredits,
-}: {
-  isOnboarded: boolean;
-  paidCredits?: User['paidCredits'];
-  paymentSuccess?: boolean | boolean[];
-}) {
+export default function PlungeStatsSection({ isOnboarded }: { isOnboarded: boolean }) {
   const {
     numberOfSessions: plungeSessionsNum,
     overallPlungeSecs,
@@ -34,12 +23,12 @@ export default function PlungeStats({
   }
 
   if (plungeSessionsNum === 0) {
-    return <StartFirstPlungeAlert paidCredits={paidCredits} />;
+    return null;
   }
 
   return (
-    <>
-      <H2>Your plunge stats</H2>
+    <section>
+      <H2 className="mb-6">Plunge stats</H2>
       <div className="flex w-full gap-2">
         <StatCard
           stat={currentStreakDays}
@@ -59,8 +48,7 @@ export default function PlungeStats({
           statIcon={<BsStopwatchFill className="w-9 h-9 fill-green-koldup" />}
         />
       </div>
-      <StartNewPlungeAlert paidCredits={paidCredits} />
-    </>
+    </section>
   );
 }
 
@@ -148,53 +136,6 @@ function CompleteOnboardingAlert() {
         <div className="flex flex-col w-full">
           <OnboardReturnBtn>Return to onboarding</OnboardReturnBtn>
         </div>
-      </div>
-    </Alert>
-  );
-}
-
-function StartFirstPlungeAlert({
-  paidCredits,
-}: {
-  paidCredits?: User['paidCredits'];
-}) {
-  return (
-    <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
-      <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
-      <div className="space-y-3">
-        <AlertTitle>No plunges yet</AlertTitle>
-        <AlertDescription>{`Time to take your first plunge!`}</AlertDescription>
-        <div className="flex flex-col w-full">
-          <StartPlungeBtn>Start first plunge</StartPlungeBtn>
-        </div>
-        {paidCredits && paidCredits > 0 ? (
-          <AlertDescription>
-            Plunge credits: <span className="font-semibold">{paidCredits}</span>
-          </AlertDescription>
-        ) : null}
-      </div>
-    </Alert>
-  );
-}
-
-function StartNewPlungeAlert({
-  paidCredits,
-}: {
-  paidCredits?: User['paidCredits'];
-}) {
-  return (
-    <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
-      <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
-      <div className="space-y-3">
-        <AlertTitle>Start new plunge session</AlertTitle>
-        <div className="flex flex-col w-full">
-          <StartPlungeBtn>Start session</StartPlungeBtn>
-        </div>
-        {paidCredits && paidCredits > 0 ? (
-          <AlertDescription>
-            Plunge credits: <span className="font-semibold">{paidCredits}</span>
-          </AlertDescription>
-        ) : null}
       </div>
     </Alert>
   );

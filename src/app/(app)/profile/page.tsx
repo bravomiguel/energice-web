@@ -11,9 +11,10 @@ import {
 import H1 from '@/components/h1';
 import Subtitle from '@/components/subtitle';
 import H2 from '@/components/h2';
-import PlungeStats from '@/components/plunge-stats';
+import PlungeStatsSection from '@/components/plunge-stats-section';
+import StartPlungeSection from '@/components/start-plunge-section';
+import PlungePlansSection from '@/components/plunge-plans-section';
 import ProfileSettings from '@/components/profile-settings';
-import PlungePackAlert from '@/components/plunge-pack-alert';
 
 export default async function Page() {
   noStore();
@@ -52,13 +53,19 @@ export default async function Page() {
             <H1>{`Let's get you feeling great 🚀`}</H1>
           )}
         </div>
-        <section className="space-y-7">
-          <PlungeStats
-            isOnboarded={isOnboarded}
-            paidCredits={user?.paidCredits}
-          />
-          <PlungePackAlert isOnboarded={isOnboarded} />
-        </section>
+
+        <PlungeStatsSection isOnboarded={isOnboarded} />
+
+        <StartPlungeSection
+          isOnboarded={isOnboarded}
+          paidCredits={user?.paidCredits}
+        />
+
+        <PlungePlansSection
+          isOnboarded={isOnboarded}
+          paidCredits={user?.paidCredits}
+        />
+
         <section>
           <H2 className="mb-3">Settings</H2>
           <ProfileSettings
@@ -69,6 +76,7 @@ export default async function Page() {
             isOnboarded={isOnboarded}
           />
         </section>
+
         <section className="flex flex-col w-full gap-2">
           <SignOutBtn />
           <DeleteAccountBtn />

@@ -25,6 +25,7 @@ export const PLUNGE_TIME_INFO_ARRAY: {
   {
     message: `The plunge timer (mm:ss) indicates how long you're aiming to plunge for during your session.`,
     gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/plunge-timer-1.gif?t=2024-08-03T02%3A12%3A37.171Z',
+    // gifUrl: 'https://drive.usercontent.google.com/download?id=1co7EMfBZQ-heWZRoOsq5o047B7ZNqfeH',
   },
   {
     message: `The timer is completely optional. You're in control and can exit when you want.`,

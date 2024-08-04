@@ -24,15 +24,15 @@ export const PLUNGE_TIME_INFO_ARRAY: {
 }[] = [
   {
     message: `The plunge timer (mm:ss) indicates how long you're aiming to plunge for during your session.`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/plunge-timer-1.gif?t=2024-08-03T02%3A12%3A37.171Z',
+    gifUrl: '/explainer-gifs/plunge-timer-1.gif',
   },
   {
     message: `The timer is completely optional. You're in control and can exit when you want.`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/how-it-works-4.gif?t=2024-07-25T23%3A18%3A15.405Z',
+    gifUrl: '/explainer-gifs/how-it-works-4.gif',
   },
   {
     message: `You can go over the timer, just note your session times out after 6 mins.`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/plunge-timer-3.gif',
+    gifUrl: '/explainer-gifs/plunge-timer-3.gif',
   },
 ];
 
@@ -42,23 +42,23 @@ export const HOW_IT_WORKS_ARRAY: {
 }[] = [
   {
     message: `Set your timer, and start a new session to unlock the plunge.`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/how-it-works-1.gif?t=2024-07-22T22%3A11%3A13.857Z',
+    gifUrl: '/explainer-gifs/how-it-works-1.gif',
   },
   {
     message: `Open the lid, place your phone in the holder... and take the plunge!`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/how-it-works-2.gif?t=2024-07-25T22%3A37%3A42.770Z',
+    gifUrl: '/explainer-gifs/how-it-works-2.gif',
   },
   {
     message: `Start the timer and lean back into your plunge.`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/how-it-works-3.gif?t=2024-07-25T23%3A08%3A55.519Z',
+    gifUrl: '/explainer-gifs/how-it-works-3.gif',
   },
   {
     message: `Done? End your session and jump out at your own pace.`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/how-it-works-4.gif?t=2024-07-25T23%3A18%3A15.405Z',
+    gifUrl: '/explainer-gifs/how-it-works-4.gif',
   },
   {
     message: `Give the plunge a quick skim and close the lid. You did it!`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/how-it-works-5.gif?t=2024-07-25T23%3A22%3A07.469Z',
+    gifUrl: '/explainer-gifs/how-it-works-5.gif',
   },
 ];
 
@@ -68,23 +68,23 @@ export const PLUNGE_TIPS_ARRAY: {
 }[] = [
   {
     message: `Breathing is key. Prep for your plunge with 5-10 big breaths.`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/plunge-tips-1.gif?t=2024-07-25T22%3A38%3A54.754Z',
+    gifUrl: '/explainer-gifs/plunge-tips-1.gif',
   },
   {
     message: `Ready to plunge? Big breath in, and breathe out as you lower into the water.`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/plunge-tips-2.gif?t=2024-07-25T23%3A29%3A33.880Z',
+    gifUrl: '/explainer-gifs/plunge-tips-2.gif',
   },
   {
     message: `The first 30 secs can be a shock. Slow down the breath as much as you can.`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/plunge-tips-3.gif?t=2024-07-25T22%3A40%3A19.304Z',
+    gifUrl: '/explainer-gifs/plunge-tips-3.gif',
   },
   {
     message: `After 30 secs, you'll notice your body relaxing. Let go, and enjoy it!`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/plunge-tips-4.gif?t=2024-07-25T22%3A40%3A28.453Z',
+    gifUrl: '/explainer-gifs/plunge-tips-4.gif',
   },
   {
     message: `You're in control at all times. End your session whenever you need to.`,
-    gifUrl: 'https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/plunge-tips-5.gif?t=2024-07-25T23%3A35%3A09.193Z',
+    gifUrl: '/explainer-gifs/plunge-tips-5.gif',
   },
 ];
 

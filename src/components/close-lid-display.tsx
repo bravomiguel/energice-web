@@ -18,7 +18,7 @@ import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 
-const GIFS_GDRIVE_BASE_URL = `https://drive.usercontent.google.com`;
+const GIFS_GDRIVE_BASE_URL = `https://drive.usercontent.google.com/download`;
 const GIFS_SUPABASE_BASE_URL = `https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public`;
 
 export default function CloseLidDisplay({
@@ -78,8 +78,8 @@ export default function CloseLidDisplay({
         <div className="w-[300px] h-[220px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
           <Image
             src={
-              process.env.VERCEL_ENV === 'development'
-                ? `${GIFS_GDRIVE_BASE_URL}/download?id=1QR1HgXOH9_0vUSMS9Un8eklYJNOxlHge`
+              process.env.VERCEL_ENV === 'preview'
+                ? `${GIFS_GDRIVE_BASE_URL}?id=1QR1HgXOH9_0vUSMS9Un8eklYJNOxlHge`
                 : process.env.VERCEL_ENV === 'production'
                 ? `${GIFS_SUPABASE_BASE_URL}/explainer-gifs/how-it-works-5.gif`
                 : `/explainer-gifs/how-it-works-5.gif`

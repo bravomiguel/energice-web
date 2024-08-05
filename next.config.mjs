@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: "yzswukrjljsdoupmonyl.supabase.co",
       },
+      {
+        protocol: 'https',
+        hostname: "drive.usercontent.google.com",
+      },
     ]
   }
 };

@@ -732,8 +732,8 @@ export async function applySessionPaidCredit(data: {
 
     if (!userRecord) {
       return {
-        error: "Failed to apply plunge credit"
-      }
+        error: 'Failed to apply plunge credit',
+      };
     }
 
     await prisma.user.update({
@@ -890,11 +890,12 @@ export async function createCheckoutSession(data: {
         {
           price: process.env.STRIPE_PRODUCT_PRICE_ID,
           quantity: 1,
+          tax_rates: [process.env.STRIPE_TAX_RATE_ID],
         },
       ],
-      automatic_tax: {
-        enabled: true,
-      },
+      // automatic_tax: {
+      //   enabled: true,
+      // },
       mode: 'payment',
       success_url: `${BASE_URL}/session/${sessionId}/unlock`,
       cancel_url: `${BASE_URL}/unit/${unitId}`,
@@ -926,11 +927,12 @@ export async function createPackCheckoutSession() {
         {
           price: process.env.STRIPE_PACK_PRICE_ID,
           quantity: 8,
+          tax_rates: [process.env.STRIPE_TAX_RATE_ID],
         },
       ],
-      automatic_tax: {
-        enabled: true,
-      },
+      // automatic_tax: {
+      //   enabled: true,
+      // },
       mode: 'payment',
       success_url: `${BASE_URL}/profile`,
       cancel_url: `${BASE_URL}/profile`,

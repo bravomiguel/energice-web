@@ -74,7 +74,11 @@ export default function CloseLidDisplay({
         </Subtitle>
         <div className="w-[300px] h-[220px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
           <Image
-            src="https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public/explainer-gifs/how-it-works-5.gif?t=2024-07-25T23%3A22%3A07.469Z"
+            src={
+              process.env.VERCEL_ENV === 'development'
+                ? `/explainer-gifs/how-it-works-5.gif`
+                : `https://drive.usercontent.google.com/download?id=1QR1HgXOH9_0vUSMS9Un8eklYJNOxlHge`
+            }
             alt="cold plunge closed image"
             width={300}
             height={50}

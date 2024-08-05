@@ -1,8 +1,15 @@
-import Image from "next/image";
+import dynamic from 'next/dynamic'
+const ReactPlayer = dynamic(() => import("react-player/lazy"), { ssr: false });
 
-import { PLUNGE_TIPS_ARRAY } from "@/lib/constants";
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "./ui/carousel";
-import { cn } from "@/lib/utils";
+import { PLUNGE_TIPS_ARRAY } from '@/lib/constants';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from './ui/carousel';
+import { cn } from '@/lib/utils';
 
 export default function PlungeTipsCarousel() {
   return (
@@ -18,13 +25,16 @@ export default function PlungeTipsCarousel() {
                 {PLUNGE_TIPS_ARRAY[index].message}
               </p>
             </div>
-            <div className="flex justify-center items-center w-9/12 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
-              <Image
-                src={PLUNGE_TIPS_ARRAY[index].gifUrl}
-                alt="explainer gif"
-                width={250}
-                height={250}
-                className="w-full"
+            <div className="flex justify-center items-center w-64 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
+              <ReactPlayer
+                url={PLUNGE_TIPS_ARRAY[index].url}
+                playing
+                playsinline
+                controls
+                loop
+                muted
+                width={256}
+                height={256}
               />
             </div>
             <div className="flex gap-2 items-center justify-center">

@@ -7,10 +7,10 @@ import {
   useState,
   useTransition,
 } from 'react';
-import Image from 'next/image';
 import { Session } from '@prisma/client';
 import { IoWarningOutline } from 'react-icons/io5';
 import { useRouter } from 'next/navigation';
+import ReactPlayer from 'react-player/lazy';
 
 import { formatSecsToMins } from '@/lib/utils';
 import Subtitle from './subtitle';
@@ -18,8 +18,8 @@ import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 
-const GIFS_GDRIVE_BASE_URL = `https://drive.usercontent.google.com/download`;
-const GIFS_SUPABASE_BASE_URL = `https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public`;
+// const GDRIVE_BASE_URL = `https://drive.usercontent.google.com/download`;
+const SUPABASE_BASE_URL = `https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public`;
 
 export default function CloseLidDisplay({
   sessionId,
@@ -76,15 +76,20 @@ export default function CloseLidDisplay({
           Please give the plunge a quick skim
         </Subtitle>
         <div className="w-[300px] h-[220px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
-          <Image
-            src={
-              process.env.VERCEL_ENV === 'development'
-                ? `/explainer-gifs/how-it-works-5.gif`
-                : `${GIFS_SUPABASE_BASE_URL}/explainer-gifs/how-it-works-5.gif`
+          <ReactPlayer
+            url={
+              process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
+                ? `/explainer-videos/how-it-works-5.mp4`
+                : `${SUPABASE_BASE_URL}/explainer-videos/how-it-works-5.mp4`
+              // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`
             }
-            alt="cold plunge closed image"
+            playing
+            playsinline
+            // controls
+            loop
+            muted
             width={300}
-            height={50}
+            height={300}
           />
         </div>
         <Subtitle className="text-3xl text-zinc-900 font-medium flex flex-col gap-3 items-center">

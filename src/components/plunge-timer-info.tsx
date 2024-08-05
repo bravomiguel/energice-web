@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import ReactPlayer from 'react-player/lazy';
 import { IoMdInformationCircleOutline } from 'react-icons/io';
 
 import {
@@ -66,13 +66,16 @@ function WhatIsItCarousel() {
               <p className="text-zinc-600 text-center">
                 {PLUNGE_TIME_INFO_ARRAY[index].message}
               </p>
-              <div className="flex justify-center items-center w-9/12 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
-                <Image
-                  src={PLUNGE_TIME_INFO_ARRAY[index].gifUrl}
-                  alt="explainer gif"
-                  width={250}
-                  height={250}
-                  className="w-full"
+              <div className="flex justify-center items-center w-64 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
+                <ReactPlayer
+                  url={PLUNGE_TIME_INFO_ARRAY[index].url}
+                  playing
+                  playsinline
+                  controls
+                  loop
+                  muted
+                  width={256}
+                  height={256}
                 />
               </div>
               <div className="flex gap-2 items-center justify-center">

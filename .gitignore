@@ -38,3 +38,4 @@ next-env.d.ts
 
 #explainer-gifs
 /public/explainer-gifs
+/public/explainer-videos

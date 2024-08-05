@@ -7,6 +7,9 @@ import { GoChecklist } from 'react-icons/go';
 import { IoWarningOutline } from 'react-icons/io5';
 import { PiWarningCircle } from 'react-icons/pi';
 import { RiLightbulbFlashLine } from 'react-icons/ri';
+import { toast } from 'sonner';
+import dynamic from 'next/dynamic'
+const ReactPlayer = dynamic(() => import("react-player/lazy"), { ssr: false });
 
 import { Button } from './ui/button';
 import BottomNav from './bottom-nav';
@@ -27,11 +30,9 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from './ui/carousel';
-import Image from 'next/image';
 import { HOW_IT_WORKS_ARRAY } from '@/lib/constants';
 import PlungeTipsCarousel from './plunge-tips-carousel';
 import { DurationDropdown } from './duration-dropdown';
-import { toast } from 'sonner';
 
 export default function UnitDetails({
   unitStatus,
@@ -238,13 +239,16 @@ function HowItWorksCarousel() {
                 {HOW_IT_WORKS_ARRAY[index].message}
               </p>
             </div>
-            <div className="flex justify-center items-center w-9/12 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
-              <Image
-                src={HOW_IT_WORKS_ARRAY[index].gifUrl}
-                alt="explainer gif"
-                width={250}
-                height={250}
-                className="w-full"
+            <div className="flex justify-center items-center w-64 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
+              <ReactPlayer
+                url={HOW_IT_WORKS_ARRAY[index].url}
+                playing
+                playsinline
+                controls
+                loop
+                muted
+                width={256}
+                height={256}
               />
             </div>
             <div className="flex gap-2 items-center justify-center">

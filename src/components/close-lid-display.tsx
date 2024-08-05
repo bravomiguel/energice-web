@@ -18,6 +18,9 @@ import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 
+const GIFS_GDRIVE_BASE_URL = `https://drive.usercontent.google.com`;
+const GIFS_SUPABASE_BASE_URL = `https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public`;
+
 export default function CloseLidDisplay({
   sessionId,
   closeSecs,
@@ -76,8 +79,10 @@ export default function CloseLidDisplay({
           <Image
             src={
               process.env.VERCEL_ENV === 'development'
-                ? `/explainer-gifs/how-it-works-5.gif`
-                : `https://drive.usercontent.google.com/download?id=1QR1HgXOH9_0vUSMS9Un8eklYJNOxlHge`
+                ? `${GIFS_GDRIVE_BASE_URL}/download?id=1QR1HgXOH9_0vUSMS9Un8eklYJNOxlHge`
+                : process.env.VERCEL_ENV === 'production'
+                ? `${GIFS_SUPABASE_BASE_URL}/explainer-gifs/how-it-works-5.gif`
+                : `/explainer-gifs/how-it-works-5.gif`
             }
             alt="cold plunge closed image"
             width={300}

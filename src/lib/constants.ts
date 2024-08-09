@@ -23,6 +23,15 @@ const SUPABASE_BASE_URL = `https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/o
 
 // console.log(process.env.VERCEL_ENV);
 
+export const PLUNGE_BENEFITS_ARRAY: string[] = [
+  'Accelerates muscle recovery',
+  'Boosts your stamina and power ',
+  'Sky-rockets your happy chemicals',
+  'Reduces soreness and inflammation',
+  'Supercharges your immune system',
+  'Burns fat and calories',
+];
+
 export const PLUNGE_TIME_INFO_ARRAY: {
   message: React.ReactNode;
   url: string;

@@ -15,6 +15,9 @@ import {
 import { Button } from './ui/button';
 import WaiverTerms from './waiver-terms';
 import { User } from '@prisma/client';
+import ColdPlungeBenefits from './cold-plunge-benefits';
+import PlungeTipsCarousel from './plunge-tips-carousel';
+import { cn } from '@/lib/utils';
 
 export default function ProfileSettings({
   firstName,
@@ -27,6 +30,8 @@ export default function ProfileSettings({
 }) {
   return (
     <>
+      <ViewPlungeDrawer type="benefits" />
+      <ViewPlungeDrawer type="tips" />
       <SettingsItem
         label="Help and support"
         href={'https://koldup.com/#help-and-support'}
@@ -65,6 +70,46 @@ function SettingsItem({ label, href }: { label: string; href?: any }) {
       <p>{label}</p>
       <IoChevronForward className="w-5 h-5" />
     </Link>
+  );
+}
+
+function ViewPlungeDrawer({ type }: { type: 'benefits' | 'tips' }) {
+  return (
+    <Drawer>
+      <DrawerTrigger asChild>
+        <div className="flex items-center justify-between text-zinc-600 border-b border-zinc-200 py-4">
+          <p>
+            {type === 'benefits' ? 'Cold plunge benefits' : 'Plunging tips'}
+          </p>
+          <IoChevronForward className="w-5 h-5" />
+        </div>
+      </DrawerTrigger>
+      <DrawerContent className="px-4">
+        <div className="mx-auto w-full max-w-sm">
+          <DrawerHeader className="px-0">
+            <DrawerTitle>
+              {type === 'benefits' ? 'Cold Plunge Benefits' : 'Plunging Tips'}
+            </DrawerTitle>
+          </DrawerHeader>
+          <div
+            className={cn('pb-6 max-h-[66vh] overflow-scroll', {
+              'space-y-8': type === 'benefits',
+            })}
+          >
+            {type === 'benefits' ? (
+              <ColdPlungeBenefits onboarding={false} />
+            ) : (
+              <PlungeTipsCarousel />
+            )}
+          </div>
+          <DrawerFooter className="px-0">
+            <DrawerClose asChild>
+              <Button variant="outline">Back</Button>
+            </DrawerClose>
+          </DrawerFooter>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 }
 

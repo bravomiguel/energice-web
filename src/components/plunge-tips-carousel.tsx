@@ -25,7 +25,7 @@ export default function PlungeTipsCarousel() {
                 {PLUNGE_TIPS_ARRAY[index].message}
               </p>
             </div>
-            <div className="flex justify-center items-center w-64 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
+            <div className="flex justify-center items-center w-9/12 aspect-square mx-auto overflow-hidden rounded-lg bg-zinc-200">
               <ReactPlayer
                 url={PLUNGE_TIPS_ARRAY[index].url}
                 playing
@@ -33,8 +33,8 @@ export default function PlungeTipsCarousel() {
                 controls
                 loop
                 muted
-                width={256}
-                height={256}
+                width={"100%"}
+                height={"100%"}
               />
             </div>
             <div className="flex gap-2 items-center justify-center">

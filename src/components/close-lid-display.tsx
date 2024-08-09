@@ -88,8 +88,8 @@ export default function CloseLidDisplay({
             // controls
             loop
             muted
-            width={300}
-            height={300}
+            width={"100%"}
+            height={"100%"}
           />
         </div>
         <Subtitle className="text-3xl text-zinc-900 font-medium flex flex-col gap-3 items-center">

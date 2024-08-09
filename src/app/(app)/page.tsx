@@ -7,7 +7,6 @@ import {
   getUserById,
   authCallbackRedirect,
 } from '@/lib/server-utils';
-import prisma from '@/lib/db';
 
 export default async function Home() {
   noStore();
@@ -20,7 +19,7 @@ export default async function Home() {
   if (user?.email === 'resetpassword@koldup.com') redirect('/reset-password');
 
   // onboarded check
-  if (!user?.isEmailConfirmed) redirect('/confirm-email');
+  if (!user?.isEmailConfirmed) redirect('/welcome');
   if (!user?.firstName) redirect('/member-details');
   if (!user.isWaiverSigned) redirect('/waiver');
 

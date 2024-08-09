@@ -3,7 +3,7 @@ import credentials from 'next-auth/providers/credentials';
 import bcrypt from 'bcryptjs';
 
 import { nextAuthEdgeConfig } from './auth-edge';
-import { signinSchema, signupSchema } from './validations';
+import { signinSchema } from './validations';
 import { getUserByEmail } from './server-utils';
 
 const config = {

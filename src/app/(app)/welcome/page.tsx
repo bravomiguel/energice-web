@@ -4,12 +4,9 @@ import { redirect } from 'next/navigation';
 import H1 from '@/components/h1';
 import Subtitle from '@/components/subtitle';
 import { checkAuth, getUserById } from '@/lib/server-utils';
-import { FaCheckCircle } from 'react-icons/fa';
-import { PLUNGE_BENEFITS_ARRAY } from '@/lib/constants';
 import H2 from '@/components/h2';
 import BottomNav from '@/components/bottom-nav';
 import WelcomeContinueBtn from '@/components/welcome-continue-btn';
-import Image from 'next/image';
 import ColdPlungeBenefits from '@/components/cold-plunge-benefits';
 
 export default async function Page() {

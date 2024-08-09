@@ -14,7 +14,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           Take the plunge.
         </p>
       </div>
-      <Suspense>{children}</Suspense>
+      <Suspense>
+        <div className="w-full max-w-md">{children}</div>
+      </Suspense>
     </div>
   );
 }

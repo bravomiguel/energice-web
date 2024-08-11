@@ -233,6 +233,8 @@ export async function deleteAccount() {
         isGWaiverSigned: false,
         healthQuiz: null,
         authCallbackUrl: null,
+        hasFreeCredit: false,
+        paidCredits: 0,
         deleted: true,
         deletedAt: new Date(),
       },

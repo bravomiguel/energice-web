@@ -1,6 +1,7 @@
 export const ONBOARDING_PATHNAMES = [
   '/confirm-email',
   '/member-details',
+  '/guardian-waiver',
   '/health-quiz',
   '/waiver',
 ];

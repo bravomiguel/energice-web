@@ -11,7 +11,7 @@ export default function ColdPlungeBenefits({
   return (
     <>
       <section className="space-y-4">
-        <p>{onboarding ? `You're one step closer to feeling incredible! 🚀` : null}</p>
+        <p>{onboarding ? `Welcome to a healthier and happier you.` : null}</p>
         <div className="w-full h-[220px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
           <Image
             src={'/koldup-welcome-image.jpg'}
@@ -36,7 +36,7 @@ export default function ColdPlungeBenefits({
         </ul>
       </section>
       <section className="flex flex-1">
-        <p className="font-medium mt-1">{`Take the plunge into a happier you!`}</p>
+        <p className="font-medium mt-1">{`Take the plunge and change your life 🚀`}</p>
       </section>
     </>
   );

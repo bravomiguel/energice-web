@@ -33,6 +33,7 @@ model User {
   authCallbackUrl  String?
   hasFreeCredit    Boolean   @default(false)
   paidCredits      Int       @default(0)
+  isGWaiverSigned  Boolean   @default(false)
   sessions         Session[]
   pwResetCode      String?
   pwResetCodeAt    DateTime?

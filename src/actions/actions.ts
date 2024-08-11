@@ -31,7 +31,7 @@ import {
   getSessionById,
   getUnitById,
 } from '@/lib/server-utils';
-import { getTimeDiffSecs, sleep } from '@/lib/utils';
+import { getTimeDiffSecs, isUserOver18, sleep } from '@/lib/utils';
 import {
   HealthQuizData,
   TSignupForm,
@@ -228,6 +228,9 @@ export async function deleteAccount() {
         lastName: null,
         dob: null,
         isWaiverSigned: false,
+        waiverSignedAt: null,
+        waiverSigName: null,
+        isGWaiverSigned: false,
         healthQuiz: null,
         authCallbackUrl: null,
         deleted: true,
@@ -272,7 +275,13 @@ export async function addMemberDetails(data: TMemberDetailsForm) {
     };
   }
 
-  redirect('/health-quiz');
+  const isOver18 = isUserOver18(validatedMemberDetails.data.dob);
+
+  if (isOver18) {
+    redirect('/health-quiz');
+  } else {
+    redirect('/guardian-waiver');
+  }
 }
 
 // --- health quiz actions ---

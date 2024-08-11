@@ -7,6 +7,7 @@ import {
   getUserById,
   authCallbackRedirect,
 } from '@/lib/server-utils';
+import { isUserOver18 } from '@/lib/utils';
 
 export default async function Home() {
   noStore();
@@ -14,6 +15,7 @@ export default async function Home() {
   // auth check
   const session = await checkAuth();
   const user = await getUserById(session.user.id);
+  const isOver18 = isUserOver18(user?.dob ?? null);
 
   // redirect to reset password page
   if (user?.email === 'resetpassword@koldup.com') redirect('/reset-password');
@@ -21,7 +23,8 @@ export default async function Home() {
   // onboarded check
   if (!user?.isEmailConfirmed) redirect('/welcome');
   if (!user?.firstName) redirect('/member-details');
-  if (!user.isWaiverSigned) redirect('/waiver');
+  if (!user.isWaiverSigned && isOver18) redirect('/waiver');
+  if (!user.isGWaiverSigned && !isOver18) redirect('/guardian-waiver');
 
   // redirect to auth callback, if relevant
   await authCallbackRedirect({

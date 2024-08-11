@@ -22,7 +22,7 @@ export default async function Page() {
   return (
     <main className="relative flex-1 flex flex-col gap-6">
       <div className="flex flex-col gap-1">
-        <H1>Welcome to KoldUp! 🎉</H1>
+        <H1>Welcome to KoldUp</H1>
         <Subtitle>The ultimate workout recovery</Subtitle>
       </div>
       <ColdPlungeBenefits onboarding={true} />

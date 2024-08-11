@@ -80,20 +80,20 @@ export const memberDetailsSchema = z.object({
           }
         }
 
-        const isOver18 =
-          Math.ceil(
-            (today.getTime() - dob.getTime()) / (1000 * 60 * 60 * 24),
-          ) >=
-          365 * 18;
-        if (!isOver18) {
-          {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: 'You must be over 18 to sign up',
-            });
-            return z.NEVER;
-          }
-        }
+        // const isOver18 =
+        //   Math.ceil(
+        //     (today.getTime() - dob.getTime()) / (1000 * 60 * 60 * 24),
+        //   ) >=
+        //   365 * 18;
+        // if (!isOver18) {
+        //   {
+        //     ctx.addIssue({
+        //       code: z.ZodIssueCode.custom,
+        //       message: 'You must be over 18 to sign up',
+        //     });
+        //     return z.NEVER;
+        //   }
+        // }
 
         return dob;
       }),

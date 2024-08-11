@@ -35,3 +35,17 @@ export function getTimeDiffSecs(startDate: Date | null, endDate: Date | null) {
   if (!startDate || !endDate) return null;
   return Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
 }
+
+export function isUserOver18(dob: Date | null) {
+  if (!dob) return false;
+
+  const today = new Date();
+  const isOver18 =
+    Math.ceil(
+      (today.getTime() - dob.getTime()) /
+        (1000 * 60 * 60 * 24),
+    ) >=
+    365 * 18;
+
+  return isOver18;
+}

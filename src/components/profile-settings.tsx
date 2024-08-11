@@ -49,7 +49,7 @@ export default function ProfileSettings({
         label="Download your data"
         href={'https://koldup.com/#download-your-data'}
       />
-      {isOnboarded ? (
+      {isOnboarded && waiverSignedAt ? (
         <ViewWaiverDrawer
           firstName={firstName}
           lastName={lastName}

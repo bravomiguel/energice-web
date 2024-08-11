@@ -15,6 +15,7 @@ import PlungeStatsSection from '@/components/plunge-stats-section';
 import StartPlungeSection from '@/components/start-plunge-section';
 import PlungePlansSection from '@/components/plunge-plans-section';
 import ProfileSettings from '@/components/profile-settings';
+import { isUserOver18 } from '@/lib/utils';
 
 export default async function Page() {
   noStore();
@@ -22,6 +23,7 @@ export default async function Page() {
   // auth check
   const session = await checkAuth();
   const user = await getUserById(session.user.id);
+  const isOver18 = isUserOver18(user?.dob ?? null);
 
   // redirect to reset password page, if required
   if (user?.email === 'resetpassword@koldup.com') redirect('/reset-password');
@@ -31,8 +33,14 @@ export default async function Page() {
   // if (!user?.firstName) redirect('/member-details');
   // if (!user.isWaiverSigned) redirect('/waiver');
   let isOnboarded = true;
-  if (!user?.isEmailConfirmed || !user?.firstName || !user.isWaiverSigned)
+  if (
+    !user?.isEmailConfirmed ||
+    !user?.firstName ||
+    (!user.isWaiverSigned && isOver18) ||
+    (!user?.isGWaiverSigned && !isOver18)
+  ) {
     isOnboarded = false;
+  }
 
   // redirect to auth callback, if relevant
   await authCallbackRedirect({

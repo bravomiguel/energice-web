@@ -904,10 +904,8 @@ export async function createCheckoutSession(data: {
           tax_rates: [process.env.STRIPE_TAX_RATE_ID],
         },
       ],
-      // automatic_tax: {
-      //   enabled: true,
-      // },
       mode: 'payment',
+      allow_promotion_codes: true,
       success_url: `${BASE_URL}/session/${sessionId}/unlock`,
       cancel_url: `${BASE_URL}/unit/${unitId}`,
       metadata: {

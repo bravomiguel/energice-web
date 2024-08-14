@@ -43,9 +43,7 @@ function QuizOutcome({ isAnyQuestionYes }: { isAnyQuestionYes: boolean }) {
           <FaCheckCircle className="h-16 w-16 text-blue-koldup" />
           <H1>Check Complete</H1>
           <Subtitle>
-            Based on your answers, cold plunging does not appear to be a health
-            risk for you. We still recommend checking with your medical doctor
-            just in case.
+            {`Cold plunging does not appear to be a health risk for you. If you're unsure, we recommend checking with your medical doctor first.`}
           </Subtitle>
         </>
       )}

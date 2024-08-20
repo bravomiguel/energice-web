@@ -114,9 +114,16 @@ export async function checkPlungeSession(userId: User['id']): Promise<{
   data: Session | null;
   status: 'valid_started' | 'valid_not_started' | 'none_valid';
 }> {
-  // get latest authorized session (i.e. paid for, or used credit)
+  // get latest authorized session (i.e. paid for, or used credit, or unlimited membership)
   const authorizedSession = await prisma.session.findFirst({
-    where: { userId, OR: [{ hasPaid: true }, { hasUsedCredit: true }] },
+    where: {
+      userId,
+      OR: [
+        { hasPaid: true },
+        { hasUsedCredit: true },
+        { hasUsedUnlimited: true },
+      ],
+    },
     orderBy: { createdAt: 'desc' },
   });
 

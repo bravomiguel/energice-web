@@ -614,7 +614,7 @@ export async function createSession(data: {
   }
 
   // create checkout session
-  // await createCheckoutSession({ unitId, sessionId: newSession.id });
+  // await plungeCheckoutSession({ unitId, sessionId: newSession.id });
   // redirect(`/unit/${unitId}/unlock`);
 
   return {
@@ -623,9 +623,7 @@ export async function createSession(data: {
   };
 }
 
-export async function applySessionFreeCredit(data: {
-  sessionId: Session['id'];
-}) {
+export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
   // auth check
   const session = await checkAuth();
 
@@ -688,9 +686,7 @@ export async function applySessionFreeCredit(data: {
   redirect(`/session/${sessionId}/unlock`);
 }
 
-export async function applySessionPaidCredit(data: {
-  sessionId: Session['id'];
-}) {
+export async function applyPaidCredit(data: { sessionId: Session['id'] }) {
   // auth check
   const session = await checkAuth();
 
@@ -756,6 +752,69 @@ export async function applySessionPaidCredit(data: {
   } catch (e) {
     return {
       error: 'Failed to apply credit.',
+    };
+  }
+
+  // redirect to unlock screen
+  redirect(`/session/${sessionId}/unlock`);
+}
+
+export async function applyUnlimited(data: { sessionId: Session['id'] }) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      sessionId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { sessionId } = validatedData.data;
+
+  // authorization check
+  const plungeSession = await getSessionById(sessionId);
+
+  if (!plungeSession) {
+    return {
+      error: 'Session not found',
+    };
+  }
+  if (plungeSession.userId !== session.user.id) {
+    return {
+      error: 'Not authorized',
+    };
+  }
+
+  try {
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: {
+        hasUsedUnlimited: true,
+      },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to apply unlimited membership',
+    };
+  }
+
+  try {
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        hasFreeCredit: false,
+      },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to apply unlimited membership.',
     };
   }
 
@@ -869,7 +928,7 @@ export async function endSession(data: {
 
 // --- payment actions ---
 
-export async function createCheckoutSession(data: {
+export async function plungeCheckoutSession(data: {
   unitId: Unit['id'];
   sessionId: Session['id'];
 }) {
@@ -899,9 +958,9 @@ export async function createCheckoutSession(data: {
       customer_email: session.user.email,
       line_items: [
         {
-          price: process.env.STRIPE_PRODUCT_PRICE_ID,
+          price: process.env.PLUNGE_PRICE_ID,
           quantity: 1,
-          tax_rates: [process.env.STRIPE_TAX_RATE_ID],
+          tax_rates: [process.env.TAX_RATE_ID],
         },
       ],
       mode: 'payment',
@@ -909,7 +968,7 @@ export async function createCheckoutSession(data: {
       success_url: `${BASE_URL}/session/${sessionId}/unlock`,
       cancel_url: `${BASE_URL}/unit/${unitId}`,
       metadata: {
-        price_id: process.env.STRIPE_PRODUCT_PRICE_ID,
+        price_id: process.env.PLUNGE_PRICE_ID,
         session_id: sessionId,
       },
     });
@@ -923,7 +982,7 @@ export async function createCheckoutSession(data: {
   redirect(checkoutSession.url);
 }
 
-export async function createPackCheckoutSession() {
+export async function packCheckoutSession() {
   // authentication check
   const session = await checkAuth();
 
@@ -934,18 +993,15 @@ export async function createPackCheckoutSession() {
       customer_email: session.user.email,
       line_items: [
         {
-          price: process.env.STRIPE_PACK_PRICE_ID,
-          quantity: 8,
-          tax_rates: [process.env.STRIPE_TAX_RATE_ID],
+          price: process.env.PACK_PRICE_ID,
+          quantity: 5,
+          tax_rates: [process.env.TAX_RATE_ID],
         },
       ],
-      // automatic_tax: {
-      //   enabled: true,
-      // },
       mode: 'payment',
       success_url: `${BASE_URL}/profile`,
       cancel_url: `${BASE_URL}/profile`,
-      metadata: { price_id: process.env.STRIPE_PACK_PRICE_ID, quantity: 8 },
+      metadata: { price_id: process.env.PACK_PRICE_ID, quantity: 5 },
     });
   } catch (e) {
     return {
@@ -955,6 +1011,67 @@ export async function createPackCheckoutSession() {
 
   // redirect user
   redirect(checkoutSession.url);
+}
+
+export async function subscriptionCheckoutSession() {
+  // authentication check
+  const session = await checkAuth();
+
+  // create checkout session
+  let checkoutSession;
+  try {
+    checkoutSession = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      customer_email: session.user.email,
+      line_items: [
+        {
+          price: process.env.SUBSCRIPTION_PRICE_ID,
+          quantity: 1,
+          tax_rates: [process.env.TAX_RATE_ID],
+        },
+      ],
+      success_url: `${BASE_URL}/profile`,
+      cancel_url: `${BASE_URL}/profile`,
+      metadata: { price_id: process.env.SUBSCRIPTION_PRICE_ID },
+    });
+  } catch (e) {
+    return {
+      error: 'Subscription checkout failed, please try again',
+    };
+  }
+
+  // redirect user
+  redirect(checkoutSession.url);
+}
+
+export async function billingPortalSession(data: {
+  customerId: User['customerId'];
+}) {
+  // authentication check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      customerId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { customerId } = validatedData.data;
+
+  const portalSession = await stripe.billingPortal.sessions.create({
+    customer: customerId,
+    return_url: `${BASE_URL}/profile`,
+  });
+
+  // redirect user
+  redirect(portalSession.url);
 }
 
 // --- email confirmation actions ---

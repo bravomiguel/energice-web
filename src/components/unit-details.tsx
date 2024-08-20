@@ -8,17 +8,18 @@ import { IoWarningOutline } from 'react-icons/io5';
 import { PiWarningCircle } from 'react-icons/pi';
 import { RiLightbulbFlashLine } from 'react-icons/ri';
 import { toast } from 'sonner';
-import dynamic from 'next/dynamic'
-const ReactPlayer = dynamic(() => import("react-player/lazy"), { ssr: false });
+import dynamic from 'next/dynamic';
+const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: false });
 
 import { Button } from './ui/button';
 import BottomNav from './bottom-nav';
 import PenaltyChargeWarning from './penalty-charge-warning';
 import {
-  applySessionFreeCredit,
-  applySessionPaidCredit,
-  createCheckoutSession,
+  applyFreeCredit,
+  applyPaidCredit,
+  plungeCheckoutSession,
   createSession,
+  applyUnlimited,
 } from '@/actions/actions';
 import { plungeTimerSecsSchema } from '@/lib/validations';
 import { cn } from '@/lib/utils';
@@ -39,11 +40,13 @@ export default function UnitDetails({
   unitId,
   paidCredits,
   hasFreeCredit,
+  isMember,
 }: {
   unitStatus: string;
   unitId: string;
   paidCredits: number;
   hasFreeCredit: boolean;
+  isMember: boolean;
 }) {
   const [plungeTimerVals, setPlungeTimerVals] = useState({
     mins: '01',
@@ -97,9 +100,18 @@ export default function UnitDetails({
       }
 
       if (sessionId) {
-        if (paidCredits > 0) {
+        if (isMember) {
+          // if unlimited member, apply it in db then redirect to session unlock screen
+          const respApplyUnlimited = await applyUnlimited({
+            sessionId,
+          });
+          if (respApplyUnlimited?.error) {
+            console.error({ error: respApplyUnlimited.error });
+            toast.error(respApplyUnlimited.error);
+          }
+        } else if (paidCredits > 0) {
           // if paid credit available, apply it in the back-end, and redirect to unlock screen
-          const respApplyCredit = await applySessionPaidCredit({
+          const respApplyCredit = await applyPaidCredit({
             sessionId,
           });
           if (respApplyCredit?.error) {
@@ -108,7 +120,7 @@ export default function UnitDetails({
           }
         } else if (hasFreeCredit) {
           // if free credit available, apply it in the back-end, and redirect to unlock screen
-          const respApplyCredit = await applySessionFreeCredit({
+          const respApplyCredit = await applyFreeCredit({
             sessionId,
           });
           if (respApplyCredit?.error) {
@@ -117,7 +129,7 @@ export default function UnitDetails({
           }
         } else {
           // if no free credit, redirect to stripe checkout page for payment
-          const respCheckout = await createCheckoutSession({
+          const respCheckout = await plungeCheckoutSession({
             unitId,
             sessionId,
           });
@@ -199,7 +211,11 @@ export default function UnitDetails({
       </div>
       <BottomNav className="gap-1 pt-2 pb-3">
         <div className="flex flex-row w-full gap-4 items-center">
-          {paidCredits > 0 || hasFreeCredit ? (
+          {isMember ? (
+            <span className="text-lg font-bold w-fit text-center whitespace-nowrap">
+              Unlimited
+            </span>
+          ) : paidCredits > 0 || hasFreeCredit ? (
             <span className="text-lg font-bold w-fit text-center whitespace-nowrap">
               {paidCredits > 0
                 ? `${paidCredits} credit${paidCredits > 1 ? 's' : ''}`
@@ -247,8 +263,8 @@ function HowItWorksCarousel() {
                 controls
                 loop
                 muted
-                width={"100%"}
-                height={"100%"}
+                width={'100%'}
+                height={'100%'}
               />
             </div>
             <div className="flex gap-2 items-center justify-center">

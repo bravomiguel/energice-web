@@ -10,10 +10,14 @@ import H2 from './h2';
 
 export default function StartPlungeSection({
   isOnboarded,
+  hasFreeCredit,
   paidCredits,
+  isMember,
 }: {
   isOnboarded: boolean;
+  hasFreeCredit?: User['hasFreeCredit'];
   paidCredits?: User['paidCredits'];
+  isMember: User['isMember'];
 }) {
   const { numberOfSessions: plungeSessionsNum } = usePlungeSessions();
 
@@ -24,7 +28,11 @@ export default function StartPlungeSection({
   if (plungeSessionsNum === 0) {
     return (
       <section>
-        <StartFirstPlungeAlert paidCredits={paidCredits} />
+        <StartFirstPlungeAlert
+          hasFreeCredit={hasFreeCredit}
+          paidCredits={paidCredits}
+          isMember={isMember}
+        />
       </section>
     );
   }
@@ -32,28 +40,48 @@ export default function StartPlungeSection({
   return (
     <section>
       <H2 className="mb-3">Start plunge</H2>
-      <StartNewPlungeAlert paidCredits={paidCredits} />
+      <StartNewPlungeAlert
+        hasFreeCredit={hasFreeCredit}
+        paidCredits={paidCredits}
+        isMember={isMember}
+      />
     </section>
   );
 }
 
 function StartFirstPlungeAlert({
   paidCredits,
+  isMember,
+  hasFreeCredit,
 }: {
   paidCredits?: User['paidCredits'];
+  isMember: User['isMember'];
+  hasFreeCredit?: User['hasFreeCredit'];
 }) {
   return (
     <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
       <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
       <div className="space-y-3">
         <AlertTitle>No plunges yet</AlertTitle>
-        <AlertDescription>Take your first plunge and feel amazing!</AlertDescription>
+        <AlertDescription>
+          {isMember || paidCredits || hasFreeCredit
+            ? `Take your first plunge and feel amazing!`
+            : `Start plunging for just $6 per session`}
+        </AlertDescription>
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start first plunge</StartPlungeBtn>
         </div>
-        {paidCredits && paidCredits > 0 ? (
-          <AlertDescription className="text-end">
-            Plunge credits: <span className="font-semibold">{paidCredits}</span>
+        {isMember ? (
+          <AlertDescription className="font-semibold text-end">
+            Unlimited access
+          </AlertDescription>
+        ) : paidCredits && paidCredits > 0 ? (
+          <AlertDescription className="font-semibold text-end">
+            {`Plunge credits:  ${paidCredits}`}
+          </AlertDescription>
+        ) : hasFreeCredit ? (
+          <AlertDescription className="font-semibold text-end">
+            Free credit
           </AlertDescription>
         ) : null}
       </div>
@@ -63,21 +91,37 @@ function StartFirstPlungeAlert({
 
 function StartNewPlungeAlert({
   paidCredits,
+  isMember,
+  hasFreeCredit,
 }: {
   paidCredits?: User['paidCredits'];
+  isMember: User['isMember'];
+  hasFreeCredit?: User['hasFreeCredit'];
 }) {
   return (
     <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
       <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
       <div className="space-y-3">
         <AlertTitle>New plunge session</AlertTitle>
-        <AlertDescription>Feel amazing in just a few minutes</AlertDescription>
+        <AlertDescription>
+          {isMember || paidCredits || hasFreeCredit
+            ? `Feel amazing in just a few minutes`
+            : `Get plunging for just $6 per session`}
+        </AlertDescription>
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start session</StartPlungeBtn>
         </div>
-        {paidCredits && paidCredits > 0 ? (
-          <AlertDescription className="text-end">
-            Plunge credits: <span className="font-semibold">{paidCredits}</span>
+        {isMember ? (
+          <AlertDescription className="font-semibold text-end">
+            Unlimited access
+          </AlertDescription>
+        ) : paidCredits && paidCredits > 0 ? (
+          <AlertDescription className="font-semibold text-end">
+            {`Plunge credits:  ${paidCredits}`}
+          </AlertDescription>
+        ) : hasFreeCredit ? (
+          <AlertDescription className="font-semibold text-end">
+            Free credit
           </AlertDescription>
         ) : null}
       </div>

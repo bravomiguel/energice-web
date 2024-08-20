@@ -66,10 +66,19 @@ export default async function Page() {
 
         <StartPlungeSection
           isOnboarded={isOnboarded}
+          hasFreeCredit={user?.hasFreeCredit}
           paidCredits={user?.paidCredits}
+          isMember={user?.isMember ?? false}
         />
 
-        <PlungePlansSection isOnboarded={isOnboarded} />
+        <PlungePlansSection
+          isOnboarded={isOnboarded}
+          isMember={user?.isMember ?? false}
+          customerId={user?.customerId ?? ''}
+          memberPeriodEnd={user?.memberPeriodEnd}
+          memberPayFailed={user?.memberPayFailed}
+          memberRenewing={user?.memberRenewing}
+        />
 
         <section>
           <H2 className="mb-3">Settings</H2>

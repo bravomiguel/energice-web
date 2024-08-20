@@ -21,6 +21,7 @@ export default function SessionEndContinueBtn() {
         disabled={isPending}
         isLoading={isPending}
         onClick={async () => await handleContinue()}
+        className='w-full h-16'
       >
         Continue
       </Button>

@@ -113,6 +113,7 @@ export default async function Page({
         unitStatus={unitStatus}
         paidCredits={user.paidCredits}
         hasFreeCredit={user.hasFreeCredit}
+        isMember={user.isMember}
       />
     </main>
   );

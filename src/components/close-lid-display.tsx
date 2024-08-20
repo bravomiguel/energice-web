@@ -102,7 +102,7 @@ export default function CloseLidDisplay({
       <BottomNav>
         <Button
           variant="destructive"
-          className="w-full"
+          className="w-full h-16"
           disabled={isPending}
           isLoading={isPending}
           onClick={handleConfirm}

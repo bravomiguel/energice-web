@@ -30,6 +30,7 @@ import {
   getCodesbyLockId,
   getSessionById,
   getUnitById,
+  getUserById,
 } from '@/lib/server-utils';
 import { getTimeDiffSecs, isUserOver18, sleep } from '@/lib/utils';
 import {
@@ -213,6 +214,11 @@ export async function deleteAccount() {
   // authentication check
   const session = await checkAuth();
 
+  const user = await getUserById(session.user.id);
+  if (user?.customerId) {
+    await customerDeletion({ customerId: user.customerId });
+  }
+
   try {
     await prisma.user.update({
       where: {
@@ -235,6 +241,11 @@ export async function deleteAccount() {
         authCallbackUrl: null,
         hasFreeCredit: false,
         paidCredits: 0,
+        customerId: null,
+        isMember: false,
+        memberPayFailed: null,
+        memberPeriodEnd: null,
+        memberRenewing: null,
         deleted: true,
         deletedAt: new Date(),
       },
@@ -1072,6 +1083,47 @@ export async function billingPortalSession(data: {
 
   // redirect user
   redirect(portalSession.url);
+}
+
+export async function customerDeletion(data: {
+  customerId: User['customerId'];
+}) {
+  // authentication check
+  // const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      customerId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { customerId } = validatedData.data;
+
+  let deletedCustomer;
+  try {
+    deletedCustomer = await stripe.customers.del(customerId);
+  } catch (e) {
+    // console.log("Customer deletion failed, please try again")
+    return {
+      error: 'Customer deletion failed, please try again',
+    };
+  }
+
+  // console.log({deletedCustomer});
+
+  if (!deletedCustomer.deleted) {
+    // console.log("Customer deletion failed, please try again.")
+    return {
+      error: 'Customer deletion failed, please try again.',
+    };
+  }
 }
 
 // --- email confirmation actions ---

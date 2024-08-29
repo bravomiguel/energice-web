@@ -975,7 +975,7 @@ export async function plungeCheckoutSession(data: {
         },
       ],
       mode: 'payment',
-      allow_promotion_codes: true,
+      // allow_promotion_codes: true,
       success_url: `${BASE_URL}/session/${sessionId}/unlock`,
       cancel_url: `${BASE_URL}/unit/${unitId}`,
       metadata: {

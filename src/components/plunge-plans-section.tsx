@@ -199,7 +199,7 @@ function ManageSubscriptionOption({
 //       <RiWaterFlashFill className="h-5 w-5 fill-sky-700/90" />
 //       <div className="space-y-3 w-full">
 //         <AlertTitle>Single session</AlertTitle>
-//         <AlertDescription>{`Start at just $6 per session (50% discount)`}</AlertDescription>
+//         <AlertDescription>{`Start at just $9 per session (50% discount)`}</AlertDescription>
 //         <div className="flex flex-col w-full">
 //           <CheckoutBtn
 //             className="bg-sky-700/90 hover:bg-sky-700/90"

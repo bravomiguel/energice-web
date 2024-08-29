@@ -66,7 +66,7 @@ function StartFirstPlungeAlert({
         <AlertDescription>
           {isMember || paidCredits || hasFreeCredit
             ? `Take your first plunge and feel amazing!`
-            : `Start plunging for just $6 per session`}
+            : `Start plunging for just $9 per session`}
         </AlertDescription>
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start first plunge</StartPlungeBtn>
@@ -106,7 +106,7 @@ function StartNewPlungeAlert({
         <AlertDescription>
           {isMember || paidCredits || hasFreeCredit
             ? `Feel amazing in just a few minutes`
-            : `Get plunging for just $6 per session`}
+            : `Get plunging for just $9 per session`}
         </AlertDescription>
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start session</StartPlungeBtn>

@@ -98,9 +98,20 @@ function BtnSet({
   isSubmitting: boolean;
 }) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const skipQuiz = async () => {
+    startTransition(async () => {
+      router.push('/waiver');
+    });
+  };
   return (
     <BottomNav className="flex flex-row justify-center items-center">
-      <Button variant="outline" onClick={() => router.push('/waiver')}>
+      <Button
+        variant="outline"
+        onClick={async () => await skipQuiz()}
+        isLoading={isPending}
+        className='w-36 px-0'
+      >
         Skip
       </Button>
       <Button

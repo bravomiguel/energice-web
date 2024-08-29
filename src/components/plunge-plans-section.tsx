@@ -36,7 +36,7 @@ export default function PlungePlansSection({
   if (memberPayFailed)
     return (
       <section>
-        <H2 className="mb-3">Plans</H2>
+        <H2 className="mb-3">Membership</H2>
         <div className="space-y-3">
           {/* <PlungeOption /> */}
           <ManageSubscriptionOption
@@ -45,7 +45,7 @@ export default function PlungePlansSection({
             memberPeriodEnd={memberPeriodEnd}
             memberRenewing={memberRenewing}
           />
-          <PackOption />
+          {/* <PackOption /> */}
           {/* <SubscriptionOption /> */}
         </div>
       </section>
@@ -54,7 +54,7 @@ export default function PlungePlansSection({
   if (isMember)
     return (
       <section>
-        <H2 className="mb-3">Plan</H2>
+        <H2 className="mb-3">Membership</H2>
         <ManageSubscriptionOption
           customerId={customerId}
           memberPeriodEnd={memberPeriodEnd}
@@ -65,50 +65,50 @@ export default function PlungePlansSection({
 
   return (
     <section>
-      <H2 className="mb-3">Plans</H2>
+      <H2 className="mb-3">Membership</H2>
       <div className="space-y-3">
         {/* <PlungeOption /> */}
-        <PackOption />
+        {/* <PackOption /> */}
         <SubscriptionOption />
       </div>
     </section>
   );
 }
 
-function PackOption() {
-  return (
-    <Alert className="bg-sky-100 text-zinc-700 pr-10 pt-5 flex gap-2">
-      <BsFillBox2HeartFill className="h-5 w-5 fill-sky-700" />
-      <div className="space-y-3 w-full">
-        <AlertTitle>Plunge 5-Pack</AlertTitle>
-        <AlertDescription>{`5 plunge credits for $22.50 ($4.50 per session)`}</AlertDescription>
-        <div className="flex flex-col w-full">
-          <CheckoutBtn
-            className="bg-sky-700 hover:bg-sky-700/90"
-            checkoutAction={packCheckoutSession}
-          >
-            Get pack
-          </CheckoutBtn>
-        </div>
-      </div>
-    </Alert>
-  );
-}
+// function PackOption() {
+//   return (
+//     <Alert className="bg-sky-100 text-zinc-700 pr-10 pt-5 flex gap-2">
+//       <BsFillBox2HeartFill className="h-5 w-5 fill-sky-700" />
+//       <div className="space-y-3 w-full">
+//         <AlertTitle>Plunge 5-Pack</AlertTitle>
+//         <AlertDescription>{`5 plunge credits for $22.50 ($4.50 per session)`}</AlertDescription>
+//         <div className="flex flex-col w-full">
+//           <CheckoutBtn
+//             className="bg-sky-700 hover:bg-sky-700/90"
+//             checkoutAction={packCheckoutSession}
+//           >
+//             Get pack
+//           </CheckoutBtn>
+//         </div>
+//       </div>
+//     </Alert>
+//   );
+// }
 
 function SubscriptionOption() {
   return (
-    <Alert className="bg-cyan-100 text-zinc-700 pr-10 pt-5 flex gap-2">
+    <Alert className="bg-sky-100 text-zinc-700 pr-10 pt-5 flex gap-2">
       <div className="relative flex items-center justify-center h-min w-min">
-        <BsFillBox2HeartFill className="h-5 w-5 fill-cyan-800" />
-        <div className="h-2.5 w-2 bg-cyan-800 absolute translate-y-1" />
+        <BsFillBox2HeartFill className="h-5 w-5 fill-sky-700" />
+        <div className="h-2.5 w-2 bg-sky-700 absolute translate-y-1" />
         <FaInfinity className="h-3 w-3 fill-cyan-100 absolute translate-y-0.5" />
       </div>
       <div className="space-y-3 w-full">
-        <AlertTitle>Membership</AlertTitle>
-        <AlertDescription>{`Unlimited plunge access for just $49.99 per month`}</AlertDescription>
+        <AlertTitle>Unlimited plunges</AlertTitle>
+        <AlertDescription>{`Get unlimited access for just $49.99 per month`}</AlertDescription>
         <div className="flex flex-col w-full">
           <CheckoutBtn
-            className="bg-cyan-800 hover:bg-cyan-800/90"
+            className="bg-sky-700 hover:bg-sky-700/90"
             checkoutAction={subscriptionCheckoutSession}
           >
             Get unlimited
@@ -158,7 +158,7 @@ function ManageSubscriptionOption({
         <AlertDescription>
           {memberPayFailed
             ? `The last subscription payment failed. Please review your billing details.`
-            : `You've got unlimited plunge access! Manage your billing details below.`}
+            : `You've got unlimited access! Manage your billing details below.`}
         </AlertDescription>
         {memberPeriodEnd && !memberPayFailed ? (
           <AlertDescription className="flex gap-1 w-full justify-end items-center">

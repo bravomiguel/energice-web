@@ -147,6 +147,7 @@ function PlungeImage({ imageUrl }: { imageUrl: Unit['imageUrl'] }) {
         width={300}
         height={50}
         className="w-full"
+        priority={true}
       />
     </div>
   );

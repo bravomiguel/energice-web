@@ -46,7 +46,7 @@ export function DurationDropdown({
             id={type === 'mins' ? 'minutes' : 'seconds'}
             type="number"
             // disabled
-            value={type === 'mins' ? value.mins : value.secs}
+            defaultValue={type === 'mins' ? value.mins : value.secs}
             className={cn('w-12 text-center h-fit', className)}
           />
         </div>
@@ -54,30 +54,27 @@ export function DurationDropdown({
       <DropdownMenuContent className="w-12 text-center bg-zinc-100">
         {type === 'mins' &&
           DURATION_MINS_OPTIONS.map((option, index) => (
-            <>
-              {index !== 0 && (
-                <DropdownMenuSeparator key={index} className="bg-zinc-200" />
-              )}
+            <div key={index}>
+              {index !== 0 && <DropdownMenuSeparator className="bg-zinc-200" />}
               <DropdownMenuItem
                 className="hover:bg-indigo-300 focus:bg-indigo-300"
                 onClick={handleSelectOption}
               >
                 {option}
               </DropdownMenuItem>
-            </>
+            </div>
           ))}
         {type === 'secs' && value.mins !== '06' ? (
           DURATION_SECS_OPTIONS.map((option, index) => (
-            <>
+            <div key={index}>
               {index !== 0 && <DropdownMenuSeparator className="bg-zinc-200" />}
               <DropdownMenuItem
-                key={index}
                 className="hover:bg-indigo-300 focus:bg-indigo-300"
                 onClick={handleSelectOption}
               >
                 {option}
               </DropdownMenuItem>
-            </>
+            </div>
           ))
         ) : type === 'secs' ? (
           <DropdownMenuItem

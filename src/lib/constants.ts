@@ -38,7 +38,7 @@ export const PLUNGE_TIME_INFO_ARRAY: {
   url: string;
 }[] = [
   {
-    message: `The plunge timer (mm:ss) indicates how long you're aiming to plunge for during your session.`,
+    message: `The plunge timer (mins / secs) indicates how long you're aiming to plunge for during your session.`,
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/plunge-timer-1.mp4`

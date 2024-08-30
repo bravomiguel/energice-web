@@ -75,7 +75,7 @@ export default function CloseLidDisplay({
         <Subtitle className="text-2xl text-zinc-600 font-normal text-center">
           Please give the plunge a quick skim
         </Subtitle>
-        <div className="h-[220px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
+        <div className="h-[210px] w-[300px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
           <ReactPlayer
             url={
               process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
@@ -88,8 +88,8 @@ export default function CloseLidDisplay({
             // controls
             loop
             muted
-            width={'100%'}
-            height={'100%'}
+            width={300}
+            height={300}
           />
         </div>
         <Subtitle className="text-3xl text-zinc-900 font-medium flex flex-col gap-3 items-center">

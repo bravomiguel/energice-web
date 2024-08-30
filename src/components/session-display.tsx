@@ -236,7 +236,7 @@ export default function SessionDisplay({
                 <span className="text-7xl font-semibold w-52 text-start ">
                   {formatSecsToMins(remainingTime)}
                 </span>
-                <div className="flex justify-center items-center gap-1 -translate-x-1 text-2xl">
+                <div className="flex justify-center items-center gap-1 -translate-x-2 text-2xl">
                   <IoIosTimer className="text-gray-500 h-5 w-5" />
                   <p className="text-gray-500 w-12 text-start">
                     {formatSecsToMins(totalPlungeSecs)}

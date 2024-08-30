@@ -201,7 +201,7 @@ export default function SessionDisplay({
           />
         </div>
         <Subtitle className="flex gap-1 justify-center items-center translate-x-1">
-          <p>{`Session starts in `}</p>
+          {`Session starts in `}
           <span className="w-14 flex justify-start items-center">
             {formatSecsToMins(sessionSecsLeft - SESSION_MAX_TIME_SECS)}
           </span>

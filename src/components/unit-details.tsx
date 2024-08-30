@@ -162,7 +162,7 @@ export default function UnitDetails({
                   setValue={setPlungeTimerVals}
                   className="bg-zinc-200 font-semibold h-8"
                 />
-                <span className="font-medium self-end text-xs">m</span>
+                <span className="font-medium self-end ">m</span>
                 <span className='font-bold'>:</span>
                 <DurationDropdown
                   type="secs"
@@ -170,7 +170,7 @@ export default function UnitDetails({
                   setValue={setPlungeTimerVals}
                   className="bg-zinc-200 font-semibold h-8"
                 />
-                <span className="font-medium self-end text-xs">s</span>
+                <span className="font-medium self-end ">s</span>
               </div>
 
               <PlungeTimerInfo />

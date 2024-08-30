@@ -20,12 +20,7 @@ export const ONBOARDING_URLS = ONBOARDING_PATHNAMES.map(
 export const APP_PATHNAMES = ['/', '/profile', '/unit'];
 
 // const GDRIVE_BASE_URL = `https://drive.usercontent.google.com/download`;
-const SUPABASE_BASE_URL =
-  process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
-    ? `https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public`
-    : `https://pvnlpwkrhxoiecvsxbcx.supabase.co/storage/v1/object/public`;
-
-// console.log({SUPABASE_BASE_URL});
+const SUPABASE_BASE_URL = `https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public`;
 
 // console.log(process.env.VERCEL_ENV);
 

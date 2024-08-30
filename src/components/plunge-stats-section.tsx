@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 export default function PlungeStatsSection({ isOnboarded }: { isOnboarded: boolean }) {
   const {
     numberOfSessions: plungeSessionsNum,
-    overallPlungeSecs,
+    avgPlungeSecs,
     currentStreakDays,
   } = usePlungeSessions();
 
@@ -29,7 +29,7 @@ export default function PlungeStatsSection({ isOnboarded }: { isOnboarded: boole
   return (
     <section>
       <H2 className="mb-6">Plunge stats</H2>
-      <div className="flex w-full gap-2">
+      <div className="flex w-full justify-between">
         <StatCard
           stat={currentStreakDays}
           statLabel="Streak days"
@@ -43,8 +43,8 @@ export default function PlungeStatsSection({ isOnboarded }: { isOnboarded: boole
           statIcon={<FaPlay className="w-9 h-9 fill-green-koldup" />}
         />
         <StatCard
-          stat={overallPlungeSecs}
-          statLabel="Plunge time"
+          stat={avgPlungeSecs}
+          statLabel="Avg time"
           statIcon={<BsStopwatchFill className="w-9 h-9 fill-green-koldup" />}
         />
       </div>
@@ -58,17 +58,17 @@ function StatCard({
   statIcon,
 }: {
   stat: number;
-  statLabel: 'Streak days' | 'Total plunges' | 'Plunge time';
+  statLabel: 'Streak days' | 'Total plunges' | 'Plunge time' | 'Avg time';
   statIcon: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col gap-3 w-full items-center">
+    <div className="flex flex-col gap-3 w-fit items-center">
       <span
         className={cn('text-4xl font-semibold', {
           'mx-3': statLabel === 'Plunge time',
         })}
       >
-        {statLabel === 'Plunge time' ? <PlungeTimeStat stat={stat} /> : stat}
+        {statLabel === 'Avg time' ? <PlungeTimeStat stat={stat} /> : stat}
       </span>
       <p className="text-sm font-medium">{statLabel}</p>
       {statIcon}

@@ -20,6 +20,7 @@ type TPlungeSessions = {
   handleChangeActivePlungeSecs: (plungeSecs: number) => void;
   numberOfSessions: number;
   overallPlungeSecs: number;
+  avgPlungeSecs: number;
   currentStreakDays: number;
 };
 
@@ -56,8 +57,10 @@ export default function PlungeSessionsProvider({
   ).length;
 
   let overallPlungeSecs;
+  let avgPlungeSecs;
   if (numberOfSessions === 0) {
     overallPlungeSecs = 0;
+    avgPlungeSecs = 0;
   } else {
     overallPlungeSecs = sessions
       .filter((session) => session.sessionStart !== null)
@@ -65,7 +68,10 @@ export default function PlungeSessionsProvider({
       .reduce((accumulator, currentValue) => {
         return accumulator + currentValue;
       });
+    
+      avgPlungeSecs = Math.floor(overallPlungeSecs / numberOfSessions);
   }
+
 
   // --- Streak days calc ---
 
@@ -147,6 +153,7 @@ export default function PlungeSessionsProvider({
         handleChangeActivePlungeSecs,
         numberOfSessions,
         overallPlungeSecs,
+        avgPlungeSecs,
         currentStreakDays,
       }}
     >

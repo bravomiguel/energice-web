@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     // update session record, if individual plunge payment
     if (
       event.data.object.metadata.price_id ===
-      process.env.STRIPE_PRODUCT_PRICE_ID
+      process.env.PLUNGE_PRICE_ID
     ) {
       await prisma.session.update({
         where: { id: event.data.object.metadata.session_id },
@@ -36,7 +36,7 @@ export async function POST(request: Request) {
       });
       // update user record, if plunge pack payment
     } else if (
-      event.data.object.metadata.price_id === process.env.STRIPE_PACK_PRICE_ID
+      event.data.object.metadata.price_id === process.env.PACK_PRICE_ID
     ) {
       const user = await prisma.user.findFirst({
         where: { email: event.data.object.customer_email },

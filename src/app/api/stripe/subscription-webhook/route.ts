@@ -72,7 +72,9 @@ export async function POST(request: Request) {
         where: { customerId: event.data.object.customer },
         data: {
           customerId: event.data.object.customer,
-          memberPeriodEnd: new Date(event.data.object.current_period_end * 1000),
+          memberPeriodEnd: new Date(
+            event.data.object.current_period_end * 1000,
+          ),
           memberRenewing: !event.data.object.cancel_at_period_end,
         },
       });

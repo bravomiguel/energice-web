@@ -43,7 +43,7 @@ export default function EndSessionBtn({
             End session?
           </DialogTitle>
           <DialogDescription className="text-base leading-tight">
-            You will have 1 minute to exit and close the plunge
+            You will have <span className='font-semibold'>1m 30s</span> to exit and close the plunge
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-col gap-2 mb-5">

@@ -75,7 +75,7 @@ export default function CloseLidDisplay({
         <Subtitle className="text-2xl text-zinc-600 font-normal text-center">
           Please give the plunge a quick skim
         </Subtitle>
-        <div className="w-[280px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
+        <div className="h-[220px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
           <ReactPlayer
             url={
               process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'

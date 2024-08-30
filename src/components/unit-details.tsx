@@ -153,7 +153,7 @@ export default function UnitDetails({
 
           <div className="flex-1 flex flex-col gap-1">
             <div className="flex gap-2 items-center">
-              <p className="">Set your plunge timer</p>
+              <p>Set your plunge timer</p>
 
               <div className="flex-1 flex gap-0.5 mb-auto items-center justify-end">
                 <DurationDropdown

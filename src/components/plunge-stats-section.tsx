@@ -29,7 +29,7 @@ export default function PlungeStatsSection({ isOnboarded }: { isOnboarded: boole
   return (
     <section>
       <H2 className="mb-6">Plunge stats</H2>
-      <div className="flex w-full justify-between">
+      <div className="flex w-full justify-between px-2">
         <StatCard
           stat={currentStreakDays}
           statLabel="Streak days"

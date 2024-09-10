@@ -20,7 +20,8 @@ export const ONBOARDING_URLS = ONBOARDING_PATHNAMES.map(
 export const APP_PATHNAMES = ['/', '/profile', '/unit'];
 
 // const GDRIVE_BASE_URL = `https://drive.usercontent.google.com/download`;
-const SUPABASE_BASE_URL = `https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public`;
+// const SUPABASE_BASE_URL = `https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public`;
+const GCLOUD_BASE_URL = `https://storage.googleapis.com`;
 
 // console.log(process.env.VERCEL_ENV);
 
@@ -42,24 +43,21 @@ export const PLUNGE_TIME_INFO_ARRAY: {
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/plunge-timer-1.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/plunge-timer-1.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/plunge-timer-1.mp4`,
   },
   {
     message: `The timer is completely optional. You're in control and can exit when you want.`,
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/how-it-works-4.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/how-it-works-4.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/how-it-works-4.mp4`,
   },
   {
     message: `You can go over the timer, just note your session times out after 6 mins.`,
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/plunge-timer-3.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/plunge-timer-3.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/plunge-timer-3.mp4`,
   },
 ];
 
@@ -72,40 +70,35 @@ export const HOW_IT_WORKS_ARRAY: {
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/how-it-works-1.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/how-it-works-1.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/how-it-works-1.mp4`,
   },
   {
     message: `Open the lid, place your phone in the holder... and take the plunge!`,
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/how-it-works-2.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/how-it-works-2.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/how-it-works-2.mp4`,
   },
   {
     message: `Start the timer and lean back into your plunge.`,
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/how-it-works-3.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/how-it-works-3.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/how-it-works-3.mp4`,
   },
   {
     message: `Done? End your session and jump out at your own pace.`,
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/how-it-works-4.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/how-it-works-4.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/how-it-works-4.mp4`,
   },
   {
     message: `Give the plunge a quick skim and close the lid. You did it!`,
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/how-it-works-5.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/how-it-works-5.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/how-it-works-5.mp4`,
   },
 ];
 
@@ -118,40 +111,35 @@ export const PLUNGE_TIPS_ARRAY: {
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/plunge-tips-1.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/plunge-tips-1.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/plunge-tips-1.mp4`,
   },
   {
     message: `Ready to plunge? Big breath in, and breathe out as you lower into the water.`,
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/plunge-tips-2.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/plunge-tips-2.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/plunge-tips-2.mp4`,
   },
   {
     message: `The first 30 secs can be a shock. Slow down the breath as much as you can.`,
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/plunge-tips-3.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/plunge-tips-3.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/plunge-tips-3.mp4`,
   },
   {
     message: `After 30 secs, you'll notice your body relaxing. Let go, and enjoy it!`,
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/plunge-tips-4.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/plunge-tips-4.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/plunge-tips-4.mp4`,
   },
   {
     message: `You're in control at all times. End your session whenever you need to.`,
     url:
       process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
         ? `/explainer-videos/plunge-tips-5.mp4`
-        : `${SUPABASE_BASE_URL}/explainer-videos/plunge-tips-5.mp4`,
-    // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`,
+        : `${GCLOUD_BASE_URL}/explainer-videos/plunge-tips-5.mp4`,
   },
 ];
 

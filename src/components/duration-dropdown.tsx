@@ -46,7 +46,7 @@ export function DurationDropdown({
             id={type === 'mins' ? 'minutes' : 'seconds'}
             type="number"
             // disabled
-            defaultValue={type === 'mins' ? value.mins : value.secs}
+            value={type === 'mins' ? value.mins : value.secs}
             className={cn('w-12 text-center h-fit', className)}
           />
         </div>

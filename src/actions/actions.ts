@@ -1033,6 +1033,7 @@ export async function subscriptionCheckoutSession() {
   try {
     checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
+      allow_promotion_codes: true,
       customer_email: session.user.email,
       line_items: [
         {

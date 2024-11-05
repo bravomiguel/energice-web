@@ -15,13 +15,13 @@ export const signupSchema = z.object({
   passwordConfirm: z.string().trim(),
 });
 
-export const signupSchemaPwConfirm = signupSchema.refine(
-  (data) => data.passwordConfirm === data.password,
-  {
-    message: 'Passwords do not match',
-    path: ['passwordConfirm'],
-  },
-);
+// export const signupSchemaPwConfirm = signupSchema.refine(
+//   (data) => data.passwordConfirm === data.password,
+//   {
+//     message: 'Passwords do not match',
+//     path: ['passwordConfirm'],
+//   },
+// );
 
 export const signinSchema = z.object({
   email: z
@@ -29,10 +29,6 @@ export const signinSchema = z.object({
     .trim()
     .email({ message: 'Not a valid email' })
     .min(1, { message: 'Email is required' }),
-  password: z
-    .string()
-    .trim()
-    .min(8, { message: 'Password must be at least 8 characters' }),
 });
 
 export const memberDetailsSchema = z.object({

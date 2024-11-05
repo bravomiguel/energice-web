@@ -36,13 +36,13 @@ const config = {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'custom-gradient': 'linear-gradient(to top, #0097a7ff, #4285f4ff)',
+        'custom-gradient': 'linear-gradient(to top, #0097a7,#4b42f4, #8c52ff)',
       },
       screens: {
         xs: '480px',
       },
       colors: {
-        'blue-koldup': '#4285f4ff',
+        'blue-koldup': '#4b42f4',
         'green-koldup': '#0097a7ff',
       },
     },

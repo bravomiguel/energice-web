@@ -35,20 +35,26 @@ export async function middleware(request: NextRequest) {
   // This will refresh session if expired - required for Server Components
   // https://supabase.com/docs/guides/auth/server-side/nextjs
   const user = await supabase.auth.getUser();
+  console.log({user});
 
-  const isAuthenticated = !!user;
+  const isAuthenticated = !user.error;
+
+  console.log({isAuthenticated});
+
   const isAuthRoute =
         request.nextUrl.pathname.startsWith('/signin') ||
         request.nextUrl.pathname.startsWith('/signup');
 
+  console.log({isAuthRoute});
+
   // protected routes
   if (!isAuthRoute && !isAuthenticated) {
-    return NextResponse.redirect(new URL('/sign-in', request.url));
+    return NextResponse.redirect(new URL('/signin', request.url));
   }
 
-  // if (request.nextUrl.pathname === '/' && !user.error) {
-  //   return NextResponse.redirect(new URL('/protected', request.url));
-  // }
+  if (isAuthRoute && isAuthenticated) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
 
   return response;
 }

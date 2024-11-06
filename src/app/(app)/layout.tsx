@@ -19,9 +19,9 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   // auth check
-  const session = await checkAuth();
+  const user = await checkAuth();
 
-  const plungeSessions = await getSessionsByUserId(session.user.id);
+  const plungeSessions = await getSessionsByUserId(user.id);
 
   return (
     <>

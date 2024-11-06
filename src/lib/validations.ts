@@ -8,11 +8,6 @@ export const signupSchema = z.object({
     .trim()
     .email({ message: 'Not a valid email' })
     .min(1, { message: 'Email is required' }),
-  password: z
-    .string()
-    .trim()
-    .min(8, { message: 'Password must be at least 8 characters' }),
-  passwordConfirm: z.string().trim(),
 });
 
 // export const signupSchemaPwConfirm = signupSchema.refine(

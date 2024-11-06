@@ -11,6 +11,7 @@ import {
 } from 'seam';
 import { Session, Unit, User } from '@prisma/client';
 import { Resend } from 'resend';
+import { headers } from 'next/headers';
 
 import prisma from '@/lib/db';
 import {
@@ -23,7 +24,7 @@ import {
   signinSchema,
   waiverDataSchema,
 } from '@/lib/validations';
-import { signIn, signOut } from '@/lib/auth-no-edge';
+
 import {
   checkAuth,
   checkPlungeSession,
@@ -42,6 +43,7 @@ import {
 import { BASE_URL, ONBOARDING_URLS } from '@/lib/constants';
 import confirmEmail from '../../emails/confirm-email';
 import passwordResetEmail from '../../emails/password-reset-email';
+import { createServerClient } from '@/lib/supabase/server';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const seam = new Seam();
@@ -49,99 +51,44 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 
 // --- user actions ---
 
-export async function signUp(
-  data: TSignupForm & { callbackUrl: string | null },
-) {
+export async function signUpAction(data: TSignupForm) {
   // validation check
-  const validatedData = signupSchema
-    .extend({ callbackUrl: z.union([z.null(), z.string().trim().url()]) })
-    .safeParse(data);
+  const validatedData = signupSchema.safeParse(data);
 
   if (!validatedData.success) {
+    console.error(validatedData.error.message);
     return {
       error: validatedData.error.issues[0].message,
     };
   }
 
-  const { email, password, callbackUrl: authCallbackUrl } = validatedData.data;
+  const { email } = validatedData.data;
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const supabase = await createServerClient();
+  const origin = (await headers()).get('origin');
 
-  // existing account check
-  let user;
-  try {
-    user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    });
-  } catch (e) {
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: `${origin}/api/auth/callback`,
+    },
+  });
+
+  if (error) {
+    console.error(error.code + ' ' + error.message);
     return {
-      message: 'Find account check failed',
-    };
-  }
-
-  if (user && !user.deleted) {
-    return {
-      error: 'Account already exists',
-    };
-  }
-
-  // update callback url (so long as not part of onboarding)
-  const isCallbackUrlOnboarding =
-    authCallbackUrl && ONBOARDING_URLS.includes(authCallbackUrl);
-
-  if (user && user.deleted) {
-    try {
-      await prisma.user.update({
-        where: {
-          email,
-        },
-        data: {
-          hashedPassword,
-          firstName: null,
-          lastName: null,
-          dob: null,
-          authCallbackUrl: !isCallbackUrlOnboarding ? authCallbackUrl : null,
-          deleted: false,
-          deletedAt: null,
-        },
-      });
-    } catch (e) {
-      return {
-        error: 'Failed to recreate account',
-      };
+      error: error.message,
     }
+  } else {
+    redirect('/signup?success=true')
   }
-
-  // create account
-  if (!user) {
-    try {
-      await prisma.user.create({
-        data: {
-          email,
-          authCallbackUrl: !isCallbackUrlOnboarding ? authCallbackUrl : null,
-          hashedPassword,
-        },
-      });
-    } catch (e) {
-      return {
-        error: 'Failed to create account',
-      };
-    }
-  }
-
-  // signin
-  await signIn('credentials', { email, password });
 }
 
 export async function signInAction(
   data: TSigninForm & { callbackUrl: string | null },
 ) {
   // validation check
-  const validatedData = signinSchema
-    .extend({ callbackUrl: z.union([z.null(), z.string().trim().url()]) })
-    .safeParse(data);
+  const validatedData = signinSchema.safeParse(data);
 
   if (!validatedData.success) {
     return {
@@ -149,72 +96,72 @@ export async function signInAction(
     };
   }
 
-  const { email, password, callbackUrl: authCallbackUrl } = validatedData.data;
+  const { email } = validatedData.data;
 
-  // password check
-  let hashedPassword;
-  try {
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-        deleted: false,
-      },
-    });
+  // // password check
+  // let hashedPassword;
+  // try {
+  //   const user = await prisma.user.findUnique({
+  //     where: {
+  //       email,
+  //       deleted: false,
+  //     },
+  //   });
 
-    if (!user?.hashedPassword)
-      return {
-        error: 'Invalid credentials',
-      };
+  //   if (!user?.hashedPassword)
+  //     return {
+  //       error: 'Invalid credentials',
+  //     };
 
-    hashedPassword = user.hashedPassword;
-  } catch (e) {
-    return {
-      error: 'Invalid credentials provided',
-    };
-  }
+  //   hashedPassword = user.hashedPassword;
+  // } catch (e) {
+  //   return {
+  //     error: 'Invalid credentials provided',
+  //   };
+  // }
 
-  const passwordsMatch = await bcrypt.compare(password, hashedPassword);
+  // const passwordsMatch = await bcrypt.compare(password, hashedPassword);
 
-  if (!passwordsMatch)
-    return {
-      error: 'Error, invalid credentials',
-    };
+  // if (!passwordsMatch)
+  //   return {
+  //     error: 'Error, invalid credentials',
+  //   };
 
-  // update callback url (so long as not part of onboarding)
-  const isCallbackUrlOnboarding =
-    authCallbackUrl && ONBOARDING_URLS.includes(authCallbackUrl);
+  // // update callback url (so long as not part of onboarding)
+  // const isCallbackUrlOnboarding =
+  //   authCallbackUrl && ONBOARDING_URLS.includes(authCallbackUrl);
 
-  if (!isCallbackUrlOnboarding) {
-    try {
-      await prisma.user.update({
-        where: {
-          email: validatedData.data.email,
-          hashedPassword,
-          deleted: false,
-        },
-        data: {
-          authCallbackUrl,
-        },
-      });
-    } catch (e) {
-      return {
-        error: 'Sign in failed, please try again',
-      };
-    }
-  }
+  // if (!isCallbackUrlOnboarding) {
+  //   try {
+  //     await prisma.user.update({
+  //       where: {
+  //         email: validatedData.data.email,
+  //         hashedPassword,
+  //         deleted: false,
+  //       },
+  //       data: {
+  //         authCallbackUrl,
+  //       },
+  //     });
+  //   } catch (e) {
+  //     return {
+  //       error: 'Sign in failed, please try again',
+  //     };
+  //   }
+  // }
 
-  await signIn('credentials', { email, password });
+  // await signIn('credentials', { email, password });
 }
 
 export async function signOutAction() {
-  await signOut({ redirectTo: '/signin' });
+  // await signOut({ redirectTo: '/signin' });
 }
 
 export async function deleteAccount() {
   // authentication check
   const session = await checkAuth();
 
-  const user = await getUserById(session.user.id);
+  const user = await getUserById('1');
   if (user?.customerId) {
     await customerDeletion({ customerId: user.customerId });
   }
@@ -222,7 +169,7 @@ export async function deleteAccount() {
   try {
     await prisma.user.update({
       where: {
-        id: session.user.id,
+        id: '1',
       },
       data: {
         eConfCode: null,
@@ -251,14 +198,14 @@ export async function deleteAccount() {
       },
     });
 
-    await prisma.session.deleteMany({ where: { userId: session.user.id } });
+    await prisma.session.deleteMany({ where: { userId: '1' } });
   } catch (e) {
     return {
       error: 'Failed to delete user',
     };
   }
 
-  await signOut({ redirectTo: '/signup' });
+  // await signOut({ redirectTo: '/signup' });
 }
 
 // --- member details actions ---
@@ -279,7 +226,7 @@ export async function addMemberDetails(data: TMemberDetailsForm) {
   // update user record with member details
   try {
     await prisma.user.update({
-      where: { id: session.user.id },
+      where: { id: '1' },
       data: { ...validatedMemberDetails.data },
     });
   } catch (e) {
@@ -314,7 +261,7 @@ export async function saveHealthQuiz(data: HealthQuizData) {
 
   try {
     await prisma.user.update({
-      where: { id: session.user.id },
+      where: { id: '1' },
       data: { healthQuiz: JSON.stringify(validatedQuizData.data) },
     });
   } catch (e) {
@@ -345,7 +292,7 @@ export async function signWaiver(data: Pick<User, 'waiverSigName'>) {
 
   try {
     await prisma.user.update({
-      where: { id: session.user.id },
+      where: { id: '1' },
       data: { isWaiverSigned: true, waiverSigName, waiverSignedAt: new Date() },
     });
   } catch (e) {
@@ -356,7 +303,7 @@ export async function signWaiver(data: Pick<User, 'waiverSigName'>) {
 
   // redirect to callback url, if available
   const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
+    where: { id: '1' },
     select: { authCallbackUrl: true },
   });
   const callbackUrl = user?.authCallbackUrl;
@@ -365,7 +312,7 @@ export async function signWaiver(data: Pick<User, 'waiverSigName'>) {
 
   // clear callback from db, before redirecting
   await prisma.user.update({
-    where: { id: session.user.id },
+    where: { id: '1' },
     data: { authCallbackUrl: null },
   });
 
@@ -511,7 +458,7 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
 
   // valid session check (i.e. paid for, and within time limit)
   const { data: plungeSession, status: plungeStatus } =
-    await checkPlungeSession(session.user.id);
+    await checkPlungeSession('1');
   if (plungeStatus === 'none_valid') {
     return {
       error: 'No valid session found',
@@ -614,7 +561,7 @@ export async function createSession(data: {
   let newSession;
   try {
     newSession = await prisma.session.create({
-      data: { userId: session.user.id, unitId, plungeTimerSecs },
+      data: { userId: '1', unitId, plungeTimerSecs },
     });
   } catch (e) {
     // console.log(e);
@@ -661,7 +608,7 @@ export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
       error: 'Session not found',
     };
   }
-  if (plungeSession.userId !== session.user.id) {
+  if (plungeSession.userId !== '1') {
     return {
       error: 'Not authorized',
     };
@@ -682,7 +629,7 @@ export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
 
   try {
     await prisma.user.update({
-      where: { id: session.user.id },
+      where: { id: '1' },
       data: {
         hasFreeCredit: false,
       },
@@ -724,7 +671,7 @@ export async function applyPaidCredit(data: { sessionId: Session['id'] }) {
       error: 'Session not found',
     };
   }
-  if (plungeSession.userId !== session.user.id) {
+  if (plungeSession.userId !== '1') {
     return {
       error: 'Not authorized',
     };
@@ -745,7 +692,7 @@ export async function applyPaidCredit(data: { sessionId: Session['id'] }) {
 
   try {
     const userRecord = await prisma.user.findFirst({
-      where: { id: session.user.id },
+      where: { id: '1' },
     });
 
     if (!userRecord) {
@@ -755,7 +702,7 @@ export async function applyPaidCredit(data: { sessionId: Session['id'] }) {
     }
 
     await prisma.user.update({
-      where: { id: session.user.id },
+      where: { id: '1' },
       data: {
         paidCredits: userRecord.paidCredits - 1,
       },
@@ -797,7 +744,7 @@ export async function applyUnlimited(data: { sessionId: Session['id'] }) {
       error: 'Session not found',
     };
   }
-  if (plungeSession.userId !== session.user.id) {
+  if (plungeSession.userId !== '1') {
     return {
       error: 'Not authorized',
     };
@@ -818,7 +765,7 @@ export async function applyUnlimited(data: { sessionId: Session['id'] }) {
 
   try {
     await prisma.user.update({
-      where: { id: session.user.id },
+      where: { id: '1' },
       data: {
         hasFreeCredit: false,
       },
@@ -860,7 +807,7 @@ export async function startSession(data: { sessionId: Session['id'] }) {
       error: 'Session not found',
     };
   }
-  if (plungeSession.userId !== session.user.id) {
+  if (plungeSession.userId !== '1') {
     return {
       error: 'Not authorized',
     };
@@ -914,7 +861,7 @@ export async function endSession(data: {
       error: 'Session not found',
     };
   }
-  if (plungeSession.userId !== session.user.id) {
+  if (plungeSession.userId !== '1') {
     return {
       error: 'Not authorized',
     };
@@ -966,7 +913,7 @@ export async function plungeCheckoutSession(data: {
   let checkoutSession;
   try {
     checkoutSession = await stripe.checkout.sessions.create({
-      customer_email: session.user.email,
+      customer_email: 'email@email.com',
       line_items: [
         {
           price: process.env.PLUNGE_PRICE_ID,
@@ -1001,7 +948,7 @@ export async function packCheckoutSession() {
   let checkoutSession;
   try {
     checkoutSession = await stripe.checkout.sessions.create({
-      customer_email: session.user.email,
+      customer_email: 'email@email.com',
       line_items: [
         {
           price: process.env.PACK_PRICE_ID,
@@ -1034,7 +981,7 @@ export async function subscriptionCheckoutSession() {
     checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
       allow_promotion_codes: true,
-      customer_email: session.user.email,
+      customer_email: 'email@email.com',
       line_items: [
         {
           price: process.env.SUBSCRIPTION_PRICE_ID,
@@ -1125,271 +1072,4 @@ export async function customerDeletion(data: {
       error: 'Customer deletion failed, please try again.',
     };
   }
-}
-
-// --- email confirmation actions ---
-
-export async function sendConfirmEmail() {
-  // auth check
-  const session = await checkAuth();
-  if (!session.user?.email) redirect('/');
-
-  // generate 6 digit code
-  const eConfCode = String(Math.floor(100000 + Math.random() * 900000));
-  const eConfCodeAt = new Date();
-
-  // add code to user record
-  try {
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: { eConfCode, eConfCodeAt },
-    });
-  } catch (e) {
-    return {
-      error: 'Failed to create code',
-    };
-  }
-
-  try {
-    await resend.emails.send({
-      from: 'KoldUp <info@koldup.com>',
-      to: [session.user.email],
-      subject: 'Confirm your email',
-      react: confirmEmail({ eConfCode }),
-    });
-    // return { success: true, dataResend, recipient };
-  } catch (error) {
-    return { error: 'Failed to send email' };
-  }
-}
-
-export async function checkEmailConfirmCode(data: {
-  eConfCode: User['eConfCode'];
-}) {
-  // auth check
-  const session = await checkAuth();
-
-  // validation check
-  const validatedData = emailConfirmCodeSchema.safeParse(data);
-
-  if (!validatedData.success) {
-    return {
-      error: validatedData.error.issues[0].message,
-    };
-  }
-
-  const { eConfCode } = validatedData.data;
-
-  // get user data
-  let user;
-  try {
-    user = await prisma.user.findUnique({ where: { id: session.user.id } });
-  } catch (e) {
-    return {
-      error: 'Code check failed, please try again',
-    };
-  }
-
-  // check user exists (possibly redundant check)
-  if (!user) {
-    redirect('/signup');
-  }
-
-  // check confirmation code exists
-  if (!user.eConfCode) {
-    return {
-      error: 'No confirmation code found, please hit resend',
-    };
-  }
-
-  // check code provided by user
-  if (eConfCode !== user.eConfCode) {
-    return {
-      error: 'Code is not correct, please try again',
-    };
-  }
-
-  // check code has not expired
-  const now = new Date();
-  const secsSinceCodeCreated = getTimeDiffSecs(user.eConfCodeAt, now);
-  const hasCodeExpired = secsSinceCodeCreated && secsSinceCodeCreated > 10 * 60;
-  if (hasCodeExpired) {
-    return {
-      error: 'Code has expired, please hit resend',
-    };
-  }
-
-  // set user email to confirmed
-  try {
-    await prisma.user.update({
-      where: { id: session.user.id },
-      data: { isEmailConfirmed: true },
-    });
-  } catch (e) {
-    return {
-      error: 'Code check failed, please try again.',
-    };
-  }
-
-  redirect('/member-details');
-}
-
-// --- password reset actions ---
-
-export async function sendPwResetEmail(data: { email: User['email'] }) {
-  // validation check
-  const validatedData = signupSchema.pick({ email: true }).safeParse(data);
-
-  if (!validatedData.success) {
-    return {
-      error: validatedData.error.issues[0].message,
-    };
-  }
-
-  const { email } = validatedData.data;
-
-  // check user exists
-  let user;
-  try {
-    user = await prisma.user.findUnique({ where: { email } });
-  } catch (e) {
-    return {
-      error: 'Account does not exist, please try again',
-    };
-  }
-  if (!user) {
-    return {
-      error: 'No account found with this email',
-    };
-  }
-
-  // generate 6 digit code
-  const pwResetCode = String(Math.floor(100000 + Math.random() * 900000));
-  const pwResetCodeAt = new Date();
-
-  // add code to user record
-  try {
-    await prisma.user.update({
-      where: { email },
-      data: { pwResetCode, pwResetCodeAt },
-    });
-  } catch (e) {
-    return {
-      error: 'Failed to create code',
-    };
-  }
-
-  // send code
-  try {
-    await resend.emails.send({
-      from: 'KoldUp <info@koldup.com>',
-      to: [email],
-      subject: 'Reset your password',
-      react: passwordResetEmail({ pwResetCode }),
-    });
-    // return { success: true, dataResend, recipient };
-  } catch (error) {
-    return { error: 'Failed to send email' };
-  }
-}
-
-export async function checkPwResetCode(data: {
-  email: User['email'];
-  pwResetCode: User['pwResetCode'];
-}) {
-  // validation check
-  const validatedData = pwResetCodeSchema
-    .pick({ pwResetCode: true, email: true })
-    .safeParse(data);
-
-  if (!validatedData.success) {
-    return {
-      error: validatedData.error.issues[0].message,
-    };
-  }
-
-  const { pwResetCode, email } = validatedData.data;
-
-  // get user data
-  let user;
-  try {
-    user = await prisma.user.findUnique({ where: { email } });
-  } catch (e) {
-    return {
-      error: 'Account lookup failed, please try again',
-    };
-  }
-
-  // check user exists
-  if (!user) {
-    return {
-      error: 'No account found with this email',
-    };
-  }
-
-  // check confirmation code exists
-  if (!user.pwResetCode) {
-    return {
-      error: 'No password reset code found, please try again',
-    };
-  }
-
-  // check code provided by user
-  if (pwResetCode !== user.pwResetCode) {
-    return {
-      error: 'Code is not correct, please try again',
-    };
-  }
-
-  // check code has not expired
-  const now = new Date();
-  const secsSinceCodeCreated = getTimeDiffSecs(user.pwResetCodeAt, now);
-  const hasCodeExpired = secsSinceCodeCreated && secsSinceCodeCreated > 10 * 60;
-  if (hasCodeExpired) {
-    return {
-      error: 'Code has expired, please try again',
-    };
-  }
-}
-
-export async function updatePassword(data: {
-  email: User['email'];
-  pwResetCode: User['pwResetCode'];
-  newPassword: string;
-  newPasswordConfirm: string;
-}) {
-  // validation check
-  const validatedData = pwResetCodeSchema.safeParse(data);
-
-  if (!validatedData.success) {
-    return {
-      error: validatedData.error.issues[0].message,
-    };
-  }
-
-  const { email, newPassword } = validatedData.data;
-
-  // update user password
-  const hashedNewPassword = await bcrypt.hash(newPassword, 10);
-
-  try {
-    await prisma.user.update({
-      where: { email },
-      data: {
-        hashedPassword: hashedNewPassword,
-      },
-    });
-  } catch (e) {
-    return {
-      error: 'Failed to update password',
-    };
-  }
-}
-
-export async function accessResetPassword() {
-  // signin
-  await signIn('credentials', {
-    email: process.env.RESET_PASSWORD_EMAIL,
-    password: process.env.RESET_PASSWORD_PW,
-  });
 }

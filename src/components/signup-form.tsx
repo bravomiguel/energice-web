@@ -9,6 +9,7 @@ import { TSignupForm } from '@/lib/types';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
 import { Button } from './ui/button';
+import { signUpAction } from '@/actions/actions';
 
 export default function SignupForm() {
   const {
@@ -23,22 +24,24 @@ export default function SignupForm() {
   const [signupError, setSignupError] = useState<string | null>(null);
 
   const onSubmit = handleSubmit(async (data) => {
-    // const response = await signUp({ ...data, callbackUrl });
-    // if (response?.error) {
-    //   console.error({ error: response.error });
-    //   setSignupError(response.error);
-    // }
+    const response = await signUpAction(data);
+    if (response?.error) {
+      console.error({ error: response.error });
+      setSignupError(response.error);
+    }
   });
 
   return (
     <form className="flex flex-col gap-5" onSubmit={onSubmit}>
       <div className="space-y-1">
-        <Label htmlFor="email" className="text-zinc-200">Email</Label>
+        <Label htmlFor="email" className="text-zinc-200">
+          Email
+        </Label>
         <Input
           id="email"
           type="email"
           {...register('email')}
-          className="border-zinc-200 focus-visible:text-zinc-900 focus-visible:bg-zinc-100/60 text-zinc-50"
+          className="border-zinc-200 font-normal focus-visible:text-zinc-900 focus-visible:ring-indigo-950 focus-visible:bg-zinc-100/70 text-zinc-50"
         />
         {errors.email && (
           <p className="text-red-300 text-sm">{errors.email.message}</p>
@@ -50,11 +53,10 @@ export default function SignupForm() {
           type="submit"
           disabled={
             !isValid ||
-            isSubmitting ||
-            (isSubmitSuccessful && signupError === null)
+            isSubmitting
           }
           isLoading={
-            isSubmitting || (isSubmitSuccessful && signupError === null)
+            isSubmitting
           }
           className="w-full"
         >

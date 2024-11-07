@@ -15,6 +15,7 @@ export default function SignupForm() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
   } = useForm<TSignupForm>({
     resolver: zodResolver(signupSchema),
@@ -29,6 +30,7 @@ export default function SignupForm() {
       console.error({ error: response.error });
       setSignupError(response.error);
     }
+    reset();
   });
 
   return (

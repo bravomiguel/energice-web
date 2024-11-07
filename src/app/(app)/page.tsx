@@ -1,12 +1,10 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import {
-  checkPlungeSession,
-  checkAuth,
-  getUserById,
-} from '@/lib/server-utils';
+import { checkPlungeSession, checkAuth, getUserById } from '@/lib/server-utils';
 import { isUserOver18 } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
+import SignOutBtn from '@/components/sign-out-btn';
 
 export default async function Home() {
   noStore();
@@ -36,5 +34,9 @@ export default async function Home() {
   // redirect to profile (currently, no need for home screen)
   // redirect('/profile');
 
-  return <main className="h-screen">Home</main>;
+  return (
+    <main className="h-screen">
+      <SignOutBtn />
+    </main>
+  );
 }

@@ -2,19 +2,25 @@ import Link from 'next/link';
 
 import SignupForm from '@/components/signup-form';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { IoMdMail } from "react-icons/io";
+import { IoMdMail } from 'react-icons/io';
+import { MdError } from 'react-icons/md';
 import { cn } from '@/lib/utils';
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { success?: boolean };
+  searchParams: { success?: boolean; confirmError?: boolean };
 }) {
-  const success = searchParams.success ?? false;
+  const signupSuccess = searchParams.success ?? false;
+  const confirmError = searchParams.confirmError ?? false;
 
   return (
     <main className="w-full">
-      {success && <SignupSuccess className='mb-5' />}
+      {signupSuccess && <SignupMessage className="mb-5" />}
+
+      {confirmError && (
+        <SignupMessage confirmError={confirmError} className="mb-5" />
+      )}
 
       <SignupForm />
       <div className="mt-3 text-xs text-center peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-zinc-200/70">
@@ -46,14 +52,30 @@ export default async function Page({
   );
 }
 
-function SignupSuccess({ className }: { className?: string }) {
+function SignupMessage({
+  className,
+  confirmError,
+}: {
+  className?: string;
+  confirmError?: boolean;
+}) {
   return (
     <Alert className={cn('bg-indigo-100 text-zinc-700 pr-10 pt-5', className)}>
-      <IoMdMail className="h-6 w-6 fill-indigo-800 -translate-y-1 -translate-x-0.5" />
+      {!!confirmError ? (
+        <MdError className="h-6 w-6 fill-red-800 -translate-y-1 -translate-x-0.5" />
+      ) : (
+        <IoMdMail className="h-6 w-6 fill-indigo-800 -translate-y-1 -translate-x-0.5" />
+      )}
       <div className="space-y-3">
-        <AlertTitle>Thanks for signing up!</AlertTitle>
+        <AlertTitle>
+          {!!confirmError
+            ? `Email verification failed`
+            : `Thanks for signing up!`}
+        </AlertTitle>
         <AlertDescription>
-          Please check your email for a verification link.
+          {!!confirmError
+            ? `Please try signing up again`
+            : `Please check your email for a verification link`}
         </AlertDescription>
       </div>
     </Alert>

@@ -34,6 +34,7 @@ export default function SignOutBtn() {
             }}
             disabled={isPending}
             isLoading={isPending}
+            className='w-32'
           >
             Log out
           </Button>

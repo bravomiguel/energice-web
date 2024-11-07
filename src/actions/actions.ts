@@ -65,96 +65,31 @@ export async function signUpAction(data: TSignupForm) {
   const { email } = validatedData.data;
 
   const supabase = await createServerClient();
-  const origin = (await headers()).get('origin');
+  // const origin = (await headers()).get('origin');
 
   const { error } = await supabase.auth.signInWithOtp({
     email,
-    options: {
-      emailRedirectTo: `${origin}/api/auth/callback`,
-    },
+    // options: {
+    //   emailRedirectTo: `${origin}`,
+    // },
   });
 
   if (error) {
     console.error(error.code + ' ' + error.message);
     return {
       error: error.message,
-    }
-  } else {
-    redirect('/signup?success=true')
-  }
-}
-
-export async function signInAction(
-  data: TSigninForm & { callbackUrl: string | null },
-) {
-  // validation check
-  const validatedData = signinSchema.safeParse(data);
-
-  if (!validatedData.success) {
-    return {
-      error: validatedData.error.issues[0].message,
     };
+  } else {
+    redirect('/signup?success=true');
   }
-
-  const { email } = validatedData.data;
-
-  // // password check
-  // let hashedPassword;
-  // try {
-  //   const user = await prisma.user.findUnique({
-  //     where: {
-  //       email,
-  //       deleted: false,
-  //     },
-  //   });
-
-  //   if (!user?.hashedPassword)
-  //     return {
-  //       error: 'Invalid credentials',
-  //     };
-
-  //   hashedPassword = user.hashedPassword;
-  // } catch (e) {
-  //   return {
-  //     error: 'Invalid credentials provided',
-  //   };
-  // }
-
-  // const passwordsMatch = await bcrypt.compare(password, hashedPassword);
-
-  // if (!passwordsMatch)
-  //   return {
-  //     error: 'Error, invalid credentials',
-  //   };
-
-  // // update callback url (so long as not part of onboarding)
-  // const isCallbackUrlOnboarding =
-  //   authCallbackUrl && ONBOARDING_URLS.includes(authCallbackUrl);
-
-  // if (!isCallbackUrlOnboarding) {
-  //   try {
-  //     await prisma.user.update({
-  //       where: {
-  //         email: validatedData.data.email,
-  //         hashedPassword,
-  //         deleted: false,
-  //       },
-  //       data: {
-  //         authCallbackUrl,
-  //       },
-  //     });
-  //   } catch (e) {
-  //     return {
-  //       error: 'Sign in failed, please try again',
-  //     };
-  //   }
-  // }
-
-  // await signIn('credentials', { email, password });
 }
+
+export async function signInAction(data: TSigninForm) {}
 
 export async function signOutAction() {
-  // await signOut({ redirectTo: '/signin' });
+  const supabase = await createServerClient();
+  await supabase.auth.signOut();
+  return redirect('/signin');
 }
 
 export async function deleteAccount() {

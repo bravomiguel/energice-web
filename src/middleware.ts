@@ -40,6 +40,8 @@ export async function middleware(request: NextRequest) {
 
   const isAuthenticated = !user.error;
 
+  const isPhoneConfirmed = !!user.data.user?.phone_confirmed_at;
+
   const isAuthRoute =
     request.nextUrl.pathname.startsWith('/signin') ||
     request.nextUrl.pathname.startsWith('/signup');
@@ -47,23 +49,30 @@ export async function middleware(request: NextRequest) {
   const isPKCEConfirmRoute =
     request.nextUrl.pathname.startsWith('/api/auth/confirm');
 
+  const isConfirmPhoneRoute = request.nextUrl.pathname === '/confirm-phone';
+
   // console.log({ user });
   // console.log({ isAuthenticated });
   // console.log({ isAuthRoute });
 
-  // allow PKCE confirm route to bypass authentication check
+  // Allow PKCE confirmation route without authentication check
   if (isPKCEConfirmRoute) {
     return response;
   }
 
-  // signed in check
+  // Redirect to signup if user is not signed in and not on an auth route
   if (!isAuthRoute && !isAuthenticated) {
     return NextResponse.redirect(new URL('/signup', request.url));
   }
 
-  // can't access auth pages if signed in
+  // Redirect authenticated users away from auth pages
   if (isAuthRoute && isAuthenticated) {
     return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  // Redirect to phone confirmation screen if authenticated but phone number is not confirmed
+  if (isAuthenticated && !isPhoneConfirmed && !isConfirmPhoneRoute) {
+    return NextResponse.redirect(new URL('/confirm-phone', request.url));
   }
 
   return response;

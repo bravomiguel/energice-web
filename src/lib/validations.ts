@@ -18,6 +18,21 @@ export const signupSchema = z.object({
 //   },
 // );
 
+export const phoneOtpSchema = z.object({
+  pin: z
+    .string({ message: 'Your one-time password must be 6 characters.' })
+    .min(6, {
+      message: 'Your one-time password must be 6 characters.',
+    }),
+});
+
+export const phoneConfirmSchema = z.object({
+  phoneNumber: z
+    .string()
+    .regex(/^\(\d{3}\)-\d{3}-\d{4}$/, 'Phone number must be 10 digits long')
+    .transform((val) => val.replace(/\D/g, '')),
+});
+
 export const signinSchema = z.object({
   email: z
     .string()
@@ -148,32 +163,3 @@ export const plungeTimerSecsSchema = z.union([
 export const waiverDataSchema = z.object({
   waiverSigName: z.string().regex(/^[a-zA-Z]{2,} [a-zA-Z]+(?: [a-zA-Z]*)*$/),
 });
-
-export const emailConfirmCodeSchema = z.object({
-  eConfCode: z.string().trim().length(6, { message: 'Code is 6 digits long' }),
-});
-
-export const pwResetCodeSchema = z.object({
-  pwResetCode: z
-    .string()
-    .trim()
-    .length(6, { message: 'Code is 6 digits long' }),
-  email: z
-    .string()
-    .trim()
-    .email({ message: 'Not a valid email' })
-    .min(1, { message: 'Email is required' }),
-  newPassword: z
-    .string()
-    .trim()
-    .min(8, { message: 'Password must be at least 8 characters' }),
-  newPasswordConfirm: z.string().trim(),
-});
-
-export const pwResetCodeSchemaPwConfirm = pwResetCodeSchema.refine(
-  (data) => data.newPasswordConfirm === data.newPassword,
-  {
-    message: 'Passwords do not match',
-    path: ['newPasswordConfirm'],
-  },
-);

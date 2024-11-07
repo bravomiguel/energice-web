@@ -1,6 +1,5 @@
 'use server';
 
-import bcrypt from 'bcryptjs';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 // import { AuthError } from 'next-auth';
@@ -9,18 +8,14 @@ import {
   isSeamActionAttemptFailedError,
   isSeamActionAttemptTimeoutError,
 } from 'seam';
-import { Session, Unit, User } from '@prisma/client';
-import { Resend } from 'resend';
+import { Session, Unit, Profile } from '@prisma/client';
 import { headers } from 'next/headers';
 
 import prisma from '@/lib/db';
 import {
   signupSchema,
-  emailConfirmCodeSchema,
-  healthQuizDataSchema,
   memberDetailsSchema,
   plungeTimerSecsSchema,
-  pwResetCodeSchema,
   signinSchema,
   waiverDataSchema,
 } from '@/lib/validations';
@@ -34,20 +29,12 @@ import {
   getUserById,
 } from '@/lib/server-utils';
 import { getTimeDiffSecs, isUserOver18, sleep } from '@/lib/utils';
-import {
-  HealthQuizData,
-  TSignupForm,
-  TMemberDetailsForm,
-  TSigninForm,
-} from '@/lib/types';
-import { BASE_URL, ONBOARDING_URLS } from '@/lib/constants';
-import confirmEmail from '../../emails/confirm-email';
-import passwordResetEmail from '../../emails/password-reset-email';
+import { TSignupForm, TMemberDetailsForm, TSigninForm } from '@/lib/types';
+import { BASE_URL } from '@/lib/constants';
 import { createServerClient } from '@/lib/supabase/server';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const seam = new Seam();
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 // --- user actions ---
 
@@ -65,23 +52,92 @@ export async function signUpAction(data: TSignupForm) {
   const { email } = validatedData.data;
 
   const supabase = await createServerClient();
-  // const origin = (await headers()).get('origin');
 
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    // options: {
-    //   emailRedirectTo: `${origin}`,
-    // },
-  });
+  const { error } = await supabase.auth.signInWithOtp({ email });
 
   if (error) {
     console.error(error.code + ' ' + error.message);
     return {
       error: error.message,
     };
-  } else {
-    redirect('/signup?success=true');
   }
+
+  redirect('/signup?success=true');
+}
+
+export async function createUserProfile() {
+        //  grab profile based on email, if it already exists
+      // let profile;
+      // try {
+      //   profile = await prisma.profile.findUnique({
+      //     where: {
+      //       email,
+      //     },
+      //   });
+      // } catch (e) {
+      //   console.error(e);
+      //   return {
+      //     error: 'Existing profile check failed',
+      //   };
+      // }
+
+      // // if (profile && !profile.deleted) {
+      // //   return {
+      // //     error: 'Account already exists',
+      // //   };
+      // // }
+
+      // // create stripe customer id for user
+      // const { stripeCustomerId, error: stripeError } = await customerCreation({
+      //   email,
+      // });
+
+      // if (stripeError) {
+      //   console.error(stripeError);
+      //   return {
+      //     error: 'Stripe customer creation failed',
+      //   };
+      // }
+
+      // // reinstate profile if previously deleted
+      // if (profile && profile.deleted) {
+      //   try {
+      //     await prisma.profile.update({
+      //       where: {
+      //         email,
+      //       },
+      //       data: {
+      //         id: user.id,
+      //         stripeCustomerId,
+      //         firstName: null,
+      //         lastName: null,
+      //         deleted: false,
+      //         deletedAt: null,
+      //       },
+      //     });
+      //   } catch (e) {
+      //     console.error(e);
+      //     return {
+      //       error: 'Failed to reinstate profile',
+      //     };
+      //   }
+      // }
+
+      // // create profile if it doesn't exist
+      // if (!profile) {
+      //   try {
+      //     await prisma.profile.create({
+      //       data: {
+      //         email,
+      //       },
+      //     });
+      //   } catch (e) {
+      //     console.error(e);
+      //     return {
+      //       error: 'Failed to create account',
+      //     };
+      //   }
+      // }
 }
 
 export async function signInAction(data: TSigninForm) {}
@@ -97,33 +153,23 @@ export async function deleteAccount() {
   const session = await checkAuth();
 
   const user = await getUserById('1');
-  if (user?.customerId) {
-    await customerDeletion({ customerId: user.customerId });
+  if (user?.stripeCustomerId) {
+    await customerDeletion({ stripeCustomerId: user.stripeCustomerId });
   }
 
   try {
-    await prisma.user.update({
+    await prisma.profile.update({
       where: {
         id: '1',
       },
       data: {
-        eConfCode: null,
-        eConfCodeAt: null,
-        pwResetCode: null,
-        pwResetCodeAt: null,
-        isEmailConfirmed: false,
         firstName: null,
         lastName: null,
-        dob: null,
         isWaiverSigned: false,
         waiverSignedAt: null,
         waiverSigName: null,
-        isGWaiverSigned: false,
-        healthQuiz: null,
-        authCallbackUrl: null,
-        hasFreeCredit: false,
-        paidCredits: 0,
-        customerId: null,
+        credits: 0,
+        stripeCustomerId: null,
         isMember: false,
         memberPayFailed: null,
         memberPeriodEnd: null,
@@ -160,7 +206,7 @@ export async function addMemberDetails(data: TMemberDetailsForm) {
 
   // update user record with member details
   try {
-    await prisma.user.update({
+    await prisma.profile.update({
       where: { id: '1' },
       data: { ...validatedMemberDetails.data },
     });
@@ -179,38 +225,9 @@ export async function addMemberDetails(data: TMemberDetailsForm) {
   }
 }
 
-// --- health quiz actions ---
-
-export async function saveHealthQuiz(data: HealthQuizData) {
-  // authentication check
-  const session = await checkAuth();
-
-  // validation check
-  const validatedQuizData = healthQuizDataSchema.safeParse(data);
-
-  if (!validatedQuizData.success) {
-    return {
-      error: validatedQuizData.error.issues[0].message,
-    };
-  }
-
-  try {
-    await prisma.user.update({
-      where: { id: '1' },
-      data: { healthQuiz: JSON.stringify(validatedQuizData.data) },
-    });
-  } catch (e) {
-    return {
-      error: 'Failed to save health quiz answers',
-    };
-  }
-
-  redirect('/health-quiz/outcome');
-}
-
 // --- waiver actions ---
 
-export async function signWaiver(data: Pick<User, 'waiverSigName'>) {
+export async function signWaiver(data: Pick<Profile, 'waiverSigName'>) {
   // authentication check
   const session = await checkAuth();
 
@@ -226,7 +243,7 @@ export async function signWaiver(data: Pick<User, 'waiverSigName'>) {
   const { waiverSigName } = validatedWaiverData.data;
 
   try {
-    await prisma.user.update({
+    await prisma.profile.update({
       where: { id: '1' },
       data: { isWaiverSigned: true, waiverSigName, waiverSignedAt: new Date() },
     });
@@ -236,22 +253,7 @@ export async function signWaiver(data: Pick<User, 'waiverSigName'>) {
     };
   }
 
-  // redirect to callback url, if available
-  const user = await prisma.user.findUnique({
-    where: { id: '1' },
-    select: { authCallbackUrl: true },
-  });
-  const callbackUrl = user?.authCallbackUrl;
-
-  if (!callbackUrl) redirect('/');
-
-  // clear callback from db, before redirecting
-  await prisma.user.update({
-    where: { id: '1' },
-    data: { authCallbackUrl: null },
-  });
-
-  redirect(callbackUrl);
+  redirect('/');
 }
 
 // --- unit actions ---
@@ -562,18 +564,18 @@ export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
     };
   }
 
-  try {
-    await prisma.user.update({
-      where: { id: '1' },
-      data: {
-        hasFreeCredit: false,
-      },
-    });
-  } catch (e) {
-    return {
-      error: 'Failed to apply free credit.',
-    };
-  }
+  // try {
+  //   await prisma.profile.update({
+  //     where: { id: '1' },
+  //     data: {
+  //       hasFreeCredit: false,
+  //     },
+  //   });
+  // } catch (e) {
+  //   return {
+  //     error: 'Failed to apply free credit.',
+  //   };
+  // }
 
   // redirect to unlock screen
   redirect(`/session/${sessionId}/unlock`);
@@ -626,7 +628,7 @@ export async function applyPaidCredit(data: { sessionId: Session['id'] }) {
   }
 
   try {
-    const userRecord = await prisma.user.findFirst({
+    const userRecord = await prisma.profile.findFirst({
       where: { id: '1' },
     });
 
@@ -636,10 +638,10 @@ export async function applyPaidCredit(data: { sessionId: Session['id'] }) {
       };
     }
 
-    await prisma.user.update({
+    await prisma.profile.update({
       where: { id: '1' },
       data: {
-        paidCredits: userRecord.paidCredits - 1,
+        credits: userRecord.credits - 1,
       },
     });
   } catch (e) {
@@ -698,18 +700,18 @@ export async function applyUnlimited(data: { sessionId: Session['id'] }) {
     };
   }
 
-  try {
-    await prisma.user.update({
-      where: { id: '1' },
-      data: {
-        hasFreeCredit: false,
-      },
-    });
-  } catch (e) {
-    return {
-      error: 'Failed to apply unlimited membership.',
-    };
-  }
+  // try {
+  //   await prisma.profile.update({
+  //     where: { id: '1' },
+  //     data: {
+  //       hasFreeCredit: false,
+  //     },
+  //   });
+  // } catch (e) {
+  //   return {
+  //     error: 'Failed to apply unlimited membership.',
+  //   };
+  // }
 
   // redirect to unlock screen
   redirect(`/session/${sessionId}/unlock`);
@@ -939,7 +941,7 @@ export async function subscriptionCheckoutSession() {
 }
 
 export async function billingPortalSession(data: {
-  customerId: User['customerId'];
+  customerId: Profile['stripeCustomerId'];
 }) {
   // authentication check
   const session = await checkAuth();
@@ -947,7 +949,7 @@ export async function billingPortalSession(data: {
   // validation check
   const validatedData = z
     .object({
-      customerId: z.string().trim().min(1),
+      stripeCustomerId: z.string().trim().min(1),
     })
     .safeParse(data);
 
@@ -957,10 +959,10 @@ export async function billingPortalSession(data: {
     };
   }
 
-  const { customerId } = validatedData.data;
+  const { stripeCustomerId } = validatedData.data;
 
   const portalSession = await stripe.billingPortal.sessions.create({
-    customer: customerId,
+    customer: stripeCustomerId,
     return_url: `${BASE_URL}/profile`,
   });
 
@@ -969,7 +971,7 @@ export async function billingPortalSession(data: {
 }
 
 export async function customerDeletion(data: {
-  customerId: User['customerId'];
+  stripeCustomerId: Profile['stripeCustomerId'];
 }) {
   // authentication check
   // const session = await checkAuth();
@@ -977,7 +979,7 @@ export async function customerDeletion(data: {
   // validation check
   const validatedData = z
     .object({
-      customerId: z.string().trim().min(1),
+      stripeCustomerId: z.string().trim().min(1),
     })
     .safeParse(data);
 
@@ -987,11 +989,11 @@ export async function customerDeletion(data: {
     };
   }
 
-  const { customerId } = validatedData.data;
+  const { stripeCustomerId } = validatedData.data;
 
   let deletedCustomer;
   try {
-    deletedCustomer = await stripe.customers.del(customerId);
+    deletedCustomer = await stripe.customers.del(stripeCustomerId);
   } catch (e) {
     // console.log("Customer deletion failed, please try again")
     return {
@@ -1007,4 +1009,36 @@ export async function customerDeletion(data: {
       error: 'Customer deletion failed, please try again.',
     };
   }
+}
+
+export async function customerCreation(data: { email: Profile['email'] }) {
+  // validation check
+  const validatedData = z
+    .object({
+      email: z.string(),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { email } = validatedData.data;
+
+  let customer;
+  try {
+    customer = await stripe.customers.create({ email });
+  } catch (e) {
+    // console.log("Customer deletion failed, please try again")
+    return {
+      error: 'Customer creation failed',
+    };
+  }
+
+  // console.log({customer});
+  const stripeCustomerId: string = customer.id;
+
+  return { stripeCustomerId };
 }

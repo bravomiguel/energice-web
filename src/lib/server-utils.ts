@@ -1,61 +1,34 @@
 import 'server-only';
 import { redirect } from 'next/navigation';
 
-import { Session, Unit, User } from '@prisma/client';
+import { Session, Unit, Profile } from '@prisma/client';
 import prisma from './db';
 import { Seam } from 'seam';
 import { isWithinTimeLimit } from './utils';
-import { APP_PATHNAMES } from './constants';
 import { createServerClient } from './supabase/server';
 
 // --- auth utils ---
 
 export async function checkAuth() {
   const supabase = await createServerClient();
-  const {data, error} = await supabase.auth.getUser();
+  const { data, error } = await supabase.auth.getUser();
   if (error) {
+    console.error(error.code + ' ' + error.message);
     redirect('/signin');
   }
 
   return data.user;
 }
 
-export async function authCallbackRedirect({
-  id: userId,
-  authCallbackUrl,
-}: Pick<User, 'id' | 'authCallbackUrl'>) {
-  if (authCallbackUrl) {
-    // clear callback from db
-    try {
-      await prisma.user.update({
-        where: { id: userId },
-        data: { authCallbackUrl: null },
-      });
-    } catch (e) {
-      return {
-        error: 'Failed to run callback url',
-      };
-    }
-
-    const isCallbackUrlAllowed =
-      APP_PATHNAMES.filter((pathName) => authCallbackUrl.includes(pathName))
-        .length > 0;
-
-    if (isCallbackUrlAllowed) {
-      redirect(authCallbackUrl);
-    }
-  }
-}
-
 // --- user utils ---
 
-export async function getUserById(userId: User['id']) {
-  const user = await prisma.user.findUnique({ where: { id: userId } });
-  return user;
+export async function getUserProfileById(userId: Profile['id']) {
+  const profile = await prisma.profile.findUnique({ where: { id: userId } });
+  return profile;
 }
 
-export async function getUserByEmail(userEmail: User['email']) {
-  const user = await prisma.user.findUnique({
+export async function getUserByEmail(userEmail: Profile['email']) {
+  const user = await prisma.profile.findUnique({
     where: { email: userEmail, deleted: false },
   });
   return user;
@@ -111,7 +84,7 @@ export async function getSessionsByUserId(userId: Session['id']) {
   return sessions;
 }
 
-export async function checkPlungeSession(userId: User['id']): Promise<{
+export async function checkPlungeSession(userId: Profile['id']): Promise<{
   data: Session | null;
   status: 'valid_started' | 'valid_not_started' | 'none_valid';
 }> {
@@ -123,6 +96,7 @@ export async function checkPlungeSession(userId: User['id']): Promise<{
         { hasPaid: true },
         { hasUsedCredit: true },
         { hasUsedUnlimited: true },
+        { hasUsedFreeCredit: true },
       ],
     },
     orderBy: { createdAt: 'desc' },

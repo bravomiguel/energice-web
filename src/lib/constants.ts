@@ -13,10 +13,6 @@ export const BASE_URL =
     ? `http://localhost:${process.env.PORT}`
     : process.env.CANONICAL_URL;
 
-export const ONBOARDING_URLS = ONBOARDING_PATHNAMES.map(
-  (pathName) => `${BASE_URL}${pathName}`,
-);
-
 export const APP_PATHNAMES = ['/', '/profile', '/unit'];
 
 // const GDRIVE_BASE_URL = `https://drive.usercontent.google.com/download`;

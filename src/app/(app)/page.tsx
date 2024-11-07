@@ -9,10 +9,9 @@ import SignOutBtn from '@/components/sign-out-btn';
 export default async function Home() {
   noStore();
 
-  // auth check
-  // const session = await checkAuth();
-  // const user = await getUserById(session.user.id);
-  // const isOver18 = isUserOver18(user?.dob ?? null);
+  // get user session
+  const user = await checkAuth();
+  // console.log({ user });
 
   // onboarded check
   // if (!user?.isEmailConfirmed) redirect('/welcome');

@@ -2,43 +2,27 @@ import { z } from 'zod';
 
 export const userIdSchema = z.string().cuid();
 
-export const signupSchema = z.object({
-  email: z
-    .string()
-    .trim()
-    .email({ message: 'Not a valid email' })
-    .min(1, { message: 'Email is required' }),
-});
-
-// export const signupSchemaPwConfirm = signupSchema.refine(
-//   (data) => data.passwordConfirm === data.password,
-//   {
-//     message: 'Passwords do not match',
-//     path: ['passwordConfirm'],
-//   },
-// );
-
-export const phoneOtpSchema = z.object({
-  pin: z
-    .string({ message: 'Your one-time password must be 6 characters.' })
-    .min(6, {
-      message: 'Your one-time password must be 6 characters.',
-    }),
-});
-
-export const phoneConfirmSchema = z.object({
-  phoneNumber: z
-    .string()
-    .regex(/^\(\d{3}\)-\d{3}-\d{4}$/, 'Phone number must be 10 digits long')
-    .transform((val) => val.replace(/\D/g, '')),
-});
-
 export const signinSchema = z.object({
   email: z
     .string()
     .trim()
     .email({ message: 'Not a valid email' })
     .min(1, { message: 'Email is required' }),
+});
+
+export const phoneOtpSchema = z.object({
+  token: z
+    .string({ message: 'Your one-time password must be 6 characters.' })
+    .length(6, {
+      message: 'Your one-time password must be 6 characters.',
+    }),
+});
+
+export const phoneConfirmSchema = z.object({
+  phone: z
+    .string()
+    .regex(/^\(\d{3}\)-\d{3}-\d{4}$/, 'Phone number must be 10 digits long')
+    .transform((val) => val.replace(/\D/g, '')),
 });
 
 export const memberDetailsSchema = z.object({

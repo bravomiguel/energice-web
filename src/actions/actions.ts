@@ -13,11 +13,11 @@ import { Session, Unit, Profile } from '@prisma/client';
 
 import prisma from '@/lib/db';
 import {
-  signupSchema,
   memberDetailsSchema,
   plungeTimerSecsSchema,
   signinSchema,
   waiverDataSchema,
+  phoneOtpSchema,
 } from '@/lib/validations';
 import {
   checkAuth,
@@ -28,18 +28,24 @@ import {
   getUserProfileById,
 } from '@/lib/server-utils';
 import { getTimeDiffSecs, isUserOver18, sleep } from '@/lib/utils';
-import { TSignupForm, TMemberDetailsForm, TSigninForm } from '@/lib/types';
+import {
+  TMemberDetailsForm,
+  TSigninForm,
+  TPhoneConfirmForm,
+  TPhoneOtpForm,
+} from '@/lib/types';
 import { BASE_URL } from '@/lib/constants';
 import { createServerClient } from '@/lib/supabase/server';
+import { UserAttributes } from '@supabase/supabase-js';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const seam = new Seam();
 
 // --- user actions ---
 
-export async function signUpAction(data: TSignupForm) {
+export async function signinWithEmail(data: TSigninForm) {
   // validation check
-  const validatedData = signupSchema.safeParse(data);
+  const validatedData = signinSchema.safeParse(data);
 
   if (!validatedData.success) {
     console.error(validatedData.error.message);
@@ -52,11 +58,14 @@ export async function signUpAction(data: TSignupForm) {
 
   const supabase = await createServerClient();
 
-  const origin = (await headers()).get("origin");
+  const origin = (await headers()).get('origin');
 
-  const { error } = await supabase.auth.signInWithOtp({ email, options: {
-    emailRedirectTo: `${origin}/api/auth/confirm`
-  } });
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: `${origin}/api/auth/email-callback`,
+    },
+  });
 
   if (error) {
     console.error(error.code + ' ' + error.message);
@@ -65,93 +74,172 @@ export async function signUpAction(data: TSignupForm) {
     };
   }
 
-  redirect('/signup?success=true');
+  redirect('/signin?success=true');
 }
 
-export async function createUserProfile() {
-        //  grab profile based on email, if it already exists
-      // let profile;
-      // try {
-      //   profile = await prisma.profile.findUnique({
-      //     where: {
-      //       email,
-      //     },
-      //   });
-      // } catch (e) {
-      //   console.error(e);
-      //   return {
-      //     error: 'Existing profile check failed',
-      //   };
-      // }
+export async function signinWithGoogle() {
+  const origin = (await headers()).get('origin');
 
-      // // if (profile && !profile.deleted) {
-      // //   return {
-      // //     error: 'Account already exists',
-      // //   };
-      // // }
+  const supabase = await createServerClient();
 
-      // // create stripe customer id for user
-      // const { stripeCustomerId, error: stripeError } = await customerCreation({
-      //   email,
-      // });
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${origin}/api/auth/google-callback`,
+    },
+  });
 
-      // if (stripeError) {
-      //   console.error(stripeError);
-      //   return {
-      //     error: 'Stripe customer creation failed',
-      //   };
-      // }
+  if (error) {
+    console.error(error.code + ' ' + error.message);
+    return {
+      error: error.message,
+    };
+  }
 
-      // // reinstate profile if previously deleted
-      // if (profile && profile.deleted) {
-      //   try {
-      //     await prisma.profile.update({
-      //       where: {
-      //         email,
-      //       },
-      //       data: {
-      //         id: user.id,
-      //         stripeCustomerId,
-      //         firstName: null,
-      //         lastName: null,
-      //         deleted: false,
-      //         deletedAt: null,
-      //       },
-      //     });
-      //   } catch (e) {
-      //     console.error(e);
-      //     return {
-      //       error: 'Failed to reinstate profile',
-      //     };
-      //   }
-      // }
-
-      // // create profile if it doesn't exist
-      // if (!profile) {
-      //   try {
-      //     await prisma.profile.create({
-      //       data: {
-      //         email,
-      //       },
-      //     });
-      //   } catch (e) {
-      //     console.error(e);
-      //     return {
-      //       error: 'Failed to create account',
-      //     };
-      //   }
-      // }
+  if (data.url) {
+    redirect(data.url); // use the redirect API for your server framework
+  }
 }
 
-export async function signInAction(data: TSigninForm) {}
+export async function sendPhoneOtp(data: TPhoneConfirmForm) {
+  // data validation check
+  const validatedData = z
+    .object({
+      phone: z.string().trim().length(10, { message: 'Invalid phone format' }),
+    })
+    .safeParse(data);
 
-export async function signOutAction() {
+  if (!validatedData.success) {
+    console.error(validatedData.error.message);
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { phone } = validatedData.data;
+
+  const supabase = await createServerClient();
+
+  const { error } = await supabase.auth.updateUser({ phone: `1${phone}` });
+
+  if (error) {
+    console.error(error.code + ' ' + error.message);
+    return {
+      error: error.message,
+    };
+  }
+}
+
+export async function verifyPhone(data: TPhoneOtpForm & { phone: string }) {
+  // data validation check
+  const validatedData = phoneOtpSchema
+    .merge(z.object({ phone: z.string().trim().length(10) }))
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    console.error(validatedData.error.message);
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { phone, token } = validatedData.data;
+
+  const supabase = await createServerClient();
+
+  const { error } = await supabase.auth.verifyOtp({
+    phone: `1${phone}`,
+    token,
+    type: 'phone_change',
+  });
+
+  if (error) {
+    console.error(error.code + ' ' + error.message);
+    return {
+      error: error.message,
+    };
+  }
+}
+
+export async function signOut() {
   const supabase = await createServerClient();
   await supabase.auth.signOut();
   return redirect('/signin');
 }
 
-export async function deleteAccount() {
+export async function deleteUser() {}
+
+export async function createUserProfile() {
+  //  grab profile based on email, if it already exists
+  // let profile;
+  // try {
+  //   profile = await prisma.profile.findUnique({
+  //     where: {
+  //       email,
+  //     },
+  //   });
+  // } catch (e) {
+  //   console.error(e);
+  //   return {
+  //     error: 'Existing profile check failed',
+  //   };
+  // }
+  // // if (profile && !profile.deleted) {
+  // //   return {
+  // //     error: 'Account already exists',
+  // //   };
+  // // }
+  // // create stripe customer id for user
+  // const { stripeCustomerId, error: stripeError } = await customerCreation({
+  //   email,
+  // });
+  // if (stripeError) {
+  //   console.error(stripeError);
+  //   return {
+  //     error: 'Stripe customer creation failed',
+  //   };
+  // }
+  // // reinstate profile if previously deleted
+  // if (profile && profile.deleted) {
+  //   try {
+  //     await prisma.profile.update({
+  //       where: {
+  //         email,
+  //       },
+  //       data: {
+  //         id: user.id,
+  //         stripeCustomerId,
+  //         firstName: null,
+  //         lastName: null,
+  //         deleted: false,
+  //         deletedAt: null,
+  //       },
+  //     });
+  //   } catch (e) {
+  //     console.error(e);
+  //     return {
+  //       error: 'Failed to reinstate profile',
+  //     };
+  //   }
+  // }
+  // // create profile if it doesn't exist
+  // if (!profile) {
+  //   try {
+  //     await prisma.profile.create({
+  //       data: {
+  //         email,
+  //       },
+  //     });
+  //   } catch (e) {
+  //     console.error(e);
+  //     return {
+  //       error: 'Failed to create account',
+  //     };
+  //   }
+  // }
+}
+
+export async function deleteUserProfile() {
   // authentication check
   const session = await checkAuth();
 

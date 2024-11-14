@@ -42,12 +42,11 @@ export async function middleware(request: NextRequest) {
 
   const isPhoneConfirmed = !!user.data.user?.phone_confirmed_at;
 
-  const isAuthRoute =
-    request.nextUrl.pathname.startsWith('/signin') ||
-    request.nextUrl.pathname.startsWith('/signup');
+  const isAuthRoute = request.nextUrl.pathname.startsWith('/signin');
 
-  const isPKCEConfirmRoute =
-    request.nextUrl.pathname.startsWith('/api/auth/confirm');
+  const isPKCERoute =
+    request.nextUrl.pathname.startsWith('/api/auth/email-callback') ||
+    request.nextUrl.pathname.startsWith('/api/auth/google-callback');
 
   const isConfirmPhoneRoute = request.nextUrl.pathname === '/confirm-phone';
 
@@ -56,13 +55,13 @@ export async function middleware(request: NextRequest) {
   // console.log({ isAuthRoute });
 
   // Allow PKCE confirmation route without authentication check
-  if (isPKCEConfirmRoute) {
+  if (isPKCERoute) {
     return response;
   }
 
   // Redirect to signup if user is not signed in and not on an auth route
   if (!isAuthRoute && !isAuthenticated) {
-    return NextResponse.redirect(new URL('/signup', request.url));
+    return NextResponse.redirect(new URL('/signin', request.url));
   }
 
   // Redirect authenticated users away from auth pages

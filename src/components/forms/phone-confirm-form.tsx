@@ -45,14 +45,14 @@ export default function PhoneConfirmForm({
   return (
     <form className="flex-1 flex flex-col" onSubmit={onSubmit}>
       <Controller
-        name="phoneNumber"
+        name="phone"
         control={control}
         render={({ field: { onChange, value }, fieldState: { error } }) => (
           <div className="flex-1 flex flex-col">
             <div className="space-y-1">
-              <Label htmlFor="phoneNumber">Phone</Label>
+              <Label htmlFor="phone">Phone</Label>
               <Input
-                id="phoneNumber"
+                id="phone"
                 type="tel"
                 inputMode="numeric"
                 value={value}

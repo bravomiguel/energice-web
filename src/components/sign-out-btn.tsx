@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 
-import { signOutAction } from '@/actions/actions';
+import { signOut } from '@/actions/actions';
 import { Button } from './ui/button';
 import {
   Dialog,
@@ -29,7 +29,7 @@ export default function SignOutBtn() {
           <Button
             onClick={async () => {
               startTransition(async () => {
-                await signOutAction();
+                await signOut();
               });
             }}
             disabled={isPending}

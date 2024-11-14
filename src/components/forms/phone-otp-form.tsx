@@ -36,29 +36,29 @@ export default function PhoneOtpForm() {
   //   formState: { isValid, isSubmitting, isSubmitSuccessful, errors },
   // } = form;
 
-  const pin = form.watch('pin', '');
-  // console.log({ pin });
+  const token = form.watch('token', '');
+  // console.log({ token });
 
   useEffect(() => {
     handleGetCode();
   }, []);
 
   useEffect(() => {
-    if (pin.length == 6) {
-      form.trigger('pin').then((isValid) => {
+    if (token.length == 6) {
+      form.trigger('token').then((isValid) => {
         if (isValid) {
           form.handleSubmit(onSubmit)(); // Call handleSubmit programmatically
         }
       });
     }
-  }, [pin]);
+  }, [token, form]);
 
   const [isPending, startTransition] = useTransition();
 
   const handleGetCode = useCallback(
     async (e?: React.MouseEvent<HTMLButtonElement>) => {
       if (e) e.preventDefault();
-      form.setValue('pin', '');
+      form.setValue('token', '');
       console.log('code requested');
       // startTransition(async () => {
       //   const response = await sendConfirmEmail();
@@ -71,7 +71,7 @@ export default function PhoneOtpForm() {
       //   }
       // });
     },
-    [],
+    [form],
   );
 
   const onSubmit: (data: TPhoneOtpForm) => Promise<void> = async (
@@ -95,7 +95,7 @@ export default function PhoneOtpForm() {
       >
         <FormField
           control={form.control}
-          name="pin"
+          name="token"
           render={({ field }) => (
             <FormItem className="flex-1 w-full flex flex-col items-center">
               {/* <FormLabel>One-Time Password</FormLabel> */}

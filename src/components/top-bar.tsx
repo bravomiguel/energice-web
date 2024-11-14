@@ -5,7 +5,7 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { FaUser } from 'react-icons/fa';
 import Link from 'next/link';
 
-import { endSession, signOutAction } from '@/actions/actions';
+import { endSession, signOut } from '@/actions/actions';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import { useEffect } from 'react';
 import { ONBOARDING_PATHNAMES, RESET_PW_PATHNAME } from '@/lib/constants';
@@ -66,13 +66,13 @@ export default function TopBar() {
           <>
             {isOnboarding && (
               <>
-                <BackArrow label="Signin" handler={signOutAction} />
+                <BackArrow label="Signin" handler={signOut} />
                 <ProfileLink />
               </>
             )}
             {isResetPassword && (
               <>
-                <BackArrow label="Signin" handler={signOutAction} />
+                <BackArrow label="Signin" handler={signOut} />
               </>
             )}
             {isUnit && (

@@ -59,15 +59,6 @@ export default function MemberDetailsForm() {
             <p className="text-red-500 text-sm">{errors.lastName.message}</p>
           )}
         </div>
-
-        <div className="space-y-1">
-          <Label htmlFor="dob">Date of Birth</Label>
-          <Input id="dob" type="date" {...register('dob')} className="text-left" />
-          <p className="text-zinc-400 text-xs">We collect this for liability reasons. See terms of service for more details.</p>
-          {errors.dob && (
-            <p className="text-red-500 text-sm">{errors.dob.message}</p>
-          )}
-        </div>
       </div>
 
       <BottomNav>

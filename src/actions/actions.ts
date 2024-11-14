@@ -8,8 +8,8 @@ import {
   isSeamActionAttemptFailedError,
   isSeamActionAttemptTimeoutError,
 } from 'seam';
-import { Session, Unit, Profile } from '@prisma/client';
 import { headers } from 'next/headers';
+import { Session, Unit, Profile } from '@prisma/client';
 
 import prisma from '@/lib/db';
 import {
@@ -19,14 +19,13 @@ import {
   signinSchema,
   waiverDataSchema,
 } from '@/lib/validations';
-
 import {
   checkAuth,
   checkPlungeSession,
   getCodesbyLockId,
   getSessionById,
   getUnitById,
-  getUserById,
+  getUserProfileById,
 } from '@/lib/server-utils';
 import { getTimeDiffSecs, isUserOver18, sleep } from '@/lib/utils';
 import { TSignupForm, TMemberDetailsForm, TSigninForm } from '@/lib/types';
@@ -53,7 +52,11 @@ export async function signUpAction(data: TSignupForm) {
 
   const supabase = await createServerClient();
 
-  const { error } = await supabase.auth.signInWithOtp({ email });
+  const origin = (await headers()).get("origin");
+
+  const { error } = await supabase.auth.signInWithOtp({ email, options: {
+    emailRedirectTo: `${origin}/api/auth/confirm`
+  } });
 
   if (error) {
     console.error(error.code + ' ' + error.message);
@@ -152,7 +155,7 @@ export async function deleteAccount() {
   // authentication check
   const session = await checkAuth();
 
-  const user = await getUserById('1');
+  const user = await getUserProfileById('1');
   if (user?.stripeCustomerId) {
     await customerDeletion({ stripeCustomerId: user.stripeCustomerId });
   }

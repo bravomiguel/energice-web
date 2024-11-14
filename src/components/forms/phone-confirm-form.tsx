@@ -5,10 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { FiSend } from 'react-icons/fi';
 
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Button } from './ui/button';
-import BottomNav from './bottom-nav';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Button } from '../ui/button';
+import BottomNav from '../bottom-nav';
 import { Dispatch, SetStateAction, useState, useTransition } from 'react';
 import { TPhoneConfirmForm } from '@/lib/types';
 import { z } from 'zod';

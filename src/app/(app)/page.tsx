@@ -1,7 +1,7 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import { checkPlungeSession, checkAuth, getUserById } from '@/lib/server-utils';
+import { checkPlungeSession, checkAuth, getUserProfileById } from '@/lib/server-utils';
 import { isUserOver18 } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import SignOutBtn from '@/components/sign-out-btn';

@@ -6,9 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { signinSchema } from '@/lib/validations';
 import { TSigninForm } from '@/lib/types';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Button } from './ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Button } from '../ui/button';
 
 export default function SigninForm() {
   const {

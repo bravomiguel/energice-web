@@ -6,9 +6,9 @@ import { useState } from 'react';
 
 import { signupSchema } from '@/lib/validations';
 import { TSignupForm } from '@/lib/types';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Button } from './ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Button } from '../ui/button';
 import { signUpAction } from '@/actions/actions';
 
 export default function SignupForm() {
@@ -16,7 +16,7 @@ export default function SignupForm() {
     register,
     handleSubmit,
     reset,
-    formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<TSignupForm>({
     resolver: zodResolver(signupSchema),
     mode: 'onBlur',
@@ -53,13 +53,8 @@ export default function SignupForm() {
       <div className="flex flex-col gap-1">
         <Button
           type="submit"
-          disabled={
-            !isValid ||
-            isSubmitting
-          }
-          isLoading={
-            isSubmitting
-          }
+          disabled={!isValid || isSubmitting}
+          isLoading={isSubmitting}
           className="w-full"
         >
           Sign up

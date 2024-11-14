@@ -1,7 +1,7 @@
 import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import PhoneConfirmForm from '@/components/phone-otp-form';
+import PhoneConfirmForm from '@/components/forms/phone-otp-form';
 import H1 from '@/components/h1';
 import Subtitle from '@/components/subtitle';
 import { checkAuth, getUserProfileById } from '@/lib/server-utils';

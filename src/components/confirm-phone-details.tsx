@@ -2,9 +2,9 @@
 
 import { useState } from 'react';
 import H1 from './h1';
-import PhoneOtpForm from './phone-otp-form';
+import PhoneOtpForm from './forms/phone-otp-form';
 import Subtitle from './subtitle';
-import PhoneConfirmForm from './phone-confirm-form';
+import PhoneConfirmForm from './forms/phone-confirm-form';
 
 export default function ConfirmPhoneDetails() {
   const [isNumSubmitted, setIsNumSubmitted] = useState(false);

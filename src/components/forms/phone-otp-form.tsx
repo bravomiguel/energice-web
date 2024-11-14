@@ -5,8 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { FiSend } from 'react-icons/fi';
 
-import { Button } from './ui/button';
-import BottomNav from './bottom-nav';
+import { Button } from '../ui/button';
+import BottomNav from '../bottom-nav';
 import { useCallback, useEffect, useState, useTransition } from 'react';
 import { TPhoneOtpForm } from '@/lib/types';
 import { phoneOtpSchema } from '@/lib/validations';
@@ -74,7 +74,9 @@ export default function PhoneOtpForm() {
     [],
   );
 
-  const onSubmit = async (data: TPhoneOtpForm) => {
+  const onSubmit: (data: TPhoneOtpForm) => Promise<void> = async (
+    data: TPhoneOtpForm,
+  ) => {
     console.log('Code submitted');
     // const response = await checkEmailConfirmCode(data);
     // if (response?.error) {

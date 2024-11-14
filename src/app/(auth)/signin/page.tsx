@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
 import H1 from '@/components/h1';
-import SigninForm from '@/components/signin-form';
+import SigninForm from '@/components/forms/signin-form';
 
 export default function Page() {
   return (

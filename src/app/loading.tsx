@@ -1,5 +1,5 @@
-import Loader from '@/components/loader';
-import LoadingSpinner from '@/components/loading-spinner';
+import Loader from '@/components/loaders/loader';
+import LoadingSpinner from '@/components/loaders/loading-spinner';
 
 export default function Loading() {
   return (

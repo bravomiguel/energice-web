@@ -2,8 +2,8 @@
 
 import { useRouter } from 'next/navigation';
 
-import BottomNav from './bottom-nav';
-import { Button } from './ui/button';
+import BottomNav from '../bottom-nav';
+import { Button } from '../ui/button';
 import { useTransition } from 'react';
 
 export default function NextNavBtn({toPath, btnLabel, isDisabled}: {toPath: string; btnLabel: string; isDisabled?: boolean}) {

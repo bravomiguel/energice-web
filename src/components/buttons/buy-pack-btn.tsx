@@ -2,26 +2,24 @@
 
 import { toast } from 'sonner';
 
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import { useTransition } from 'react';
 import { cn } from '@/lib/utils';
-import { subscriptionCheckoutSession } from '@/actions/actions';
+import { packCheckoutSession } from '@/actions/actions';
 
-export default function CheckoutBtn({
-  checkoutAction,
+export default function BuyPackBtn({
   className,
   variant,
   children,
 }: {
-  checkoutAction: () => Promise<{ error: string }>;
   className?: string;
   variant?: any;
   children: React.ReactNode;
 }) {
   const [isPending, startTransition] = useTransition();
-  const createSubscriptionCheckout = async () => {
+  const createPackCheckout = async () => {
     startTransition(async () => {
-      const respCheckout = await checkoutAction();
+      const respCheckout = await packCheckoutSession();
       if (respCheckout?.error) {
         console.error({ error: respCheckout.error });
         toast.error(respCheckout.error);
@@ -31,7 +29,7 @@ export default function CheckoutBtn({
   return (
     <Button
       className={cn(className)}
-      onClick={async () => await createSubscriptionCheckout()}
+      onClick={async () => await createPackCheckout()}
       disabled={isPending}
       isLoading={isPending}
       variant={variant}

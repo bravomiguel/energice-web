@@ -4,14 +4,14 @@ import { redirect } from 'next/navigation';
 import { checkPlungeSession, checkAuth, getUserProfileById } from '@/lib/server-utils';
 import { isUserOver18 } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import SignOutBtn from '@/components/sign-out-btn';
-import DeleteAccountBtn from '@/components/delete-account-btn';
+import SignOutBtn from '@/components/buttons/sign-out-btn';
+import DeleteAccountBtn from '@/components/buttons/delete-account-btn';
 
 export default async function Home() {
   noStore();
 
   // get user session
-  const user = await checkAuth();
+  // const user = await checkAuth();
   // console.log({ user });
 
   // onboarded check

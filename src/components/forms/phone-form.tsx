@@ -3,22 +3,21 @@
 import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { FiSend } from 'react-icons/fi';
 
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
 import BottomNav from '../bottom-nav';
-import { Dispatch, SetStateAction, useState, useTransition } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { TPhoneConfirmForm } from '@/lib/types';
-import { z } from 'zod';
 import { sleep } from '@/lib/utils';
 import { phoneConfirmSchema } from '@/lib/validations';
+import { sendPhoneOtp } from '@/actions/actions';
 
-export default function PhoneConfirmForm({
-  setIsNumSubmitted,
+export default function PhoneForm({
+  setShowOtpForm,
 }: {
-  setIsNumSubmitted: Dispatch<SetStateAction<boolean>>;
+  setShowOtpForm: Dispatch<SetStateAction<boolean>>;
 }) {
   const {
     control,
@@ -32,14 +31,14 @@ export default function PhoneConfirmForm({
 
   const onSubmit = handleSubmit(async (data) => {
     await sleep(300);
-    setIsNumSubmitted(true);
-    // const response = await checkEmailConfirmCode(data);
+    setShowOtpForm(true);
+    // const response = await sendPhoneOtp(data);
     // if (response?.error) {
     //   console.error({ error: response.error });
     //   toast.warning(response.error);
     //   return;
     // }
-    // toast.success('Email confirmed!');
+    // setShowOtpForm(true);
   });
 
   return (
@@ -59,6 +58,9 @@ export default function PhoneConfirmForm({
                 onChange={(e) => {
                   // Remove all non-numeric characters
                   const rawValue = e.target.value.replace(/\D/g, '');
+
+                  // console.log({ formValue: e.target.value });
+                  // console.log({ rawValue });
 
                   // Format based on length of the input
                   let formattedValue = rawValue;

@@ -22,7 +22,7 @@ export default function SigninForm() {
     formState: { errors, isValid, isSubmitting },
   } = useForm<TSigninForm>({
     resolver: zodResolver(signinSchema),
-    mode: 'onBlur',
+    mode: 'onChange',
   });
 
   const [signupError, setSignupError] = useState<string | null>(null);

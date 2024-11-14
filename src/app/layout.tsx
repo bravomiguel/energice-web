@@ -24,11 +24,6 @@ export default function RootLayout({
       <body
         className={`${inter.className} text-base text-zinc-900 bg-zinc-100 min-h-screen sm:flex sm:flex-col sm:gap-4 sm:items-center sm:justify-center`}
       >
-        {/* <LogoTransparent className="hidden sm:block" />
-        <p className="hidden sm:block text-lg font-semibold">
-          App only available on mobile
-        </p>
-        <div className="sm:hidden">{children}</div> */}
         {children}
       </body>
     </html>

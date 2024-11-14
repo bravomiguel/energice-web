@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import logo from '../../public/energice_logo.svg';
+import logo from '../../../public/energice_logo.svg';
 import { cn } from '@/lib/utils';
 
 export default function LogoTransparent({ className }: { className?: string }) {

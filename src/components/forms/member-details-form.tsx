@@ -5,11 +5,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { memberDetailsSchema } from '@/lib/validations';
 import { TMemberDetailsForm } from '@/lib/types';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Button } from './ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Button } from '../ui/button';
 import { addMemberDetails } from '@/actions/actions';
-import BottomNav from './bottom-nav';
+import BottomNav from '../bottom-nav';
 import { toast } from 'sonner';
 
 export default function MemberDetailsForm() {

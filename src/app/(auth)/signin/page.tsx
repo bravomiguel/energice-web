@@ -3,7 +3,7 @@ import { CircleCheck } from 'lucide-react';
 
 import SigninForm from '@/components/forms/signin-form';
 import H1 from '@/components/h1';
-import LogoTransparent from '@/components/logo-transparent';
+import LogoTransparent from '@/components/logos/logo-transparent';
 
 export default async function Page({
   searchParams,

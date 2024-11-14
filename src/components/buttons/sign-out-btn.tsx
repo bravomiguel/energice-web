@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 
 import { signOut } from '@/actions/actions';
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './ui/dialog';
+} from '../ui/dialog';
 
 export default function SignOutBtn() {
   const [isPending, startTransition] = useTransition();

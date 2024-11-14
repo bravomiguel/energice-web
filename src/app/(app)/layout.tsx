@@ -8,6 +8,7 @@ import {
   getAllUnits,
   getSessionsByUserId,
 } from '@/lib/server-utils';
+import { Session } from '@prisma/client';
 
 export const viewport: Viewport = {
   themeColor: '#f4f4f5',
@@ -19,14 +20,16 @@ export default async function Layout({
   children: React.ReactNode;
 }) {
   // auth check
-  const user = await checkAuth();
+  // const user = await checkAuth();
 
-  const plungeSessions = await getSessionsByUserId(user.id);
+  // const plungeSessions = await getSessionsByUserId(user.id);
+  const plungeSessions: Session[] | null = null;
 
   return (
     <>
       <div className="relative flex flex-col px-4 min-h-screen w-full max-w-md">
-        <PlungeSessionsContextProvider data={plungeSessions}>
+        {/* <PlungeSessionsContextProvider data={plungeSessions}> */}
+        <PlungeSessionsContextProvider>
           <TopBar />
           {children}
         </PlungeSessionsContextProvider>

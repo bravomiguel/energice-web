@@ -2,12 +2,12 @@
 
 import { toast } from 'sonner';
 
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import { useTransition } from 'react';
 import { cn } from '@/lib/utils';
 import { packCheckoutSession } from '@/actions/actions';
 
-export default function BuyPackBtn({
+export default function BuySessionBtn({
   className,
   variant,
   children,

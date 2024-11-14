@@ -1,9 +1,9 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import BottomNav from './bottom-nav';
-import PenaltyChargeWarning from './penalty-charge-warning';
-import { Button } from './ui/button';
+import BottomNav from '../bottom-nav';
+import PenaltyChargeWarning from '../penalty-charge-warning';
+import { Button } from '../ui/button';
 import { useTransition } from 'react';
 
 export default function SessionEndContinueBtn() {

@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 import { Session, Unit } from '@prisma/client';
 
 import { startSession, unlockAction } from '@/actions/actions';
-import LoadingSpinner from './loading-spinner';
+import LoadingSpinner from './loaders/loading-spinner';
 import { cn } from '@/lib/utils';
 import BottomNav from './bottom-nav';
 import Subtitle from './subtitle';
@@ -73,7 +73,10 @@ export default function AutoUnlock({
   if (!isPending && isError) {
     return (
       <>
-        <Link href={"/profile"} className="w-full flex gap-0.5 text-indigo-800 items-center text-xs">
+        <Link
+          href={'/profile'}
+          className="w-full flex gap-0.5 text-indigo-800 items-center text-xs"
+        >
           <IoIosArrowBack className="h-7 w-7 text-indigo-700 -translate-x-2" />
           <p className="-translate-x-3">Home</p>
         </Link>

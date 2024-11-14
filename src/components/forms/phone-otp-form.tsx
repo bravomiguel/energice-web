@@ -3,20 +3,17 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { FiSend } from 'react-icons/fi';
 
 import { Button } from '../ui/button';
 import BottomNav from '../bottom-nav';
-import { useCallback, useEffect, useState, useTransition } from 'react';
+import { Dispatch, SetStateAction, useEffect, useTransition } from 'react';
 import { TPhoneOtpForm } from '@/lib/types';
 import { phoneOtpSchema } from '@/lib/validations';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
 import {
@@ -26,7 +23,11 @@ import {
   InputOTPSlot,
 } from '@/components/ui/input-otp';
 
-export default function PhoneOtpForm() {
+export default function PhoneOtpForm({
+  setShowOtpForm,
+}: {
+  setShowOtpForm: Dispatch<SetStateAction<boolean>>;
+}) {
   const form = useForm<TPhoneOtpForm>({
     resolver: zodResolver(phoneOtpSchema),
     mode: 'onChange',
@@ -40,10 +41,6 @@ export default function PhoneOtpForm() {
   // console.log({ token });
 
   useEffect(() => {
-    handleGetCode();
-  }, []);
-
-  useEffect(() => {
     if (token.length == 6) {
       form.trigger('token').then((isValid) => {
         if (isValid) {
@@ -54,25 +51,6 @@ export default function PhoneOtpForm() {
   }, [token, form]);
 
   const [isPending, startTransition] = useTransition();
-
-  const handleGetCode = useCallback(
-    async (e?: React.MouseEvent<HTMLButtonElement>) => {
-      if (e) e.preventDefault();
-      form.setValue('token', '');
-      console.log('code requested');
-      // startTransition(async () => {
-      //   const response = await sendConfirmEmail();
-      //   if (response?.error) {
-      //     console.error({ error: response.error });
-      //     toast.warning(response.error);
-      //     return;
-      //   } else {
-      //     toast.success('Code sent successfully');
-      //   }
-      // });
-    },
-    [form],
-  );
 
   const onSubmit: (data: TPhoneOtpForm) => Promise<void> = async (
     data: TPhoneOtpForm,
@@ -140,9 +118,9 @@ export default function PhoneOtpForm() {
           <Button
             type="submit"
             variant="outline"
-            onClick={async (e) => await handleGetCode(e)}
+            onClick={() => setShowOtpForm(false)}
           >
-            Resend code
+            Try again
           </Button>
         </BottomNav>
       </form>

@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 
-import { Button } from './ui/button';
+import { Button } from '../ui/button';
 import { deleteAccount } from '@/actions/actions';
 import {
   Dialog,
@@ -12,7 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from './ui/dialog';
+} from '../ui/dialog';
 
 export default function DeleteAccountBtn() {
   const [isPending, startTransition] = useTransition();

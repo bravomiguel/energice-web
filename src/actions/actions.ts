@@ -35,7 +35,7 @@ import {
   TPhoneOtpForm,
 } from '@/lib/types';
 import { BASE_URL } from '@/lib/constants';
-import { createServerClient } from '@/lib/supabase/server';
+import { createServerAdminClient, createServerClient } from '@/lib/supabase/server';
 import { UserAttributes } from '@supabase/supabase-js';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -167,8 +167,6 @@ export async function signOut() {
   return redirect('/signin');
 }
 
-export async function deleteUser() {}
-
 export async function createUserProfile() {
   //  grab profile based on email, if it already exists
   // let profile;
@@ -239,45 +237,69 @@ export async function createUserProfile() {
   // }
 }
 
-export async function deleteUserProfile() {
-  // authentication check
-  const session = await checkAuth();
+export async function deleteAccount() {
+  // const user = await getUserProfileById('1');
+  // if (user?.stripeCustomerId) {
+  //   await customerDeletion({ stripeCustomerId: user.stripeCustomerId });
+  // }
 
-  const user = await getUserProfileById('1');
-  if (user?.stripeCustomerId) {
-    await customerDeletion({ stripeCustomerId: user.stripeCustomerId });
-  }
+  // try {
+  //   await prisma.profile.update({
+  //     where: {
+  //       id: '1',
+  //     },
+  //     data: {
+  //       firstName: null,
+  //       lastName: null,
+  //       isWaiverSigned: false,
+  //       waiverSignedAt: null,
+  //       waiverSigName: null,
+  //       credits: 0,
+  //       stripeCustomerId: null,
+  //       isMember: false,
+  //       memberPayFailed: null,
+  //       memberPeriodEnd: null,
+  //       memberRenewing: null,
+  //       deleted: true,
+  //       deletedAt: new Date(),
+  //     },
+  //   });
 
-  try {
-    await prisma.profile.update({
-      where: {
-        id: '1',
-      },
-      data: {
-        firstName: null,
-        lastName: null,
-        isWaiverSigned: false,
-        waiverSignedAt: null,
-        waiverSigName: null,
-        credits: 0,
-        stripeCustomerId: null,
-        isMember: false,
-        memberPayFailed: null,
-        memberPeriodEnd: null,
-        memberRenewing: null,
-        deleted: true,
-        deletedAt: new Date(),
-      },
-    });
+  //   await prisma.session.deleteMany({ where: { userId: '1' } });
+  // } catch (e) {
+  //   return {
+  //     error: 'Failed to delete user',
+  //   };
+  // }
 
-    await prisma.session.deleteMany({ where: { userId: '1' } });
-  } catch (e) {
+  // await signOut({ redirectTo: '/signup' });
+
+  const supabase = await createServerAdminClient();
+
+  const {
+    data: { user },
+    error: getUserError,
+  } = await supabase.auth.getUser();
+
+  if (getUserError) {
+    console.error(getUserError.code + ' ' + getUserError.message);
     return {
-      error: 'Failed to delete user',
+      error: getUserError.message,
     };
   }
 
-  // await signOut({ redirectTo: '/signup' });
+  const { error: deleteUserError } = await supabase.auth.admin.deleteUser(
+    user?.id ?? '',
+  );
+
+  if (deleteUserError) {
+    console.error(deleteUserError.code + ' ' + deleteUserError.message);
+    return {
+      error: deleteUserError.message,
+    };
+  }
+
+  redirect('/signin');
 }
 
 // --- member details actions ---

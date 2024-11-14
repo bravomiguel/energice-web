@@ -70,9 +70,9 @@ export async function middleware(request: NextRequest) {
   }
 
   // Redirect to phone confirmation screen if authenticated but phone number is not confirmed
-  if (isAuthenticated && !isPhoneConfirmed && !isConfirmPhoneRoute) {
-    return NextResponse.redirect(new URL('/confirm-phone', request.url));
-  }
+  // if (isAuthenticated && !isPhoneConfirmed && !isConfirmPhoneRoute) {
+  //   return NextResponse.redirect(new URL('/confirm-phone', request.url));
+  // }
 
   return response;
 }

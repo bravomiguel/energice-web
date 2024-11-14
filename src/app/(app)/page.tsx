@@ -5,6 +5,7 @@ import { checkPlungeSession, checkAuth, getUserProfileById } from '@/lib/server-
 import { isUserOver18 } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import SignOutBtn from '@/components/sign-out-btn';
+import DeleteAccountBtn from '@/components/delete-account-btn';
 
 export default async function Home() {
   noStore();
@@ -36,6 +37,7 @@ export default async function Home() {
   return (
     <main className="h-screen">
       <SignOutBtn />
+      <DeleteAccountBtn />
     </main>
   );
 }

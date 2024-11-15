@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { endSession, signOut } from '@/actions/actions';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import { useEffect } from 'react';
-import { ONBOARDING_PATHNAMES, RESET_PW_PATHNAME } from '@/lib/constants';
+import { ONBOARDING_PATHNAMES } from '@/lib/constants';
 import { formatSecsToMins } from '@/lib/utils';
 import { toast } from 'sonner';
 
@@ -17,7 +17,6 @@ export default function TopBar() {
   const isOnboarding = ONBOARDING_PATHNAMES.find(
     (pathName) => pathName === activePathname,
   );
-  const isResetPassword = RESET_PW_PATHNAME === activePathname;
   const isUnit = activePathname.includes('/unit');
 
   const { activeSessionId, activeSessionSecsLeft, activePlungeSecs } =
@@ -70,14 +69,9 @@ export default function TopBar() {
                 <ProfileLink />
               </>
             )}
-            {isResetPassword && (
+            {isUnit && (  
               <>
-                <BackArrow label="Signin" handler={signOut} />
-              </>
-            )}
-            {isUnit && (
-              <>
-                <BackArrow isLink={true} href="/" />
+                <BackArrow href="/" />
               </>
             )}
           </>
@@ -131,7 +125,7 @@ function BackArrow({
   if (!isLink && handler) {
     return (
       <li
-        className="flex items-center -mt-1 mb-3"
+        className="flex items-center -mt-1 mb-3 cursor-pointer"
         onClick={async () => await handler()}
       >
         <IoIosArrowBack className="h-8 w-8 text-indigo-700 -translate-x-2" />

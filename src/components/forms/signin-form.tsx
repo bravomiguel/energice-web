@@ -81,7 +81,7 @@ export default function SigninForm() {
             ) : (
               <Mail className="mr-2 h-4 w-4" />
             )}
-            Continue with email
+            Continue with Email
           </Button>
           {signupError && <p className="text-red-300 text-sm">{signupError}</p>}
         </div>

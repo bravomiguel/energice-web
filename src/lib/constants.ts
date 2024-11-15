@@ -4,8 +4,6 @@ export const ONBOARDING_PATHNAMES = [
   '/waiver',
 ];
 
-export const RESET_PW_PATHNAME = '/reset-password';
-
 export const BASE_URL =
   process.env.VERCEL_ENV === 'development'
     ? `http://localhost:${process.env.PORT}`

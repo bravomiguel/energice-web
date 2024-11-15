@@ -22,10 +22,10 @@ export default function SignOutBtn() {
         <Button onClick={() => setIsOpen(true)}>Log out</Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader className='mb-5'>
+        <DialogHeader className="mb-5">
           <DialogTitle>Are you sure you want to log out?</DialogTitle>
         </DialogHeader>
-        <DialogFooter className='flex flex-col gap-2 mb-5'>
+        <DialogFooter className="flex flex-col gap-2 mb-5">
           <Button
             onClick={async () => {
               startTransition(async () => {
@@ -34,7 +34,7 @@ export default function SignOutBtn() {
             }}
             disabled={isPending}
             isLoading={isPending}
-            className='w-32'
+            className="sm:w-32"
           >
             Log out
           </Button>

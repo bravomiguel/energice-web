@@ -11,18 +11,15 @@ export const signinSchema = z.object({
 });
 
 export const phoneOtpSchema = z.object({
+  phone: z
+  .string()
+  .regex(/^\(\d{3}\)-\d{3}-\d{4}$/, 'Phone number must be 10 digits long')
+  .transform((val) => val.replace(/\D/g, '')),
   token: z
     .string({ message: 'Your one-time password must be 6 characters.' })
     .length(6, {
       message: 'Your one-time password must be 6 characters.',
     }),
-});
-
-export const phoneConfirmSchema = z.object({
-  phone: z
-    .string()
-    .regex(/^\(\d{3}\)-\d{3}-\d{4}$/, 'Phone number must be 10 digits long')
-    .transform((val) => val.replace(/\D/g, '')),
 });
 
 export const memberDetailsSchema = z.object({

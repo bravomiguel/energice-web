@@ -31,11 +31,13 @@ import { getTimeDiffSecs, isUserOver18, sleep } from '@/lib/utils';
 import {
   TMemberDetailsForm,
   TSigninForm,
-  TPhoneConfirmForm,
   TPhoneOtpForm,
 } from '@/lib/types';
 import { BASE_URL } from '@/lib/constants';
-import { createServerAdminClient, createServerClient } from '@/lib/supabase/server';
+import {
+  createServerAdminClient,
+  createServerClient,
+} from '@/lib/supabase/server';
 import { UserAttributes } from '@supabase/supabase-js';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -101,7 +103,7 @@ export async function signinWithGoogle() {
   }
 }
 
-export async function sendPhoneOtp(data: TPhoneConfirmForm) {
+export async function sendPhoneOtp(data: Pick<TPhoneOtpForm, 'phone'>) {
   // data validation check
   const validatedData = z
     .object({
@@ -128,9 +130,12 @@ export async function sendPhoneOtp(data: TPhoneConfirmForm) {
       error: error.message,
     };
   }
+
+  redirect('/confirm-phone?otpSent=true');
 }
 
-export async function verifyPhone(data: TPhoneOtpForm & { phone: string }) {
+export async function verifyPhoneOtp(data: TPhoneOtpForm) {
+  // console.log({ data });
   // data validation check
   const validatedData = phoneOtpSchema
     .merge(z.object({ phone: z.string().trim().length(10) }))
@@ -159,6 +164,8 @@ export async function verifyPhone(data: TPhoneOtpForm & { phone: string }) {
       error: error.message,
     };
   }
+
+  redirect('/');
 }
 
 export async function signOut() {
@@ -301,7 +308,6 @@ export async function createUserProfile() {
   //   }
   // }
 }
-
 
 // --- member details actions ---
 

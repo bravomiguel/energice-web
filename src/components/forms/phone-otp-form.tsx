@@ -1,12 +1,12 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 
 import { Button } from '../ui/button';
 import BottomNav from '../bottom-nav';
-import { Dispatch, SetStateAction, useEffect, useTransition } from 'react';
+import { useTransition } from 'react';
 import { TPhoneOtpForm } from '@/lib/types';
 import { phoneOtpSchema } from '@/lib/validations';
 import {
@@ -22,108 +22,197 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
+import { sendPhoneOtp, verifyPhoneOtp } from '@/actions/actions';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { cn } from '@/lib/utils';
 
-export default function PhoneOtpForm({
-  setShowOtpForm,
-}: {
-  setShowOtpForm: Dispatch<SetStateAction<boolean>>;
-}) {
+export default function PhoneOtpForm({ isOtpSent }: { isOtpSent: boolean }) {
   const form = useForm<TPhoneOtpForm>({
     resolver: zodResolver(phoneOtpSchema),
     mode: 'onChange',
   });
 
-  // const {
-  //   formState: { isValid, isSubmitting, isSubmitSuccessful, errors },
-  // } = form;
+  const {
+    formState: { isValid, isSubmitting, errors },
+  } = form;
 
-  const token = form.watch('token', '');
+  // console.log({isValid, errors: errors.token})
+
+  const phone = form.watch('phone', '');
+  // const token = form.watch('token', '');
+  // console.log({ phone });
   // console.log({ token });
 
-  useEffect(() => {
-    if (token.length == 6) {
-      form.trigger('token').then((isValid) => {
-        if (isValid) {
-          form.handleSubmit(onSubmit)(); // Call handleSubmit programmatically
-        }
-      });
-    }
-  }, [token, form]);
+  // useEffect(() => {
+  //   if (token.length == 6) {
+  //     form.trigger('token').then((isValid) => {
+  //       if (isValid) {
+  //         form.handleSubmit(onSubmit)(); // Call handleSubmit programmatically
+  //       }
+  //     });
+  //   }
+  // }, [token, form]);
 
   const [isPending, startTransition] = useTransition();
+
+  const handleSendOtp = async (data: Pick<TPhoneOtpForm, 'phone'>) => {
+    const validatedData = phoneOtpSchema.pick({ phone: true }).safeParse(data);
+
+    if (!validatedData.success) {
+      toast.warning('Invalid phone format.');
+      return;
+    }
+
+    const { phone } = validatedData.data;
+
+    startTransition(async () => {
+      const response = await sendPhoneOtp({ phone });
+      if (response?.error) {
+        console.error({ error: response.error });
+        toast.warning('OTP request failed, please try again');
+        return;
+      }
+    });
+  };
 
   const onSubmit: (data: TPhoneOtpForm) => Promise<void> = async (
     data: TPhoneOtpForm,
   ) => {
-    console.log('Code submitted');
-    // const response = await checkEmailConfirmCode(data);
-    // if (response?.error) {
-    //   console.error({ error: response.error });
-    //   toast.warning(response.error);
-    //   return;
-    // }
-    // toast.success('Phone confirmed!');
+    const response = await verifyPhoneOtp(data);
+    if (response?.error) {
+      console.error({ error: response.error });
+      toast.warning(response.error);
+      form.setValue('token', '');
+      return;
+    }
+    toast.success('Phone confirmed!');
   };
 
   return (
-    <Form {...form}>
-      <form
-        // onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 flex flex-col flex-1 w-full"
-      >
-        <FormField
-          control={form.control}
-          name="token"
-          render={({ field }) => (
-            <FormItem className="flex-1 w-full flex flex-col items-center">
-              {/* <FormLabel>One-Time Password</FormLabel> */}
-              <FormControl>
-                <InputOTP
-                  maxLength={6}
-                  {...field}
-                  type="tel"
-                  inputMode="numeric"
-                >
-                  <InputOTPGroup>
-                    <InputOTPSlot index={0} />
-                    <InputOTPSlot index={1} />
-                    <InputOTPSlot index={2} />
-                  </InputOTPGroup>
-                  <InputOTPSeparator />
-                  <InputOTPGroup>
-                    <InputOTPSlot index={3} />
-                    <InputOTPSlot index={4} />
-                    <InputOTPSlot index={5} />
-                  </InputOTPGroup>
-                </InputOTP>
-              </FormControl>
-              {/* <FormDescription>
-                Please enter the one-time password sent to your phone.
-              </FormDescription> */}
-              <FormMessage className="font-normal" />
-            </FormItem>
-          )}
-        />
+    <>
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-6 flex flex-col flex-1 w-full"
+        >
+          <Controller
+            name="phone"
+            control={form.control}
+            render={({ field: { onChange, value }, fieldState: { error } }) => (
+              <div
+                className={cn('flex flex-col items-center w-full', {
+                  hidden: isOtpSent,
+                })}
+              >
+                <div className="space-y-1 w-80">
+                  <Label htmlFor="phone">Phone</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    inputMode="numeric"
+                    className="h-12"
+                    value={value}
+                    onChange={(e) => {
+                      // Remove all non-numeric characters
+                      const rawValue = e.target.value.replace(/\D/g, '');
 
+                      // Format based on length of the input
+                      let formattedValue = rawValue;
+                      if (rawValue.length > 3 && rawValue.length <= 6) {
+                        formattedValue = `(${rawValue.slice(
+                          0,
+                          3,
+                        )})-${rawValue.slice(3)}`;
+                      } else if (rawValue.length > 6) {
+                        formattedValue = `(${rawValue.slice(
+                          0,
+                          3,
+                        )})-${rawValue.slice(3, 6)}-${rawValue.slice(6, 10)}`;
+                      } else if (rawValue.length > 0) {
+                        formattedValue = `(${rawValue}`;
+                      }
+
+                      onChange(formattedValue);
+                    }}
+                  />
+                  {error && (
+                    <p className="text-red-500 text-sm">{error.message}</p>
+                  )}
+                </div>
+              </div>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="token"
+            render={({ field }) => (
+              <FormItem
+                className={cn('flex-1 w-full flex flex-col items-center', {
+                  hidden: !isOtpSent,
+                })}
+              >
+                {/* <FormLabel>One-Time Password</FormLabel> */}
+                <FormControl>
+                  <InputOTP
+                    maxLength={6}
+                    {...field}
+                    type="tel"
+                    inputMode="numeric"
+                  >
+                    <InputOTPGroup>
+                      <InputOTPSlot index={0} />
+                      <InputOTPSlot index={1} />
+                      <InputOTPSlot index={2} />
+                    </InputOTPGroup>
+                    <InputOTPSeparator />
+                    <InputOTPGroup>
+                      <InputOTPSlot index={3} />
+                      <InputOTPSlot index={4} />
+                      <InputOTPSlot index={5} />
+                    </InputOTPGroup>
+                  </InputOTP>
+                </FormControl>
+                <FormMessage className="text-sm font-normal -translate-x-2" />
+              </FormItem>
+            )}
+          />
+
+          {isOtpSent && (
+            <BottomNav>
+              <Button
+                type="submit"
+                disabled={!isValid || isSubmitting}
+                isLoading={isSubmitting}
+              >
+                Confirm
+              </Button>
+              <Button
+                variant="outline"
+                disabled={isSubmitting}
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = '/confirm-phone';
+                }}
+              >
+                Try again
+              </Button>
+            </BottomNav>
+          )}
+        </form>
+      </Form>
+      {!isOtpSent && (
         <BottomNav>
-          {/* <Button
-            type="submit"
-            disabled={
-              !isValid || isSubmitting || (isSubmitSuccessful && !!errors)
-            }
-            isLoading={isSubmitting || (isSubmitSuccessful && !!errors)}
-          >
-            Confirm phone
-          </Button> */}
           <Button
-            type="submit"
-            variant="outline"
-            onClick={() => setShowOtpForm(false)}
+            disabled={phone.length === 0 || !!errors.phone}
+            isLoading={isPending}
+            onClick={async () => handleSendOtp({ phone })}
           >
-            Try again
+            Continue
           </Button>
         </BottomNav>
-      </form>
-    </Form>
+      )}
+    </>
   );
 }

@@ -23,7 +23,7 @@ export default async function Page({
           </p>
         </div>
 
-        <H1 className="text-zinc-200 text-xl font-bold mb-4 text-center">
+        <H1 className="text-zinc-100 text-xl font-bold mb-4 text-center">
           Log in or create an account
         </H1>
 

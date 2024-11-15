@@ -8,7 +8,7 @@ import { IoArrowUndoSharp } from 'react-icons/io5';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import H2 from './h2';
-import OnboardReturnBtn from './onboard-return-btn';
+import OnboardReturnBtn from './buttons/onboard-return-btn';
 import { cn } from '@/lib/utils';
 
 export default function PlungeStatsSection({ isOnboarded }: { isOnboarded: boolean }) {

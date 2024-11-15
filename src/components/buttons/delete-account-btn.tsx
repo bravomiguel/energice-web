@@ -20,18 +20,24 @@ export default function DeleteAccountBtn() {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" onClick={() => setIsOpen(true)}>Delete account</Button>
+        <Button variant="outline" onClick={() => setIsOpen(true)}>
+          Delete account
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="mb-5 space-y-5">
-          <DialogTitle className='text-lg leading-tight'>Are you sure you want to delete your account?</DialogTitle>
-          <DialogDescription className='text-base leading-tight'>
-            This action cannot be undone. Your account would be permanently deleted.
+          <DialogTitle className="text-lg leading-tight">
+            Are you sure you want to delete your account?
+          </DialogTitle>
+          <DialogDescription className="text-base leading-tight">
+            This action cannot be undone. Your account would be permanently
+            deleted.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-col gap-2 mb-5">
           <Button onClick={() => setIsOpen(false)}>Cancel</Button>
           <Button
+            className="sm:w-48"
             variant="outline"
             onClick={async () => {
               startTransition(async () => {

@@ -3,21 +3,19 @@
 import { RiWaterFlashFill } from 'react-icons/ri';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import StartPlungeBtn from './start-plunge-btn';
+import StartPlungeBtn from './buttons/start-plunge-btn';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
-import { User } from '@prisma/client';
+import { Profile } from '@prisma/client';
 import H2 from './h2';
 
 export default function StartPlungeSection({
   isOnboarded,
-  hasFreeCredit,
-  paidCredits,
+  credits,
   isMember,
 }: {
   isOnboarded: boolean;
-  hasFreeCredit?: User['hasFreeCredit'];
-  paidCredits?: User['paidCredits'];
-  isMember: User['isMember'];
+  credits?: Profile['credits'];
+  isMember: Profile['isMember'];
 }) {
   const { numberOfSessions: plungeSessionsNum } = usePlungeSessions();
 
@@ -28,11 +26,7 @@ export default function StartPlungeSection({
   if (plungeSessionsNum === 0) {
     return (
       <section>
-        <StartFirstPlungeAlert
-          hasFreeCredit={hasFreeCredit}
-          paidCredits={paidCredits}
-          isMember={isMember}
-        />
+        <StartFirstPlungeAlert credits={credits} isMember={isMember} />
       </section>
     );
   }
@@ -40,23 +34,17 @@ export default function StartPlungeSection({
   return (
     <section>
       <H2 className="mb-3">Start plunge</H2>
-      <StartNewPlungeAlert
-        hasFreeCredit={hasFreeCredit}
-        paidCredits={paidCredits}
-        isMember={isMember}
-      />
+      <StartNewPlungeAlert credits={credits} isMember={isMember} />
     </section>
   );
 }
 
 function StartFirstPlungeAlert({
-  paidCredits,
+  credits,
   isMember,
-  hasFreeCredit,
 }: {
-  paidCredits?: User['paidCredits'];
-  isMember: User['isMember'];
-  hasFreeCredit?: User['hasFreeCredit'];
+  credits?: Profile['credits'];
+  isMember: Profile['isMember'];
 }) {
   return (
     <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
@@ -64,7 +52,7 @@ function StartFirstPlungeAlert({
       <div className="space-y-3">
         <AlertTitle>No plunges yet</AlertTitle>
         <AlertDescription>
-          {isMember || paidCredits || hasFreeCredit
+          {isMember || credits
             ? `Take your first plunge and feel amazing!`
             : `Start plunging for just $9 per session`}
         </AlertDescription>
@@ -75,13 +63,9 @@ function StartFirstPlungeAlert({
           <AlertDescription className="font-semibold text-end">
             Unlimited access
           </AlertDescription>
-        ) : paidCredits && paidCredits > 0 ? (
+        ) : credits && credits > 0 ? (
           <AlertDescription className="font-semibold text-end">
-            {`Plunge credits:  ${paidCredits}`}
-          </AlertDescription>
-        ) : hasFreeCredit ? (
-          <AlertDescription className="font-semibold text-end">
-            Free credit
+            {`Plunge credits:  ${credits}`}
           </AlertDescription>
         ) : null}
       </div>
@@ -90,13 +74,11 @@ function StartFirstPlungeAlert({
 }
 
 function StartNewPlungeAlert({
-  paidCredits,
+  credits,
   isMember,
-  hasFreeCredit,
 }: {
-  paidCredits?: User['paidCredits'];
-  isMember: User['isMember'];
-  hasFreeCredit?: User['hasFreeCredit'];
+  credits?: Profile['credits'];
+  isMember: Profile['isMember'];
 }) {
   return (
     <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
@@ -104,7 +86,7 @@ function StartNewPlungeAlert({
       <div className="space-y-3">
         <AlertTitle>New plunge session</AlertTitle>
         <AlertDescription>
-          {isMember || paidCredits || hasFreeCredit
+          {isMember || credits
             ? `Feel amazing in just a few minutes`
             : `Get plunging for just $9 per session`}
         </AlertDescription>
@@ -115,13 +97,9 @@ function StartNewPlungeAlert({
           <AlertDescription className="font-semibold text-end">
             Unlimited access
           </AlertDescription>
-        ) : paidCredits && paidCredits > 0 ? (
+        ) : credits && credits > 0 ? (
           <AlertDescription className="font-semibold text-end">
-            {`Plunge credits:  ${paidCredits}`}
-          </AlertDescription>
-        ) : hasFreeCredit ? (
-          <AlertDescription className="font-semibold text-end">
-            Free credit
+            {`Plunge credits:  ${credits}`}
           </AlertDescription>
         ) : null}
       </div>

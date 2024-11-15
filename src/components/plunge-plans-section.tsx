@@ -7,13 +7,13 @@ import { IoMdTime } from 'react-icons/io';
 
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import H2 from './h2';
-import CheckoutBtn from './checkout-btn';
+import CheckoutBtn from './buttons/checkout-btn';
 import {
   billingPortalSession,
   packCheckoutSession,
   subscriptionCheckoutSession,
 } from '@/actions/actions';
-import { User } from '@prisma/client';
+import { Profile } from '@prisma/client';
 import { cn } from '@/lib/utils';
 
 export default function PlungePlansSection({
@@ -27,9 +27,9 @@ export default function PlungePlansSection({
   isOnboarded: boolean;
   isMember: boolean;
   customerId: string;
-  memberPeriodEnd?: User['memberPeriodEnd'];
-  memberPayFailed?: User['memberPayFailed'];
-  memberRenewing?: User['memberRenewing'];
+  memberPeriodEnd?: Profile['memberPeriodEnd'];
+  memberPayFailed?: Profile['memberPayFailed'];
+  memberRenewing?: Profile['memberRenewing'];
 }) {
   if (!isOnboarded) return null;
 
@@ -127,8 +127,8 @@ function ManageSubscriptionOption({
 }: {
   customerId: string;
   memberPayFailed?: boolean;
-  memberPeriodEnd?: User['memberPeriodEnd'];
-  memberRenewing?: User['memberRenewing'];
+  memberPeriodEnd?: Profile['memberPeriodEnd'];
+  memberRenewing?: Profile['memberRenewing'];
 }) {
   return (
     <Alert

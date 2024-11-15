@@ -3,12 +3,8 @@ import { Viewport } from 'next';
 import { Toaster } from '@/components/ui/sonner';
 import PlungeSessionsContextProvider from '@/contexts/sessions-context-provider';
 import TopBar from '@/components/top-bar';
-import {
-  checkAuth,
-  getAllUnits,
-  getSessionsByUserId,
-} from '@/lib/server-utils';
 import { Session } from '@prisma/client';
+import { getSessionsByUserId } from '@/lib/server-utils';
 
 export const viewport: Viewport = {
   themeColor: '#f4f4f5',
@@ -19,17 +15,13 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  // auth check
-  // const user = await checkAuth();
-
-  // const plungeSessions = await getSessionsByUserId(user.id);
-  const plungeSessions: Session[] | null = null;
+  const plungeSessions = await getSessionsByUserId('1');
 
   return (
     <>
       <div className="relative flex flex-col px-4 min-h-screen w-full max-w-md">
-        {/* <PlungeSessionsContextProvider data={plungeSessions}> */}
-        <PlungeSessionsContextProvider>
+        <PlungeSessionsContextProvider data={plungeSessions}>
+        {/* <PlungeSessionsContextProvider> */}
           <TopBar />
           {children}
         </PlungeSessionsContextProvider>

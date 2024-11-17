@@ -12,7 +12,7 @@ import {
   billingPortalSession,
   packCheckoutSession,
   subscriptionCheckoutSession,
-} from '@/actions/actions';
+} from '@/lib/actions';
 import { Profile } from '@prisma/client';
 import { cn } from '@/lib/utils';
 

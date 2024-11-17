@@ -8,9 +8,10 @@ import { TMemberDetailsForm } from '@/lib/types';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
-import { addMemberDetails } from '@/actions/actions';
+import { addMemberDetails } from '@/lib/actions';
 import BottomNav from '../bottom-nav';
 import { toast } from 'sonner';
+import { User } from '@supabase/supabase-js';
 
 export default function MemberDetailsForm() {
   const {
@@ -64,7 +65,9 @@ export default function MemberDetailsForm() {
       <BottomNav>
         <Button
           type="submit"
-          disabled={!isValid || isSubmitting || (isSubmitSuccessful && !!errors)}
+          disabled={
+            !isValid || isSubmitting || (isSubmitSuccessful && !!errors)
+          }
           isLoading={isSubmitting || (isSubmitSuccessful && !!errors)}
         >
           Submit

@@ -13,16 +13,16 @@ datasource db {
 
 model Profile {
   id               String    @id
-  stripeCustomerId String   @unique
+  stripeCustomerId String    @unique
   email            String    @unique
   phone            String?
-  firstName        String?
-  lastName         String?
+  name             String?
   isWaiverSigned   Boolean   @default(false)
   waiverSignedAt   DateTime?
   waiverSigName    String?
   credits          Int       @default(0)
   isMember         Boolean   @default(false)
+  stripeSubId      String?
   memberPayFailed  Boolean?
   memberPeriodEnd  DateTime?
   memberRenewing   Boolean?
@@ -36,7 +36,7 @@ model Profile {
 }
 
 model Session {
-  id                String    @id @default(cuid())
+  id                String    @id @default(uuid())
   hasPaid           Boolean   @default(false)
   hasUsedCredit     Boolean   @default(false)
   hasUsedUnlimited  Boolean   @default(false)
@@ -48,8 +48,8 @@ model Session {
   sessionEnd        DateTime?
   isLidLeftOpen     Boolean   @default(false)
   totalPlungeSecs   Int?
-  Profile           Profile   @relation(fields: [userId], references: [id])
-  userId            String
+  Profile           Profile   @relation(fields: [profileId], references: [id])
+  profileId         String
   Unit              Unit      @relation(fields: [unitId], references: [id])
   unitId            String
   createdAt         DateTime  @default(now())
@@ -57,7 +57,7 @@ model Session {
 }
 
 model Unit {
-  id               String    @id @default(cuid())
+  id               String    @id @default(uuid())
   imageUrl         String
   hostName         String
   hostAddress      String

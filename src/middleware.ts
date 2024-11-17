@@ -42,20 +42,20 @@ export async function middleware(request: NextRequest) {
 
   const isAuthRoute = request.nextUrl.pathname.startsWith('/signin');
 
-  const isPKCERoute =
-    request.nextUrl.pathname.startsWith('/api/auth/email-callback') ||
-    request.nextUrl.pathname.startsWith('/api/auth/google-callback');
+  const isPKCERoute = request.nextUrl.pathname.startsWith('/api/auth');
+
+  const isSupabaseWhRoute =
+    request.nextUrl.pathname.startsWith('/api/supabase');
+
+  const isProfileRoute = request.nextUrl.pathname.startsWith('/profile');
 
   const isConfirmPhoneRoute =
     request.nextUrl.pathname.startsWith('/confirm-phone');
 
-  // console.log({ user });
-  // console.log({ isAuthenticated });
-  // console.log({ isAuthRoute });
-  // console.log(isPhoneConfirmed);
+  // console.log({ isSupabaseWhRoute });
 
   // Allow PKCE confirmation route without authentication check
-  if (isPKCERoute) {
+  if (isPKCERoute || isSupabaseWhRoute) {
     return response;
   }
 
@@ -69,8 +69,13 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/', request.url));
   }
 
-  // Redirect to phone confirmation screen if authenticated but phone number is not confirmed
-  if (isAuthenticated && !isPhoneConfirmed && !isConfirmPhoneRoute) {
+  // Redirect to phone confirmation screen if authenticated but phone number is not confirmed (unless navigating to profile screen)
+  if (
+    isAuthenticated &&
+    !isPhoneConfirmed &&
+    !isConfirmPhoneRoute &&
+    !isProfileRoute
+  ) {
     return NextResponse.redirect(new URL('/confirm-phone', request.url));
   }
 

@@ -28,22 +28,17 @@ import {
   getUserProfileById,
 } from '@/lib/server-utils';
 import { getTimeDiffSecs, isUserOver18, sleep } from '@/lib/utils';
-import {
-  TMemberDetailsForm,
-  TSigninForm,
-  TPhoneOtpForm,
-} from '@/lib/types';
+import { TMemberDetailsForm, TSigninForm, TPhoneOtpForm } from '@/lib/types';
 import { BASE_URL } from '@/lib/constants';
 import {
   createServerAdminClient,
   createServerClient,
 } from '@/lib/supabase/server';
-import { UserAttributes } from '@supabase/supabase-js';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const seam = new Seam();
 
-// --- user actions ---
+// --- auth actions ---
 
 export async function signinWithEmail(data: TSigninForm) {
   // validation check
@@ -70,7 +65,7 @@ export async function signinWithEmail(data: TSigninForm) {
   });
 
   if (error) {
-    console.error(error.code + ' ' + error.message);
+    console.error(error.code + ': ' + error.message);
     return {
       error: error.message,
     };
@@ -92,7 +87,7 @@ export async function signinWithGoogle() {
   });
 
   if (error) {
-    console.error(error.code + ' ' + error.message);
+    console.error(error.code + ': ' + error.message);
     return {
       error: error.message,
     };
@@ -102,6 +97,43 @@ export async function signinWithGoogle() {
     redirect(data.url); // use the redirect API for your server framework
   }
 }
+
+export async function signOut() {
+  const supabase = await createServerClient();
+  await supabase.auth.signOut();
+  return redirect('/signin');
+}
+
+export async function deleteAccount() {
+  const supabase = await createServerAdminClient();
+
+  const {
+    data: { user },
+    error: getUserError,
+  } = await supabase.auth.getUser();
+
+  if (getUserError) {
+    console.error(getUserError.code + ': ' + getUserError.message);
+    return {
+      error: getUserError.message,
+    };
+  }
+
+  const { error: deleteUserError } = await supabase.auth.admin.deleteUser(
+    user?.id ?? '',
+  );
+
+  if (deleteUserError) {
+    console.error(deleteUserError.code + ': ' + deleteUserError.message);
+    return {
+      error: deleteUserError.message,
+    };
+  }
+
+  redirect('/signin');
+}
+
+// --- onboarding actions ---
 
 export async function sendPhoneOtp(data: Pick<TPhoneOtpForm, 'phone'>) {
   // data validation check
@@ -122,10 +154,35 @@ export async function sendPhoneOtp(data: Pick<TPhoneOtpForm, 'phone'>) {
 
   const supabase = await createServerClient();
 
+  // check if phone registered with different account
+  let profile;
+  try {
+    profile = await prisma.profile.findFirst({
+      where: {
+        phone,
+      },
+    });
+    console.log({ profile });
+  } catch (e) {
+    console.error('Error checking if phone is already registered:', e);
+    return {
+      error: 'Error checking if phone is already registered',
+    };
+  }
+
+  const user = await checkAuth();
+
+  if (!profile || profile.email !== user.email) {
+    console.error('Error checking if phone is already registered');
+    return {
+      error: 'This phone number is registered to a different account.',
+    };
+  }
+
   const { error } = await supabase.auth.updateUser({ phone: `1${phone}` });
 
   if (error) {
-    console.error(error.code + ' ' + error.message);
+    console.error(error.code + ': ' + error.message);
     return {
       error: error.message,
     };
@@ -159,7 +216,7 @@ export async function verifyPhoneOtp(data: TPhoneOtpForm) {
   });
 
   if (error) {
-    console.error(error.code + ' ' + error.message);
+    console.error(error.code + ': ' + error.message);
     return {
       error: error.message,
     };
@@ -168,167 +225,23 @@ export async function verifyPhoneOtp(data: TPhoneOtpForm) {
   redirect('/');
 }
 
-export async function signOut() {
-  const supabase = await createServerClient();
-  await supabase.auth.signOut();
-  return redirect('/signin');
-}
-
-export async function deleteAccount() {
-  // const user = await getUserProfileById('1');
-  // if (user?.stripeCustomerId) {
-  //   await customerDeletion({ stripeCustomerId: user.stripeCustomerId });
-  // }
-
-  // try {
-  //   await prisma.profile.update({
-  //     where: {
-  //       id: '1',
-  //     },
-  //     data: {
-  //       firstName: null,
-  //       lastName: null,
-  //       isWaiverSigned: false,
-  //       waiverSignedAt: null,
-  //       waiverSigName: null,
-  //       credits: 0,
-  //       stripeCustomerId: null,
-  //       isMember: false,
-  //       memberPayFailed: null,
-  //       memberPeriodEnd: null,
-  //       memberRenewing: null,
-  //       deleted: true,
-  //       deletedAt: new Date(),
-  //     },
-  //   });
-
-  //   await prisma.session.deleteMany({ where: { userId: '1' } });
-  // } catch (e) {
-  //   return {
-  //     error: 'Failed to delete user',
-  //   };
-  // }
-
-  // await signOut({ redirectTo: '/signup' });
-
-  const supabase = await createServerAdminClient();
-
-  const {
-    data: { user },
-    error: getUserError,
-  } = await supabase.auth.getUser();
-
-  if (getUserError) {
-    console.error(getUserError.code + ' ' + getUserError.message);
-    return {
-      error: getUserError.message,
-    };
-  }
-
-  const { error: deleteUserError } = await supabase.auth.admin.deleteUser(
-    user?.id ?? '',
-  );
-
-  if (deleteUserError) {
-    console.error(deleteUserError.code + ' ' + deleteUserError.message);
-    return {
-      error: deleteUserError.message,
-    };
-  }
-
-  redirect('/signin');
-}
-
-export async function createUserProfile() {
-  //  grab profile based on email, if it already exists
-  // let profile;
-  // try {
-  //   profile = await prisma.profile.findUnique({
-  //     where: {
-  //       email,
-  //     },
-  //   });
-  // } catch (e) {
-  //   console.error(e);
-  //   return {
-  //     error: 'Existing profile check failed',
-  //   };
-  // }
-  // // if (profile && !profile.deleted) {
-  // //   return {
-  // //     error: 'Account already exists',
-  // //   };
-  // // }
-  // // create stripe customer id for user
-  // const { stripeCustomerId, error: stripeError } = await customerCreation({
-  //   email,
-  // });
-  // if (stripeError) {
-  //   console.error(stripeError);
-  //   return {
-  //     error: 'Stripe customer creation failed',
-  //   };
-  // }
-  // // reinstate profile if previously deleted
-  // if (profile && profile.deleted) {
-  //   try {
-  //     await prisma.profile.update({
-  //       where: {
-  //         email,
-  //       },
-  //       data: {
-  //         id: user.id,
-  //         stripeCustomerId,
-  //         firstName: null,
-  //         lastName: null,
-  //         deleted: false,
-  //         deletedAt: null,
-  //       },
-  //     });
-  //   } catch (e) {
-  //     console.error(e);
-  //     return {
-  //       error: 'Failed to reinstate profile',
-  //     };
-  //   }
-  // }
-  // // create profile if it doesn't exist
-  // if (!profile) {
-  //   try {
-  //     await prisma.profile.create({
-  //       data: {
-  //         email,
-  //       },
-  //     });
-  //   } catch (e) {
-  //     console.error(e);
-  //     return {
-  //       error: 'Failed to create account',
-  //     };
-  //   }
-  // }
-}
-
-// --- member details actions ---
-
 export async function addMemberDetails(data: TMemberDetailsForm) {
-  // authentication check
-  const session = await checkAuth();
-
   // validation check
-  const validatedMemberDetails = memberDetailsSchema.safeParse(data);
+  const validatedData = memberDetailsSchema.safeParse(data);
 
-  if (!validatedMemberDetails.success) {
+  if (!validatedData.success) {
     return {
-      error: validatedMemberDetails.error.issues[0].message,
+      error: validatedData.error.issues[0].message,
     };
   }
+
+  const { firstName, lastName } = validatedData.data;
 
   // update user record with member details
   try {
     await prisma.profile.update({
       where: { id: '1' },
-      data: { ...validatedMemberDetails.data },
+      data: { ...validatedData.data },
     });
   } catch (e) {
     return {
@@ -336,16 +249,8 @@ export async function addMemberDetails(data: TMemberDetailsForm) {
     };
   }
 
-  const isOver18 = isUserOver18(validatedMemberDetails.data.dob);
-
-  if (isOver18) {
-    redirect('/health-quiz');
-  } else {
-    redirect('/guardian-waiver');
-  }
+  redirect('waiver');
 }
-
-// --- waiver actions ---
 
 export async function signWaiver(data: Pick<Profile, 'waiverSigName'>) {
   // authentication check
@@ -618,7 +523,7 @@ export async function createSession(data: {
   let newSession;
   try {
     newSession = await prisma.session.create({
-      data: { userId: '1', unitId, plungeTimerSecs },
+      data: { profileId: '1', unitId, plungeTimerSecs },
     });
   } catch (e) {
     // console.log(e);
@@ -665,7 +570,7 @@ export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
       error: 'Session not found',
     };
   }
-  if (plungeSession.userId !== '1') {
+  if (plungeSession.profileId !== '1') {
     return {
       error: 'Not authorized',
     };
@@ -728,7 +633,7 @@ export async function applyPaidCredit(data: { sessionId: Session['id'] }) {
       error: 'Session not found',
     };
   }
-  if (plungeSession.userId !== '1') {
+  if (plungeSession.profileId !== '1') {
     return {
       error: 'Not authorized',
     };
@@ -801,7 +706,7 @@ export async function applyUnlimited(data: { sessionId: Session['id'] }) {
       error: 'Session not found',
     };
   }
-  if (plungeSession.userId !== '1') {
+  if (plungeSession.profileId !== '1') {
     return {
       error: 'Not authorized',
     };
@@ -864,7 +769,7 @@ export async function startSession(data: { sessionId: Session['id'] }) {
       error: 'Session not found',
     };
   }
-  if (plungeSession.userId !== '1') {
+  if (plungeSession.profileId !== '1') {
     return {
       error: 'Not authorized',
     };
@@ -918,7 +823,7 @@ export async function endSession(data: {
       error: 'Session not found',
     };
   }
-  if (plungeSession.userId !== '1') {
+  if (plungeSession.profileId !== '1') {
     return {
       error: 'Not authorized',
     };
@@ -1090,48 +995,7 @@ export async function billingPortalSession(data: {
   redirect(portalSession.url);
 }
 
-export async function customerDeletion(data: {
-  stripeCustomerId: Profile['stripeCustomerId'];
-}) {
-  // authentication check
-  // const session = await checkAuth();
-
-  // validation check
-  const validatedData = z
-    .object({
-      stripeCustomerId: z.string().trim().min(1),
-    })
-    .safeParse(data);
-
-  if (!validatedData.success) {
-    return {
-      error: validatedData.error.issues[0].message,
-    };
-  }
-
-  const { stripeCustomerId } = validatedData.data;
-
-  let deletedCustomer;
-  try {
-    deletedCustomer = await stripe.customers.del(stripeCustomerId);
-  } catch (e) {
-    // console.log("Customer deletion failed, please try again")
-    return {
-      error: 'Customer deletion failed, please try again',
-    };
-  }
-
-  // console.log({deletedCustomer});
-
-  if (!deletedCustomer.deleted) {
-    // console.log("Customer deletion failed, please try again.")
-    return {
-      error: 'Customer deletion failed, please try again.',
-    };
-  }
-}
-
-export async function customerCreation(data: { email: Profile['email'] }) {
+export async function createCustomer(data: { email: Profile['email'] }) {
   // validation check
   const validatedData = z
     .object({
@@ -1140,6 +1004,10 @@ export async function customerCreation(data: { email: Profile['email'] }) {
     .safeParse(data);
 
   if (!validatedData.success) {
+    console.error(
+      'Error validating data:',
+      validatedData.error.issues[0].message,
+    );
     return {
       error: validatedData.error.issues[0].message,
     };
@@ -1151,9 +1019,11 @@ export async function customerCreation(data: { email: Profile['email'] }) {
   try {
     customer = await stripe.customers.create({ email });
   } catch (e) {
-    // console.log("Customer deletion failed, please try again")
+    // @ts-ignore
+    console.error(e.raw.code + ': ' + e.raw.message);
     return {
-      error: 'Customer creation failed',
+      // @ts-ignore
+      error: e.raw.message,
     };
   }
 
@@ -1161,4 +1031,37 @@ export async function customerCreation(data: { email: Profile['email'] }) {
   const stripeCustomerId: string = customer.id;
 
   return { stripeCustomerId };
+}
+
+export async function cancelSubscription(data: Pick<Profile, 'stripeSubId'>) {
+  // validation check
+  const validatedData = z
+    .object({
+      stripeSubId: z.string(),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    console.error(
+      'Error validating data:',
+      validatedData.error.issues[0].message,
+    );
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { stripeSubId } = validatedData.data;
+
+  let subscription;
+  try {
+    subscription = await stripe.subscriptions.delete(stripeSubId);
+  } catch (e) {
+    // @ts-ignore
+    console.error(e.raw.code + ': ' + e.raw.message);
+    return {
+      // @ts-ignore
+      error: `${e.raw.message}`,
+    };
+  }
 }

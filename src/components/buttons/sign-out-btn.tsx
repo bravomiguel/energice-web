@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 
-import { signOut } from '@/actions/actions';
+import { signOut } from '@/lib/actions';
 import { Button } from '../ui/button';
 import {
   Dialog,

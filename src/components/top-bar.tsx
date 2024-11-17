@@ -5,7 +5,7 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { FaUser } from 'react-icons/fa';
 import Link from 'next/link';
 
-import { endSession, signOut } from '@/actions/actions';
+import { endSession, signOut } from '@/lib/actions';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import { useEffect } from 'react';
 import { ONBOARDING_PATHNAMES } from '@/lib/constants';
@@ -69,7 +69,7 @@ export default function TopBar() {
                 <ProfileLink />
               </>
             )}
-            {isUnit && (  
+            {isUnit && (
               <>
                 <BackArrow href="/" />
               </>

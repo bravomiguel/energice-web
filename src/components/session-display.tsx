@@ -5,14 +5,14 @@ import { Session } from '@prisma/client';
 import { cn, formatSecsToMins } from '@/lib/utils';
 import { IoIosTimer } from 'react-icons/io';
 import { CountdownCircleTimer } from 'react-countdown-circle-timer';
-import useWakeLock from "react-use-wake-lock";
+import useWakeLock from 'react-use-wake-lock';
 
 import Subtitle from './subtitle';
 import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
 import H1 from './h1';
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
-import { endSession } from '@/actions/actions';
+import { endSession } from '@/lib/actions';
 import EndSessionBtn from './end-session-btn';
 import PlungeTipsDrawer from './plunge-tips-drawer';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
@@ -45,13 +45,13 @@ export default function SessionDisplay({
 
   const { request, release, isLocked, isSupported } = useWakeLock({
     onError(e, type) {
-      console.error("Wake Lock Error: REQUEST: ", e);
+      console.error('Wake Lock Error: REQUEST: ', e);
     },
     onLock(lock) {
-      console.log("Wake Lock Acquired: ", lock);
+      console.log('Wake Lock Acquired: ', lock);
     },
     onRelease(lock) {
-      console.log("Wake Lock Released: ", lock);
+      console.log('Wake Lock Released: ', lock);
     },
   });
 
@@ -259,7 +259,10 @@ export default function SessionDisplay({
             ? 'Resume timer'
             : 'Pause timer'}
         </Button>
-        <EndSessionBtn isPending={isPending} handleEndSession={handleEndSession} />
+        <EndSessionBtn
+          isPending={isPending}
+          handleEndSession={handleEndSession}
+        />
       </BottomNav>
     </>
   );

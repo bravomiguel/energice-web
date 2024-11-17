@@ -7,7 +7,7 @@ import { PiArrowClockwiseBold } from 'react-icons/pi';
 import { toast } from 'sonner';
 import { Session, Unit } from '@prisma/client';
 
-import { startSession, unlockAction } from '@/actions/actions';
+import { startSession, unlockAction } from '@/lib/actions';
 import LoadingSpinner from './loaders/loading-spinner';
 import { cn } from '@/lib/utils';
 import BottomNav from './bottom-nav';

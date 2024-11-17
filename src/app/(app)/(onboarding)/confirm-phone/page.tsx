@@ -10,8 +10,6 @@ export default async function Page({
   const params = await searchParams;
   const isOtpSent = params.otpSent === 'true';
 
-  // const [enterOtp, setEnterOtp] = useState(false);
-
   return (
     <main className="relative flex-1 flex flex-col gap-6">
       <div className="flex flex-col gap-1">

@@ -4,7 +4,7 @@ import { Session, Unit } from '@prisma/client';
 
 import { Button, ButtonProps } from '../ui/button';
 import { cn } from '@/lib/utils';
-import { startSession, unlockAction } from '@/actions/actions';
+import { startSession, unlockAction } from '@/lib/actions';
 import { TransitionStartFunction } from 'react';
 import { toast } from 'sonner';
 

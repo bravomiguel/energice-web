@@ -9,7 +9,7 @@ import { TSigninForm } from '@/lib/types';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
-import { signinWithEmail, signinWithGoogle } from '@/actions/actions';
+import { signinWithEmail, signinWithGoogle } from '@/lib/actions';
 import { Icons } from '../ui/icons';
 import { FaGoogle } from 'react-icons/fa';
 import { Mail } from 'lucide-react';

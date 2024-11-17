@@ -11,8 +11,6 @@ export const BASE_URL =
 
 export const APP_PATHNAMES = ['/', '/profile', '/unit'];
 
-// const GDRIVE_BASE_URL = `https://drive.usercontent.google.com/download`;
-// const SUPABASE_BASE_URL = `https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public`;
 const GCLOUD_BASE_URL = `https://storage.googleapis.com`;
 
 // console.log(process.env.VERCEL_ENV);

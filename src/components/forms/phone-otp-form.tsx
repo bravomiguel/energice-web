@@ -22,7 +22,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { sendPhoneOtp, verifyPhoneOtp } from '@/actions/actions';
+import { sendPhoneOtp, verifyPhoneOtp } from '@/lib/actions';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';

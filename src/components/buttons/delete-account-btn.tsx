@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 
 import { Button } from '../ui/button';
-import { deleteAccount } from '@/actions/actions';
+import { deleteAccount } from '@/lib/actions';
 import {
   Dialog,
   DialogContent,

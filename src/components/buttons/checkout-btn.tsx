@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { useTransition } from 'react';
 import { cn } from '@/lib/utils';
-import { subscriptionCheckoutSession } from '@/actions/actions';
+import { subscriptionCheckoutSession } from '@/lib/actions';
 
 export default function CheckoutBtn({
   checkoutAction,

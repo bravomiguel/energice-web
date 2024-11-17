@@ -22,7 +22,7 @@ import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
 import { cn } from '@/lib/utils';
 import BottomNav from './bottom-nav';
-import { signWaiver } from '@/actions/actions';
+import { signWaiver } from '@/lib/actions';
 import { toast } from 'sonner';
 import { waiverDataSchema } from '@/lib/validations';
 
@@ -68,7 +68,10 @@ export default function ESigBlock({
       <div className="flex flex-col gap-3">
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogTrigger asChild>
-            <div onClick={() => setIsFormOpen(true)} className="space-y-1 cursor-pointer">
+            <div
+              onClick={() => setIsFormOpen(true)}
+              className="space-y-1 cursor-pointer"
+            >
               <span>Participant signature:</span>
               <Input
                 id="signature"

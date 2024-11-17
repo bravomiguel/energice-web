@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const userIdSchema = z.string().cuid();
+export const profileIdSchema = z.string().cuid();
 
 export const signinSchema = z.object({
   email: z
@@ -12,9 +12,9 @@ export const signinSchema = z.object({
 
 export const phoneOtpSchema = z.object({
   phone: z
-  .string()
-  .regex(/^\(\d{3}\)-\d{3}-\d{4}$/, 'Phone number must be 10 digits long')
-  .transform((val) => val.replace(/\D/g, '')),
+    .string()
+    .regex(/^\(\d{3}\)-\d{3}-\d{4}$/, 'Phone number must be 10 digits long')
+    .transform((val) => val.replace(/\D/g, '')),
   token: z
     .string({ message: 'Your one-time password must be 6 characters.' })
     .length(6, {

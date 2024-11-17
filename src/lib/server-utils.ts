@@ -22,8 +22,8 @@ export async function checkAuth() {
 
 // --- user utils ---
 
-export async function getUserProfileById(userId: Profile['id']) {
-  const profile = await prisma.profile.findUnique({ where: { id: userId } });
+export async function getUserProfileById(profileId: Profile['id']) {
+  const profile = await prisma.profile.findUnique({ where: { id: profileId } });
   return profile;
 }
 
@@ -79,19 +79,19 @@ export async function getSessionById(sessionId: Session['id']) {
   return session;
 }
 
-export async function getSessionsByUserId(userId: Session['id']) {
-  const sessions = await prisma.session.findMany({ where: { userId } });
+export async function getSessionsByprofileId(profileId: Session['id']) {
+  const sessions = await prisma.session.findMany({ where: { profileId } });
   return sessions;
 }
 
-export async function checkPlungeSession(userId: Profile['id']): Promise<{
+export async function checkPlungeSession(profileId: Profile['id']): Promise<{
   data: Session | null;
   status: 'valid_started' | 'valid_not_started' | 'none_valid';
 }> {
   // get latest authorized session (i.e. paid for, or used credit, or unlimited membership)
   const authorizedSession = await prisma.session.findFirst({
     where: {
-      userId,
+      profileId,
       OR: [
         { hasPaid: true },
         { hasUsedCredit: true },

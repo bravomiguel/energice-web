@@ -20,7 +20,7 @@ import {
   plungeCheckoutSession,
   createSession,
   applyUnlimited,
-} from '@/actions/actions';
+} from '@/lib/actions';
 import { plungeTimerSecsSchema } from '@/lib/validations';
 import { cn } from '@/lib/utils';
 import PlungeTimerInfo from './plunge-timer-info';
@@ -163,7 +163,7 @@ export default function UnitDetails({
                   className="bg-zinc-200 font-semibold h-8"
                 />
                 <span className="font-medium self-end ">m</span>
-                <span className='font-bold'>:</span>
+                <span className="font-bold">:</span>
                 <DurationDropdown
                   type="secs"
                   value={plungeTimerVals}

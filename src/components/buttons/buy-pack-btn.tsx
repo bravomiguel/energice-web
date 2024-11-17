@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { useTransition } from 'react';
 import { cn } from '@/lib/utils';
-import { packCheckoutSession } from '@/actions/actions';
+import { packCheckoutSession } from '@/lib/actions';
 
 export default function BuyPackBtn({
   className,

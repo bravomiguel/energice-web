@@ -1023,7 +1023,7 @@ export async function createCustomer(data: { email: Profile['email'] }) {
     console.error(e.raw.code + ': ' + e.raw.message);
     return {
       // @ts-ignore
-      error: e.raw.message,
+      error: `${e.raw.message}`,
     };
   }
 
@@ -1031,6 +1031,52 @@ export async function createCustomer(data: { email: Profile['email'] }) {
   const stripeCustomerId: string = customer.id;
 
   return { stripeCustomerId };
+}
+
+export async function getCustomerSubId(
+  data: Pick<Profile, 'stripeCustomerId'>,
+) {
+  // validation check
+  const validatedData = z
+    .object({
+      stripeCustomerId: z.string(),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    console.error(
+      'Error validating data:',
+      validatedData.error.issues[0].message,
+    );
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { stripeCustomerId } = validatedData.data;
+
+  let subscriptions;
+  try {
+    subscriptions = await stripe.subscriptions.list({
+      customer: stripeCustomerId,
+      limit: 1,
+    });
+  } catch (e) {
+    // @ts-ignore
+    console.error(e.raw.code + ': ' + e.raw.message);
+    return {
+      // @ts-ignore
+      error: `${e.raw.message}`,
+    };
+  }
+
+  if (subscriptions.data.length === 0) {
+    return { stripeSubId: undefined, error: undefined };
+  }
+
+  const stripeSubId: string = subscriptions.data[0].id;
+
+  return { stripeSubId };
 }
 
 export async function cancelSubscription(data: Pick<Profile, 'stripeSubId'>) {
@@ -1064,4 +1110,6 @@ export async function cancelSubscription(data: Pick<Profile, 'stripeSubId'>) {
       error: `${e.raw.message}`,
     };
   }
+
+  return { error: undefined };
 }

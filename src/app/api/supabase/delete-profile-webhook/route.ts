@@ -1,38 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
-import { cancelSubscription } from '@/lib/actions';
+import { cancelSubscription, getCustomerSubId } from '@/lib/actions';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
   // console.log({ body });
 
-  const { id } = body.old_record;
+  const { id, stripeCustomerId } = body.old_record;
 
-  if (!id) {
+  if (!id || !stripeCustomerId) {
     return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
   }
 
-  // fetch subscription id to cancel subscription
-  let stripeSubId;
-  try {
-    const profile = await prisma.profile.findUnique({
-      where: { id },
-    });
-    stripeSubId = profile?.stripeSubId;
-  } catch (e) {
-    console.error(e);
-    return {
-      error: 'Failed to fetch profile',
-    };
+  // fetch user subscription id to cancel subscription
+  const { stripeSubId, error } = await getCustomerSubId({ stripeCustomerId });
+
+  if (error) {
+    console.error('Error creating stripe customer id:', error);
+    return NextResponse.json(
+      { error: 'Failed to create profile' },
+      { status: 500 },
+    );
   }
 
   // cancel subscription
-  if (!!stripeSubId) {
-    const error = await cancelSubscription({ stripeSubId });
-
+  if (stripeSubId) {
+    const { error: cancelSubError } = await cancelSubscription({ stripeSubId });
     console.log('Stripe subscription successfully cancelled');
-    if (error) {
-      console.error('Error cancelling stripe subscription:', error);
+
+    if (cancelSubError) {
+      console.error('Error cancelling stripe subscription:', cancelSubError);
       return NextResponse.json(
         { error: 'Failed to cancel stripe subscription' },
         { status: 500 },

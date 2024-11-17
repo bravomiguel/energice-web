@@ -22,12 +22,11 @@ model Profile {
   waiverSigName    String?
   credits          Int       @default(0)
   isMember         Boolean   @default(false)
-  stripeSubId      String?
   memberPayFailed  Boolean?
   memberPeriodEnd  DateTime?
   memberRenewing   Boolean?
-  memberTrial      Boolean?
-  memberTrialEnd   DateTime?
+  // memberTrial      Boolean?
+  // memberTrialEnd   DateTime?
   sessions         Session[]
   deleted          Boolean   @default(false)
   deletedAt        DateTime?

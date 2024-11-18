@@ -12,12 +12,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
   }
 
+  // Create stripe customer id
+  const { stripeCustomerId, error } = await createCustomer({
+    email,
+  });
+  if (!stripeCustomerId) {
+    console.error('Error creating stripe customer id:', error);
+    return NextResponse.json(
+      { error: 'Failed to create profile' },
+      { status: 500 },
+    );
+  }
+
   // Grab profile based on email, if it already exists
   let profile;
   try {
     profile = await prisma.profile.findUnique({
       where: {
         email,
+        stripeCustomerId,
       },
     });
   } catch (e) {
@@ -54,18 +67,6 @@ export async function POST(req: NextRequest) {
 
   // create profile if it doesn't exist
   if (!profile) {
-    // Create stripe customer id
-    const { stripeCustomerId, error } = await createCustomer({
-      email,
-    });
-    if (!stripeCustomerId) {
-      console.error('Error creating stripe customer id:', error);
-      return NextResponse.json(
-        { error: 'Failed to create profile' },
-        { status: 500 },
-      );
-    }
-
     try {
       await prisma.profile.create({
         data: {

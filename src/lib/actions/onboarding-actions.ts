@@ -2,7 +2,6 @@
 
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-// import { AuthError } from 'next-auth';
 import { Profile } from '@prisma/client';
 
 import prisma from '@/lib/db';
@@ -39,7 +38,7 @@ export async function sendPhoneOtp(data: Pick<TPhoneOtpForm, 'phone'>) {
   try {
     profile = await prisma.profile.findFirst({
       where: {
-        phone,
+        phone: `1${phone}`,
       },
     });
   } catch (e) {
@@ -51,9 +50,9 @@ export async function sendPhoneOtp(data: Pick<TPhoneOtpForm, 'phone'>) {
 
   const user = await checkAuth();
 
-  // console.log(profile);
-  // console.log({profileEmail: profile?.email});
-  // console.log({userEmail: user.email});
+  console.log(profile);
+  console.log({ profileEmail: profile?.email });
+  console.log({ userEmail: user.email });
 
   if (profile && profile.email !== user.email) {
     console.error('Error checking if phone is already registered');

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 import {
   cancelSubscription,
+  deleteCustomer,
   getCustomerSubId,
 } from '@/lib/actions/payment-actions';
 
@@ -9,35 +10,26 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   // console.log({ body });
 
-  const { id, stripeCustomerId } = body.old_record;
+  const { id } = body.old_record;
 
-  if (!id || !stripeCustomerId) {
+  if (!id) {
     return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
   }
 
-  // fetch user subscription id to cancel subscription
-  const { stripeSubId, error } = await getCustomerSubId({ stripeCustomerId });
-
-  if (error) {
-    console.error('Error creating stripe customer id:', error);
-    return NextResponse.json(
-      { error: 'Failed to create profile' },
-      { status: 500 },
-    );
+  // delete stripe customer
+  let stripeCustomerId;
+  try {
+    const profile = await prisma.profile.findUnique({ where: { id } });
+    stripeCustomerId = profile?.stripeCustomerId;
+  } catch (e) {
+    console.error(e);
+    return {
+      error: 'Error getting customer id',
+    };
   }
 
-  // cancel subscription
-  if (stripeSubId) {
-    const { error: cancelSubError } = await cancelSubscription({ stripeSubId });
-    console.log('Stripe subscription successfully cancelled');
-
-    if (cancelSubError) {
-      console.error('Error cancelling stripe subscription:', cancelSubError);
-      return NextResponse.json(
-        { error: 'Failed to cancel stripe subscription' },
-        { status: 500 },
-      );
-    }
+  if (stripeCustomerId) {
+    await deleteCustomer({ stripeCustomerId });
   }
 
   // mark profile as deleted
@@ -45,6 +37,7 @@ export async function POST(req: NextRequest) {
     await prisma.profile.update({
       where: { id },
       data: {
+        stripeCustomerId: null,
         isWaiverSigned: false,
         waiverSignedAt: null,
         waiverSigName: null,

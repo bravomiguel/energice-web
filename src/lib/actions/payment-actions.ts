@@ -4,9 +4,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { Session, Unit, Profile } from '@prisma/client';
 
-import {
-  checkAuth,
-} from '@/lib/server-utils';
+import { checkAuth } from '@/lib/server-utils';
 import { BASE_URL } from '@/lib/constants';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -194,6 +192,47 @@ export async function createCustomer(data: { email: Profile['email'] }) {
   const stripeCustomerId: string = customer.id;
 
   return { stripeCustomerId };
+}
+
+export async function deleteCustomer(data: {
+  stripeCustomerId: Profile['stripeCustomerId'];
+}) {
+  // authentication check
+  // const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      stripeCustomerId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { stripeCustomerId } = validatedData.data;
+
+  let deletedCustomer;
+  try {
+    deletedCustomer = await stripe.customers.del(stripeCustomerId);
+  } catch (e) {
+    // console.log("Customer deletion failed, please try again")
+    return {
+      error: 'Customer deletion failed, please try again',
+    };
+  }
+
+  // console.log({deletedCustomer});
+
+  if (!deletedCustomer.deleted) {
+    // console.log("Customer deletion failed, please try again.")
+    return {
+      error: 'Customer deletion failed, please try again.',
+    };
+  }
 }
 
 export async function getCustomerSubId(

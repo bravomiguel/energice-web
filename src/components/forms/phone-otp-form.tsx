@@ -22,7 +22,7 @@ import {
   InputOTPSeparator,
   InputOTPSlot,
 } from '@/components/ui/input-otp';
-import { sendPhoneOtp, verifyPhoneOtp } from '@/lib/actions';
+import { sendPhoneOtp, verifyPhoneOtp } from '@/lib/actions/onboarding-actions';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { cn } from '@/lib/utils';
@@ -70,7 +70,7 @@ export default function PhoneOtpForm({ isOtpSent }: { isOtpSent: boolean }) {
       const response = await sendPhoneOtp({ phone });
       if (response?.error) {
         console.error({ error: response.error });
-        toast.warning('OTP request failed, please try again');
+        toast.warning(response.error);
         return;
       }
     });

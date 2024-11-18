@@ -1,6 +1,8 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
+import prisma from './lib/db';
+
 export async function middleware(request: NextRequest) {
   // Create an unmodified response
   let response = NextResponse.next({
@@ -33,24 +35,22 @@ export async function middleware(request: NextRequest) {
   );
 
   // This will refresh session if expired - required for Server Components
-  // https://supabase.com/docs/guides/auth/server-side/nextjs
   const user = await supabase.auth.getUser();
 
   const isAuthenticated = !user.error;
-
   const isPhoneConfirmed = !!user.data.user?.phone_confirmed_at;
 
-  const isAuthRoute = request.nextUrl.pathname.startsWith('/signin');
-
   const isPKCERoute = request.nextUrl.pathname.startsWith('/api/auth');
-
   const isSupabaseWhRoute =
     request.nextUrl.pathname.startsWith('/api/supabase');
 
-  const isProfileRoute = request.nextUrl.pathname.startsWith('/profile');
-
+  const isAuthRoute = request.nextUrl.pathname.startsWith('/signin');
   const isConfirmPhoneRoute =
     request.nextUrl.pathname.startsWith('/confirm-phone');
+  const isMemberDetailsRoute =
+    request.nextUrl.pathname.startsWith('/member-details');
+  const isWaiverRoute = request.nextUrl.pathname.startsWith('/waiver');
+  const isProfileRoute = request.nextUrl.pathname.startsWith('/profile');
 
   // console.log({ isSupabaseWhRoute });
 
@@ -81,7 +81,7 @@ export async function middleware(request: NextRequest) {
 
   // Block /confirm-phone route if phone is already confirmed
   if (isAuthenticated && isPhoneConfirmed && isConfirmPhoneRoute) {
-    return NextResponse.redirect(new URL('/', request.url)); // Redirect to homepage or any other route
+    return NextResponse.redirect(new URL('/', request.url)); // Redirect to homepage
   }
 
   return response;

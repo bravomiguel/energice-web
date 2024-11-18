@@ -10,9 +10,8 @@ import H2 from './h2';
 import CheckoutBtn from './buttons/checkout-btn';
 import {
   billingPortalSession,
-  packCheckoutSession,
   subscriptionCheckoutSession,
-} from '@/lib/actions';
+} from '@/lib/actions/payment-actions';
 import { Profile } from '@prisma/client';
 import { cn } from '@/lib/utils';
 

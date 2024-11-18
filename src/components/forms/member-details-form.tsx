@@ -2,20 +2,21 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 import { memberDetailsSchema } from '@/lib/validations';
 import { TMemberDetailsForm } from '@/lib/types';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
-import { addMemberDetails } from '@/lib/actions';
+import { addMemberDetails } from '@/lib/actions/onboarding-actions';
 import BottomNav from '../bottom-nav';
-import { toast } from 'sonner';
-import { User } from '@supabase/supabase-js';
 
-export default function MemberDetailsForm() {
+export default function MemberDetailsForm({ userName }: { userName?: string }) {
   const {
     register,
+    setValue,
     handleSubmit,
     formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
   } = useForm<TMemberDetailsForm>({
@@ -31,6 +32,13 @@ export default function MemberDetailsForm() {
       // return;
     }
   });
+
+  useEffect(() => {
+    if (userName) {
+      setValue('firstName', userName.split(' ')[0]);
+      setValue('lastName', userName.split(' ')[1]);
+    }
+  }, [userName, setValue]);
 
   return (
     <form className="flex-1 flex flex-col" onSubmit={onSubmit}>

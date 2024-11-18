@@ -1,4 +1,4 @@
-import { User } from '@prisma/client';
+import { Profile } from '@prisma/client';
 import { Homemade_Apple } from 'next/font/google';
 
 import H2 from './h2';
@@ -8,17 +8,13 @@ import { Label } from './ui/label';
 const homemadeApple = Homemade_Apple({ weight: '400', subsets: ['latin'] });
 
 export default function WaiverTerms({
-  firstName,
-  lastName,
-  // isSigned,
+  name,
   waiverSignedAt,
   waiverSigName,
 }: {
-  firstName: User['firstName'];
-  lastName: User['lastName'];
-  // isSigned?: boolean;
-  waiverSignedAt?: User['waiverSignedAt'];
-  waiverSigName?: User['waiverSigName'];
+  name: Profile['name'];
+  waiverSignedAt?: Profile['waiverSignedAt'];
+  waiverSigName?: Profile['waiverSigName'];
 }) {
   return (
     <div className="flex-1 flex flex-col gap-5">
@@ -30,7 +26,7 @@ export default function WaiverTerms({
           {`This Cold Plunge Waiver and Release of Liability ("Waiver") is made and entered into as of ${new Date().toLocaleDateString(
             'en-US',
           )} by and between KoldUp and our partner gyms ("Provider"), and you, `}
-          <span className="font-semibold underline">{`${firstName} ${lastName}`}</span>
+          <span className="font-semibold underline">{name}</span>
           {`, the undersigned participant ("Participant").`}
         </p>
         <p className="font-semibold">
@@ -115,8 +111,10 @@ export default function WaiverTerms({
 
       {waiverSignedAt && waiverSigName && (
         <div className="space-y-3 mt-4">
-          <div className='space-y-1'>
-            <Label htmlFor="signature" className='font-normal'>Participant signature:</Label>
+          <div className="space-y-1">
+            <Label htmlFor="signature" className="font-normal">
+              Participant signature:
+            </Label>
             <Input
               id="signature"
               type="text"
@@ -127,7 +125,9 @@ export default function WaiverTerms({
           </div>
           <div className="grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
             <span className="col-start-1 row-start-1">Participant Name:</span>
-            <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">{`${firstName} ${lastName}`}</span>
+            <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">
+              {name}
+            </span>
             <span className="col-start-1 row-start-2">Date signed:</span>
             <span className="col-start-2 row-start-2 border-b border-zinc-700 px-2 font-medium">
               {waiverSignedAt.toLocaleDateString('en-US')}

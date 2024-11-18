@@ -12,7 +12,7 @@ import {
 import { Homemade_Apple } from 'next/font/google';
 import { Label } from '@radix-ui/react-label';
 import { DialogTrigger } from '@radix-ui/react-dialog';
-import { User } from '@prisma/client';
+import { Profile } from '@prisma/client';
 import Link from 'next/link';
 
 import { Button } from './ui/button';
@@ -22,21 +22,19 @@ import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
 import { cn } from '@/lib/utils';
 import BottomNav from './bottom-nav';
-import { signWaiver } from '@/lib/actions';
+import { signWaiver } from '@/lib/actions/onboarding-actions';
 import { toast } from 'sonner';
 import { waiverDataSchema } from '@/lib/validations';
 
 const homemadeApple = Homemade_Apple({ weight: '400', subsets: ['latin'] });
 
 export default function ESigBlock({
-  firstName,
-  lastName,
+  name,
 }: {
-  firstName?: User['firstName'];
-  lastName?: User['lastName'];
+  name?: Profile['name'];
 }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [fullName, setFullName] = useState(`${firstName} ${lastName}`);
+  const [fullName, setFullName] = useState(`${name}`);
   const isValid = useMemo(() => {
     const validatedData = waiverDataSchema.safeParse({
       waiverSigName: fullName,
@@ -155,7 +153,7 @@ export default function ESigBlock({
         )}
         <div className="mt-4 grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
           <span className="col-start-1 row-start-1">Participant Name:</span>
-          <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">{`${firstName} ${lastName}`}</span>
+          <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">{name}</span>
           <span className="col-start-1 row-start-2">Date signed:</span>
           <span className="col-start-2 row-start-2 border-b border-zinc-700 px-2 font-medium">
             {new Date().toLocaleDateString('en-US')}

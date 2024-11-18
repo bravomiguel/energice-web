@@ -1,24 +1,31 @@
-import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
 
-import { checkPlungeSession, checkAuth, getUserProfileById } from '@/lib/server-utils';
-import { isUserOver18 } from '@/lib/utils';
+import {
+  checkPlungeSession,
+  checkAuth,
+  getUserProfileById,
+} from '@/lib/server-utils';
 import { Button } from '@/components/ui/button';
 import SignOutBtn from '@/components/buttons/sign-out-btn';
 import DeleteAccountBtn from '@/components/buttons/delete-account-btn';
+import prisma from '@/lib/db';
 
 export default async function Home() {
-  noStore();
+  const user = await checkAuth();
 
-  // get user session
-  // const user = await checkAuth();
-  // console.log({ user });
+  // get profile
+  let profile;
+  try {
+    profile = await prisma.profile.findUnique({
+      where: { id: user?.id },
+    });
+  } catch (e) {
+    console.error(e);
+  }
 
   // onboarded check
-  // if (!user?.isEmailConfirmed) redirect('/welcome');
-  // if (!user?.firstName) redirect('/member-details');
-  // if (!user.isWaiverSigned && isOver18) redirect('/waiver');
-  // if (!user.isGWaiverSigned && !isOver18) redirect('/guardian-waiver');
+  if (!profile?.name) redirect('/member-details');
+  if (!profile.isWaiverSigned) redirect('/waiver');
 
   // valid session check (i.e. paid for, and within time limit)
   // const { data: plungeSession, status: plungeSessionStatus } =
@@ -32,7 +39,7 @@ export default async function Home() {
   // }
 
   // redirect to profile (currently, no need for home screen)
-  // redirect('/profile');
+  redirect('/profile');
 
   return (
     <main className="h-screen">

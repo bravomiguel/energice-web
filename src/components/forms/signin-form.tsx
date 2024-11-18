@@ -7,11 +7,9 @@ import { useState, useTransition } from 'react';
 import { signinSchema } from '@/lib/validations';
 import { TSigninForm } from '@/lib/types';
 import { Input } from '../ui/input';
-import { Label } from '../ui/label';
 import { Button } from '../ui/button';
-import { signinWithEmail, signinWithGoogle } from '@/lib/actions';
+import { signinWithEmail, signinWithGoogle } from '@/lib/actions/auth-actions';
 import { Icons } from '../ui/icons';
-import { FaGoogle } from 'react-icons/fa';
 import { Mail } from 'lucide-react';
 
 export default function SigninForm() {

@@ -17,10 +17,10 @@ import PenaltyChargeWarning from './penalty-charge-warning';
 import {
   applyFreeCredit,
   applyPaidCredit,
-  plungeCheckoutSession,
   createSession,
   applyUnlimited,
-} from '@/lib/actions';
+} from '@/lib/actions/session-actions';
+import { plungeCheckoutSession } from '@/lib/actions/payment-actions';
 import { plungeTimerSecsSchema } from '@/lib/validations';
 import { cn } from '@/lib/utils';
 import PlungeTimerInfo from './plunge-timer-info';

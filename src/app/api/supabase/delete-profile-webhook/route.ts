@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
-import { cancelSubscription, getCustomerSubId } from '@/lib/actions';
+import {
+  cancelSubscription,
+  getCustomerSubId,
+} from '@/lib/actions/payment-actions';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
@@ -46,7 +49,6 @@ export async function POST(req: NextRequest) {
         waiverSignedAt: null,
         waiverSigName: null,
         credits: 0,
-        stripeSubId: null,
         isMember: false,
         memberPayFailed: null,
         memberPeriodEnd: null,

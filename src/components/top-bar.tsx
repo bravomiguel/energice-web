@@ -5,7 +5,8 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { FaUser } from 'react-icons/fa';
 import Link from 'next/link';
 
-import { endSession, signOut } from '@/lib/actions';
+import { endSession } from '@/lib/actions/session-actions';
+import { signOut } from '@/lib/actions/auth-actions';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import { useEffect } from 'react';
 import { ONBOARDING_PATHNAMES } from '@/lib/constants';

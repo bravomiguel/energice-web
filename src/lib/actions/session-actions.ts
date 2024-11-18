@@ -1,0 +1,361 @@
+'use server';
+
+import { redirect } from 'next/navigation';
+import { z } from 'zod';
+import { Session, Unit } from '@prisma/client';
+
+import prisma from '@/lib/db';
+import {
+  plungeTimerSecsSchema,
+} from '@/lib/validations';
+import {
+  checkAuth,
+  getSessionById,
+} from '@/lib/server-utils';
+
+export async function createSession(data: {
+  unitId: Unit['id'];
+  plungeTimerSecs: Session['plungeTimerSecs'];
+}) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      unitId: z.string().trim().min(1),
+      plungeTimerSecs: plungeTimerSecsSchema,
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+      data: null,
+    };
+  }
+
+  const { unitId, plungeTimerSecs } = validatedData.data;
+
+  // create new session
+  let newSession;
+  try {
+    newSession = await prisma.session.create({
+      data: { profileId: '1', unitId, plungeTimerSecs },
+    });
+  } catch (e) {
+    // console.log(e);
+    return {
+      error: 'Failed to create new session',
+      data: null,
+    };
+  }
+
+  return {
+    error: null,
+    data: { newSessionId: newSession.id },
+  };
+}
+
+export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      sessionId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { sessionId } = validatedData.data;
+
+  // authorization check
+  const plungeSession = await getSessionById(sessionId);
+
+  if (!plungeSession) {
+    return {
+      error: 'Session not found',
+    };
+  }
+  if (plungeSession.profileId !== '1') {
+    return {
+      error: 'Not authorized',
+    };
+  }
+
+  try {
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: {
+        hasUsedCredit: true,
+      },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to apply free credit',
+    };
+  }
+
+  // try {
+  //   await prisma.profile.update({
+  //     where: { id: '1' },
+  //     data: {
+  //       hasFreeCredit: false,
+  //     },
+  //   });
+  // } catch (e) {
+  //   return {
+  //     error: 'Failed to apply free credit.',
+  //   };
+  // }
+
+  // redirect to unlock screen
+  redirect(`/session/${sessionId}/unlock`);
+}
+
+export async function applyPaidCredit(data: { sessionId: Session['id'] }) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      sessionId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { sessionId } = validatedData.data;
+
+  // authorization check
+  const plungeSession = await getSessionById(sessionId);
+
+  if (!plungeSession) {
+    return {
+      error: 'Session not found',
+    };
+  }
+  if (plungeSession.profileId !== '1') {
+    return {
+      error: 'Not authorized',
+    };
+  }
+
+  try {
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: {
+        hasUsedCredit: true,
+      },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to apply credit',
+    };
+  }
+
+  try {
+    const userRecord = await prisma.profile.findFirst({
+      where: { id: '1' },
+    });
+
+    if (!userRecord) {
+      return {
+        error: 'Failed to apply plunge credit',
+      };
+    }
+
+    await prisma.profile.update({
+      where: { id: '1' },
+      data: {
+        credits: userRecord.credits - 1,
+      },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to apply credit.',
+    };
+  }
+
+  // redirect to unlock screen
+  redirect(`/session/${sessionId}/unlock`);
+}
+
+export async function applyUnlimited(data: { sessionId: Session['id'] }) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      sessionId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { sessionId } = validatedData.data;
+
+  // authorization check
+  const plungeSession = await getSessionById(sessionId);
+
+  if (!plungeSession) {
+    return {
+      error: 'Session not found',
+    };
+  }
+  if (plungeSession.profileId !== '1') {
+    return {
+      error: 'Not authorized',
+    };
+  }
+
+  try {
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: {
+        hasUsedUnlimited: true,
+      },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to apply unlimited membership',
+    };
+  }
+
+  // try {
+  //   await prisma.profile.update({
+  //     where: { id: '1' },
+  //     data: {
+  //       hasFreeCredit: false,
+  //     },
+  //   });
+  // } catch (e) {
+  //   return {
+  //     error: 'Failed to apply unlimited membership.',
+  //   };
+  // }
+
+  // redirect to unlock screen
+  redirect(`/session/${sessionId}/unlock`);
+}
+
+export async function startSession(data: { sessionId: Session['id'] }) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      sessionId: z.string().trim().min(1),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { sessionId } = validatedData.data;
+
+  // authorization check
+  const plungeSession = await getSessionById(sessionId);
+
+  if (!plungeSession) {
+    return {
+      error: 'Session not found',
+    };
+  }
+  if (plungeSession.profileId !== '1') {
+    return {
+      error: 'Not authorized',
+    };
+  }
+
+  // update start date
+  try {
+    const sessionStart = new Date();
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: { sessionStart },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to start session',
+    };
+  }
+
+  // redirect to session screen
+  redirect(`/session/${sessionId}`);
+}
+
+export async function endSession(data: {
+  sessionId: Session['id'];
+  totalPlungeSecs: Session['totalPlungeSecs'];
+}) {
+  // auth check
+  const session = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      sessionId: z.string().trim().min(1),
+      totalPlungeSecs: z.number(),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { sessionId, totalPlungeSecs } = validatedData.data;
+
+  // authorization check
+  const plungeSession = await getSessionById(sessionId);
+
+  if (!plungeSession) {
+    return {
+      error: 'Session not found',
+    };
+  }
+  if (plungeSession.profileId !== '1') {
+    return {
+      error: 'Not authorized',
+    };
+  }
+
+  // update session in db
+  try {
+    const sessionEnd = new Date();
+    await prisma.session.update({
+      where: { id: sessionId },
+      data: { sessionEnd, totalPlungeSecs },
+    });
+  } catch (e) {
+    return {
+      error: 'Failed to end session',
+    };
+  }
+
+  // redirect to session screen
+  redirect(`/session/${sessionId}/close`);
+}

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
-import { createCustomer } from '@/lib/actions';
+import { createCustomer } from '@/lib/actions/payment-actions';
 
 export async function POST(req: NextRequest) {
   const body = await req.json();

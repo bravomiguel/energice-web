@@ -89,7 +89,7 @@ export default function AutoUnlock({
           <Subtitle className="text-zinc-600 text-start">
             Access issues?
           </Subtitle>
-          <Link href="https://koldup.com/#help-and-support" className="w-full">
+          <Link href="https://energicelife.com/#help-and-support" className="w-full">
             <Button variant="outline" className="w-full">
               Report issue
             </Button>

@@ -33,20 +33,19 @@ export default function ProfileSettings({
       <ViewPlungeDrawer type="tips" />
       <SettingsItem
         label="Help and support"
-        href={'https://koldup.com/#help-and-support'}
+        href={'https://energicelife.com/#help-and-support'}
       />
       <SettingsItem
         label="Terms of service"
-        href={'https://koldup.com/#terms-of-service'}
+        href={'https://energicelife.com/#terms-of-service'}
       />
       <SettingsItem
         label="Privacy policy"
-        href={'https://koldup.com/#privacy-policy'}
+        href={'https://energicelife.com/#privacy-policy'}
       />
-      <SettingsItem label="Retake your Health Quiz" href={'/health-quiz'} />
       <SettingsItem
         label="Download your data"
-        href={'https://koldup.com/#download-your-data'}
+        href={'https://energicelife.com/#download-your-data'}
       />
       {isOnboarded && waiverSignedAt ? (
         <ViewWaiverDrawer
@@ -146,7 +145,7 @@ function ViewWaiverDrawer({
             <DrawerClose asChild>
               <Button variant="outline">Back</Button>
             </DrawerClose>
-            {/* <Link href="https://koldup.com">
+            {/* <Link href="https://energicelife.com">
               <Button className="w-full" variant="outline">
                 Download waiver
               </Button>

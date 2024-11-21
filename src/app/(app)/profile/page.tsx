@@ -10,6 +10,7 @@ import StartPlungeSection from '@/components/start-plunge-section';
 import PlungePlansSection from '@/components/plunge-plans-section';
 import ProfileSettings from '@/components/profile-settings';
 import { checkAuth, getProfileById } from '@/lib/server-utils';
+import PlungeOffersSection from '@/components/plunge-credits-section';
 
 export default async function Page() {
   noStore();
@@ -52,6 +53,8 @@ export default async function Page() {
           memberPayFailed={profile.memberPayFailed}
           memberRenewing={profile.memberRenewing}
         />
+
+        <PlungeOffersSection isOnboarded={isOnboarded} />
 
         <section>
           <H2 className="mb-3">Settings</H2>

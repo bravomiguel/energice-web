@@ -12,6 +12,7 @@ export default async function Page() {
   const user = await checkAuth();
   const profile = await getProfileById(user.id);
 
+  if (!profile.name) redirect('/member-details');
   if (profile?.isWaiverSigned) redirect('/');
 
   return (

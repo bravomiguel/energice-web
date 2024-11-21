@@ -13,6 +13,9 @@ import {
 import { checkAuth } from '@/lib/server-utils';
 import { TMemberDetailsForm, TPhoneOtpForm } from '@/lib/types';
 import { createServerClient } from '@/lib/supabase/server';
+import { signOut } from './auth-actions';
+import { createCustomer, deleteCustomer } from './payment-actions';
+import { User } from '@supabase/supabase-js';
 
 export async function sendPhoneOtp(data: Pick<TPhoneOtpForm, 'phone'>) {
   // data validation check
@@ -50,12 +53,12 @@ export async function sendPhoneOtp(data: Pick<TPhoneOtpForm, 'phone'>) {
 
   const user = await checkAuth();
 
-  console.log(profile);
-  console.log({ profileEmail: profile?.email });
-  console.log({ userEmail: user.email });
+  // console.log(profile);
+  // console.log({ profileEmail: profile?.email });
+  // console.log({ userEmail: user.email });
 
   if (profile && profile.email !== user.email) {
-    console.error('Error checking if phone is already registered');
+    console.error('Phone is registered to a different account.');
     return {
       error: 'This phone is registered to a different account.',
     };
@@ -106,6 +109,9 @@ export async function verifyPhoneOtp(data: TPhoneOtpForm) {
     };
   }
 
+  // create / reinstate profile record
+  await createProfile();
+
   // save number in profile record
   try {
     await prisma.profile.update({
@@ -139,7 +145,7 @@ export async function addMemberDetails(data: TMemberDetailsForm) {
   const name = `${validatedData.data.firstName} ${validatedData.data.lastName}`;
 
   // update user metadata if needed
-  if (!!user?.user_metadata?.name && name !== user?.user_metadata?.name) {
+  if (!user?.user_metadata?.name) {
     const supabase = await createServerClient();
     const { error } = await supabase.auth.updateUser({ data: { name } });
 
@@ -194,4 +200,146 @@ export async function signWaiver(data: Pick<Profile, 'waiverSigName'>) {
   }
 
   redirect('/');
+}
+
+export async function createProfile() {
+  const user = await checkAuth();
+
+  const { id, email } = user;
+
+  if (!email) {
+    signOut();
+    redirect('/signin');
+  }
+
+  // Create stripe customer id
+  const { stripeCustomerId, error } = await createCustomer({
+    email,
+  });
+  if (!stripeCustomerId) {
+    console.error('Error creating stripe customer id:', error);
+    return {
+      error: 'Failed to create profile',
+    };
+  }
+
+  // Grab deleted profile based on email, if it exists
+  let deletedProfile;
+  try {
+    deletedProfile = await prisma.profile.findUnique({
+      where: {
+        email,
+        deleted: true,
+      },
+    });
+  } catch (e) {
+    console.error('Error checking for existing profile:', e);
+    return { error: 'Failed to create profile' };
+  }
+
+  // reinstate deleted profile if it exists (with new customer id)
+  if (deletedProfile) {
+    try {
+      await prisma.profile.update({
+        where: {
+          email,
+        },
+        data: {
+          id,
+          stripeCustomerId,
+          deleted: false,
+          deletedAt: null,
+        },
+      });
+
+      console.log('Profile reinstated successfully');
+    } catch (e) {
+      console.error('Error reinstating profile', e);
+      return { error: 'Failed to create profile' };
+    }
+  }
+
+  // create new profile otherwise
+  if (!deletedProfile) {
+    try {
+      await prisma.profile.create({
+        data: {
+          id,
+          email,
+          stripeCustomerId,
+          freeCredits: 1,
+        },
+      });
+
+      console.log('Profile created successfully');
+    } catch (e) {
+      console.error('Error creating profile:', e);
+      return { error: 'Failed to create profile' };
+    }
+  }
+
+  return { message: 'Profile created successfully' };
+}
+
+export async function deleteProfile() {
+  const user = await checkAuth();
+  const { id } = user;
+
+  // delete stripe customer
+  let stripeCustomerId;
+  try {
+    const profile = await prisma.profile.findUnique({ where: { id } });
+    stripeCustomerId = profile?.stripeCustomerId;
+  } catch (e) {
+    console.error(e);
+    return {
+      error: 'Error getting customer id',
+    };
+  }
+
+  if (stripeCustomerId) {
+    await deleteCustomer({ stripeCustomerId });
+  }
+
+  // mark profile as deleted
+  try {
+    await prisma.profile.update({
+      where: { id },
+      data: {
+        name: null,
+        stripeCustomerId: null,
+        isWaiverSigned: false,
+        waiverSignedAt: null,
+        waiverSigName: null,
+        isMember: false,
+        memberPayFailed: null,
+        memberPeriodEnd: null,
+        memberRenewing: null,
+        deleted: true,
+        deletedAt: new Date(),
+      },
+    });
+
+    console.log('Profile successfully marked as deleted and reset');
+  } catch (e) {
+    console.error(e);
+    return {
+      error: 'Failed to delete profile',
+    };
+  }
+
+  // delete user sessions
+  try {
+    await prisma.session.deleteMany({ where: { profileId: id } });
+    console.log('Profile sessions deleted successfully');
+  } catch (e) {
+    console.error(e);
+    return {
+      error: 'Failed to delete sessions',
+    };
+  }
+
+  return {
+    message: 'Profile successfully marked as deleted',
+  };
 }

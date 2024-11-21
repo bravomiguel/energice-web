@@ -18,7 +18,9 @@ export default function TopBar() {
   const isOnboarding = ONBOARDING_PATHNAMES.find(
     (pathName) => pathName === activePathname,
   );
-  const isUnit = activePathname.includes('/unit');
+  const isConfirmPhone = activePathname.startsWith('/confirm-phone');
+
+  const isUnit = activePathname.startsWith('/unit');
 
   const { activeSessionId, activeSessionSecsLeft, activePlungeSecs } =
     usePlungeSessions();
@@ -67,7 +69,7 @@ export default function TopBar() {
             {isOnboarding && (
               <>
                 <BackArrow label="Signin" handler={signOut} />
-                <ProfileLink />
+                {!isConfirmPhone && <ProfileLink />}
               </>
             )}
             {isUnit && (

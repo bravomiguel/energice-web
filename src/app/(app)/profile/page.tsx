@@ -70,9 +70,7 @@ export default async function Page() {
       </main>
       <footer className="flex flex-col gap-1 items-center border-t-2 border-zinc-200 pt-4 pb-8 mt-8">
         <Subtitle className="text-zinc-700">Logged in as</Subtitle>
-        <p className="text-sm text-zinc-600">
-          {'miguelbravobalestrini@gmail.com'}
-        </p>
+        <p className="text-sm text-zinc-600">{user.email}</p>
       </footer>
     </>
   );

@@ -9,7 +9,7 @@ import {
   createServerAdminClient,
   createServerClient,
 } from '@/lib/supabase/server';
-
+import { deleteProfile } from './profile-actions';
 
 export async function signinWithEmail(data: TSigninForm) {
   // validation check
@@ -82,6 +82,9 @@ export async function deleteAccount() {
     data: { user },
     error: getUserError,
   } = await supabase.auth.getUser();
+
+  // reset profile and mark as deleted
+  await deleteProfile();
 
   if (getUserError) {
     console.error(getUserError.code + ': ' + getUserError.message);

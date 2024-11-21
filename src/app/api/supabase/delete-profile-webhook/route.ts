@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
         isWaiverSigned: false,
         waiverSignedAt: null,
         waiverSigName: null,
-        credits: 0,
+        freeCredits: 0,
         isMember: false,
         memberPayFailed: null,
         memberPeriodEnd: null,

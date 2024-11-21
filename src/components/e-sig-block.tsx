@@ -22,7 +22,7 @@ import { Input } from './ui/input';
 import { Checkbox } from './ui/checkbox';
 import { cn } from '@/lib/utils';
 import BottomNav from './bottom-nav';
-import { signWaiver } from '@/lib/actions/onboarding-actions';
+import { signWaiver } from '@/lib/actions/profile-actions';
 import { toast } from 'sonner';
 import { waiverDataSchema } from '@/lib/validations';
 

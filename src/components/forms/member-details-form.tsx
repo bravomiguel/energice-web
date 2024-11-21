@@ -10,7 +10,7 @@ import { TMemberDetailsForm } from '@/lib/types';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Button } from '../ui/button';
-import { addMemberDetails } from '@/lib/actions/onboarding-actions';
+import { addMemberDetails } from '@/lib/actions/profile-actions';
 import BottomNav from '../bottom-nav';
 
 export default function MemberDetailsForm({ userName }: { userName?: string }) {
@@ -73,9 +73,7 @@ export default function MemberDetailsForm({ userName }: { userName?: string }) {
       <BottomNav>
         <Button
           type="submit"
-          disabled={
-            !isValid || isSubmitting
-          }
+          disabled={!isValid || isSubmitting}
           isLoading={isSubmitting || (isSubmitSuccessful && !!errors)}
         >
           Submit

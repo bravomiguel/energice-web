@@ -14,13 +14,13 @@ datasource db {
 model Profile {
   id               String    @id
   email            String    @unique
-  stripeCustomerId String?   
+  stripeCustomerId String?
   phone            String?
   name             String?
   isWaiverSigned   Boolean   @default(false)
   waiverSignedAt   DateTime?
   waiverSigName    String?
-  credits          Int       @default(0)
+  freeCredits      Int       @default(0)
   isMember         Boolean   @default(false)
   memberPayFailed  Boolean?
   memberPeriodEnd  DateTime?

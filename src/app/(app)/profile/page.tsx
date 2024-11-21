@@ -1,12 +1,7 @@
 import { unstable_noStore as noStore } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 import DeleteAccountBtn from '@/components/buttons/delete-account-btn';
 import SignOutBtn from '@/components/buttons/sign-out-btn';
-// import {
-//   checkAuth,
-//   getUserById,
-// } from '@/lib/server-utils';
 import H1 from '@/components/h1';
 import Subtitle from '@/components/subtitle';
 import H2 from '@/components/h2';
@@ -14,28 +9,18 @@ import PlungeStatsSection from '@/components/plunge-stats-section';
 import StartPlungeSection from '@/components/start-plunge-section';
 import PlungePlansSection from '@/components/plunge-plans-section';
 import ProfileSettings from '@/components/profile-settings';
-import { isUserOver18 } from '@/lib/utils';
+import { checkAuth, getProfileById } from '@/lib/server-utils';
 
 export default async function Page() {
   noStore();
 
-  // auth check
-  // const session = await checkAuth();
-  // const user = await getUserById(session.user.id);
+  const user = await checkAuth();
+  const profile = await getProfileById(user.id);
 
-  // onboarded check
-  // if (!user?.isEmailConfirmed) redirect('/confirm-email');
-  // if (!user?.firstName) redirect('/member-details');
-  // if (!user.isWaiverSigned) redirect('/waiver');
   let isOnboarded = true;
-  // if (
-  //   !user?.isEmailConfirmed ||
-  //   !user?.firstName ||
-  //   (!user.isWaiverSigned && isOver18) ||
-  //   (!user?.isGWaiverSigned && !isOver18)
-  // ) {
-  //   isOnboarded = false;
-  // }
+  if (!profile.phone || !profile.name || !profile.isWaiverSigned) {
+    isOnboarded = false;
+  }
 
   return (
     <>
@@ -55,27 +40,25 @@ export default async function Page() {
 
         <StartPlungeSection
           isOnboarded={isOnboarded}
-          hasFreeCredit={false}
-          paidCredits={0}
-          isMember={false}
+          freeCredits={profile.freeCredits}
+          isMember={!!profile.isMember}
         />
 
         <PlungePlansSection
           isOnboarded={isOnboarded}
-          isMember={false}
-          customerId={''}
-          memberPeriodEnd={null}
-          memberPayFailed={null}
-          memberRenewing={null}
+          isMember={!!profile.isMember}
+          stripeCustomerId={profile?.stripeCustomerId ?? ''}
+          memberPeriodEnd={profile.memberPeriodEnd}
+          memberPayFailed={profile.memberPayFailed}
+          memberRenewing={profile.memberRenewing}
         />
 
         <section>
           <H2 className="mb-3">Settings</H2>
           <ProfileSettings
-            firstName={'Miguel'}
-            lastName={'Bravo'}
-            waiverSignedAt={null}
-            waiverSigName={null}
+            name={profile.name}
+            waiverSignedAt={profile.waiverSignedAt}
+            waiverSigName={profile.waiverSigName}
             isOnboarded={isOnboarded}
           />
         </section>
@@ -87,7 +70,9 @@ export default async function Page() {
       </main>
       <footer className="flex flex-col gap-1 items-center border-t-2 border-zinc-200 pt-4 pb-8 mt-8">
         <Subtitle className="text-zinc-700">Logged in as</Subtitle>
-        <p className="text-sm text-zinc-600">{'miguelbravobalestrini@gmail.com'}</p>
+        <p className="text-sm text-zinc-600">
+          {'miguelbravobalestrini@gmail.com'}
+        </p>
       </footer>
     </>
   );

@@ -10,11 +10,11 @@ import H2 from './h2';
 
 export default function StartPlungeSection({
   isOnboarded,
-  credits,
+  freeCredits,
   isMember,
 }: {
   isOnboarded: boolean;
-  credits?: Profile['credits'];
+  freeCredits?: Profile['freeCredits'];
   isMember: Profile['isMember'];
 }) {
   const { numberOfSessions: plungeSessionsNum } = usePlungeSessions();
@@ -26,7 +26,7 @@ export default function StartPlungeSection({
   if (plungeSessionsNum === 0) {
     return (
       <section>
-        <StartFirstPlungeAlert credits={credits} isMember={isMember} />
+        <StartFirstPlungeAlert freeCredits={freeCredits} isMember={isMember} />
       </section>
     );
   }
@@ -34,16 +34,16 @@ export default function StartPlungeSection({
   return (
     <section>
       <H2 className="mb-3">Start plunge</H2>
-      <StartNewPlungeAlert credits={credits} isMember={isMember} />
+      <StartNewPlungeAlert freeCredits={freeCredits} isMember={isMember} />
     </section>
   );
 }
 
 function StartFirstPlungeAlert({
-  credits,
+  freeCredits,
   isMember,
 }: {
-  credits?: Profile['credits'];
+  freeCredits?: Profile['freeCredits'];
   isMember: Profile['isMember'];
 }) {
   return (
@@ -52,7 +52,7 @@ function StartFirstPlungeAlert({
       <div className="space-y-3">
         <AlertTitle>No plunges yet</AlertTitle>
         <AlertDescription>
-          {isMember || credits
+          {isMember || freeCredits
             ? `Take your first plunge and feel amazing!`
             : `Start plunging for just $9 per session`}
         </AlertDescription>
@@ -63,9 +63,9 @@ function StartFirstPlungeAlert({
           <AlertDescription className="font-semibold text-end">
             Unlimited access
           </AlertDescription>
-        ) : credits && credits > 0 ? (
+        ) : freeCredits && freeCredits > 0 ? (
           <AlertDescription className="font-semibold text-end">
-            {`Plunge credits:  ${credits}`}
+            {`Free credits:  ${freeCredits}`}
           </AlertDescription>
         ) : null}
       </div>
@@ -74,10 +74,10 @@ function StartFirstPlungeAlert({
 }
 
 function StartNewPlungeAlert({
-  credits,
+  freeCredits,
   isMember,
 }: {
-  credits?: Profile['credits'];
+  freeCredits?: Profile['freeCredits'];
   isMember: Profile['isMember'];
 }) {
   return (
@@ -86,7 +86,7 @@ function StartNewPlungeAlert({
       <div className="space-y-3">
         <AlertTitle>New plunge session</AlertTitle>
         <AlertDescription>
-          {isMember || credits
+          {isMember || freeCredits
             ? `Feel amazing in just a few minutes`
             : `Get plunging for just $9 per session`}
         </AlertDescription>
@@ -97,9 +97,9 @@ function StartNewPlungeAlert({
           <AlertDescription className="font-semibold text-end">
             Unlimited access
           </AlertDescription>
-        ) : credits && credits > 0 ? (
+        ) : freeCredits && freeCredits > 0 ? (
           <AlertDescription className="font-semibold text-end">
-            {`Plunge credits:  ${credits}`}
+            {`Free credits:  ${freeCredits}`}
           </AlertDescription>
         ) : null}
       </div>

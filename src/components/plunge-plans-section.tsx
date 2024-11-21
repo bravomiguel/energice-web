@@ -18,14 +18,14 @@ import { cn } from '@/lib/utils';
 export default function PlungePlansSection({
   isOnboarded,
   isMember,
-  customerId,
+  stripeCustomerId,
   memberPeriodEnd,
   memberPayFailed,
   memberRenewing,
 }: {
   isOnboarded: boolean;
   isMember: boolean;
-  customerId: string;
+  stripeCustomerId: string;
   memberPeriodEnd?: Profile['memberPeriodEnd'];
   memberPayFailed?: Profile['memberPayFailed'];
   memberRenewing?: Profile['memberRenewing'];
@@ -39,7 +39,7 @@ export default function PlungePlansSection({
         <div className="space-y-3">
           {/* <PlungeOption /> */}
           <ManageSubscriptionOption
-            customerId={customerId}
+            stripeCustomerId={stripeCustomerId}
             memberPayFailed={memberPayFailed}
             memberPeriodEnd={memberPeriodEnd}
             memberRenewing={memberRenewing}
@@ -55,7 +55,7 @@ export default function PlungePlansSection({
       <section>
         <H2 className="mb-3">Membership</H2>
         <ManageSubscriptionOption
-          customerId={customerId}
+          stripeCustomerId={stripeCustomerId}
           memberPeriodEnd={memberPeriodEnd}
           memberRenewing={memberRenewing}
         />
@@ -119,12 +119,12 @@ function SubscriptionOption() {
 }
 
 function ManageSubscriptionOption({
-  customerId,
+  stripeCustomerId,
   memberPayFailed,
   memberPeriodEnd,
   memberRenewing,
 }: {
-  customerId: string;
+  stripeCustomerId: string;
   memberPayFailed?: boolean;
   memberPeriodEnd?: Profile['memberPeriodEnd'];
   memberRenewing?: Profile['memberRenewing'];
@@ -181,7 +181,7 @@ function ManageSubscriptionOption({
               'bg-red-800 hover:bg-red-800/90': memberPayFailed,
             })}
             checkoutAction={async () =>
-              await billingPortalSession({ customerId })
+              await billingPortalSession({ stripeCustomerId })
             }
           >
             Manage billing

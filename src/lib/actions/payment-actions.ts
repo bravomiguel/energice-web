@@ -127,7 +127,7 @@ export async function subscriptionCheckoutSession() {
 }
 
 export async function billingPortalSession(data: {
-  customerId: Profile['stripeCustomerId'];
+  stripeCustomerId: Profile['stripeCustomerId'];
 }) {
   // authentication check
   const session = await checkAuth();

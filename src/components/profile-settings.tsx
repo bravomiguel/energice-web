@@ -14,18 +14,17 @@ import {
 } from './ui/drawer';
 import { Button } from './ui/button';
 import WaiverTerms from './waiver-terms';
-import { User } from '@prisma/client';
+import { Profile } from '@prisma/client';
 import ColdPlungeBenefits from './cold-plunge-benefits';
 import PlungeTipsCarousel from './plunge-tips-carousel';
 import { cn } from '@/lib/utils';
 
 export default function ProfileSettings({
-  firstName,
-  lastName,
+  name,
   waiverSignedAt,
   waiverSigName,
   isOnboarded,
-}: Pick<User, 'firstName' | 'lastName' | 'waiverSignedAt' | 'waiverSigName'> & {
+}: Pick<Profile, 'name' | 'waiverSignedAt' | 'waiverSigName'> & {
   isOnboarded: boolean;
 }) {
   return (
@@ -51,8 +50,7 @@ export default function ProfileSettings({
       />
       {isOnboarded && waiverSignedAt ? (
         <ViewWaiverDrawer
-          firstName={firstName}
-          lastName={lastName}
+          name={name}
           waiverSignedAt={waiverSignedAt}
           waiverSigName={waiverSigName}
         />
@@ -114,11 +112,10 @@ function ViewPlungeDrawer({ type }: { type: 'benefits' | 'tips' }) {
 }
 
 function ViewWaiverDrawer({
-  firstName,
-  lastName,
+  name,
   waiverSignedAt,
   waiverSigName,
-}: Pick<User, 'firstName' | 'lastName' | 'waiverSignedAt' | 'waiverSigName'>) {
+}: Pick<Profile, 'name' | 'waiverSignedAt' | 'waiverSigName'>) {
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -140,8 +137,7 @@ function ViewWaiverDrawer({
           </DrawerHeader>
           <div className="pb-6 max-h-[66vh] overflow-scroll text-sm">
             <WaiverTerms
-              firstName={firstName}
-              lastName={lastName}
+              name={name}
               waiverSignedAt={waiverSignedAt}
               waiverSigName={waiverSigName}
             />

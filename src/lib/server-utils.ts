@@ -6,6 +6,8 @@ import prisma from './db';
 import { Seam } from 'seam';
 import { isWithinTimeLimit } from './utils';
 import { createServerClient } from './supabase/server';
+import { User } from '@supabase/supabase-js';
+import { signOut } from './actions/auth-actions';
 
 // --- auth utils ---
 
@@ -32,6 +34,20 @@ export async function getUserByEmail(userEmail: Profile['email']) {
     where: { email: userEmail, deleted: false },
   });
   return user;
+}
+
+export async function getProfileById(userId: User['id']) {
+  // get profile
+  const profile = await prisma.profile.findUnique({
+    where: { id: userId },
+  });
+
+  if (!profile) {
+    await signOut();
+    redirect('/signin');
+  }
+
+  return profile;
 }
 
 // --- unit utils ---

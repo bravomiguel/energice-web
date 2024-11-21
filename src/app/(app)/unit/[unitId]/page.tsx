@@ -10,15 +10,14 @@ import {
   checkAuth,
   getLockByLockId,
   getUnitById,
-  getUserById,
-  authCallbackRedirect,
+  getProfileById,
 } from '@/lib/server-utils';
 import H1 from '@/components/h1';
 import Image from 'next/image';
 // import { createLockCode } from '@/actions/actions';
 import Subtitle from '@/components/subtitle';
 import UnitDetails from '@/components/unit-details';
-import { cn, isUserOver18 } from '@/lib/utils';
+import { cn } from '@/lib/utils';
 import FreeCreditModal from '@/components/free-credit-modal';
 
 export default async function Page({
@@ -29,28 +28,16 @@ export default async function Page({
   noStore();
 
   // auth check
-  const session = await checkAuth();
-  const user = await getUserById(session.user.id);
-  const isOver18 = isUserOver18(user?.dob ?? null);
-
-  // redirect to reset password page
-  if (user?.email === 'resetpassword@koldup.com') redirect('/reset-password');
+  const user = await checkAuth();
+  const profile = await getProfileById(user.id);
 
   // onboarded check
-  if (!user?.isEmailConfirmed) redirect('/confirm-email');
-  if (!user?.firstName) redirect('/member-details');
-  if (!user.isWaiverSigned && isOver18) redirect('/waiver');
-  if (!user.isGWaiverSigned && !isOver18) redirect('/guardian-waiver');
-
-  // redirect to auth callback, if relevant
-  await authCallbackRedirect({
-    id: session.user.id,
-    authCallbackUrl: user.authCallbackUrl,
-  });
+  if (!profile?.name) redirect('/member-details');
+  if (!profile.isWaiverSigned) redirect('/waiver');
 
   // valid session check (i.e. paid for / used credit, and within time limit)
   const { data: plungeSession, status: plungeSessionStatus } =
-    await checkPlungeSession(session.user.id);
+    await checkPlungeSession(user.id);
   // redirect to session screen, if session is valid and has already started
   if (plungeSession && plungeSessionStatus === 'valid_started') {
     redirect(`/session/${plungeSession.id}`);
@@ -107,13 +94,12 @@ export default async function Page({
         <PlungeStatus unitStatus={unitStatus} />
         <PlungeImage imageUrl={unit.imageUrl} />
       </div>
-      <FreeCreditModal hasFreeCredit={user.hasFreeCredit} />
+      {/* <FreeCreditModal hasFreeCredit={profile.hasFreeCredit} /> */}
       <UnitDetails
         unitId={unitId}
         unitStatus={unitStatus}
-        paidCredits={user.paidCredits}
-        hasFreeCredit={user.hasFreeCredit}
-        isMember={user.isMember}
+        freeCredits={profile.freeCredits}
+        isMember={profile.isMember}
       />
     </main>
   );

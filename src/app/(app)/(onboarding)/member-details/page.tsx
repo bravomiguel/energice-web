@@ -3,22 +3,15 @@ import { redirect } from 'next/navigation';
 import H1 from '@/components/h1';
 import MemberDetailsForm from '@/components/forms/member-details-form';
 import Subtitle from '@/components/subtitle';
-import { checkAuth } from '@/lib/server-utils';
+import { checkAuth, getProfileById } from '@/lib/server-utils';
 import prisma from '@/lib/db';
 
 export default async function Page() {
   const user = await checkAuth();
+  const profile = await getProfileById(user.id);
 
-  // let profile;
-  // try {
-  //   profile = await prisma.profile.findUnique({ where: { id: user.id } });
-  // } catch (e) {
-  //   console.error(e);
-  // }
-
-  // if (!!profile?.name) {
-  //   redirect('/waiver');
-  // }
+  if (profile?.isWaiverSigned) redirect('/');
+  if (profile?.name) redirect('/waiver');
 
   return (
     <main className="relative flex-1 flex flex-col gap-6">

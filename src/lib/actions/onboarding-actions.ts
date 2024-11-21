@@ -114,9 +114,10 @@ export async function verifyPhoneOtp(data: TPhoneOtpForm) {
     });
   } catch (e) {
     console.error(e);
-    return {
-      error: 'Error saving verified phone to profile',
-    };
+    // return {
+    //   error: 'Error saving verified phone to profile',
+    // };
+    redirect('/member-details');
   }
 
   redirect('/member-details');
@@ -186,6 +187,7 @@ export async function signWaiver(data: Pick<Profile, 'waiverSigName'>) {
       data: { isWaiverSigned: true, waiverSigName, waiverSignedAt: new Date() },
     });
   } catch (e) {
+    console.error(e);
     return {
       error: 'Failed to complete sign waiver operation',
     };

@@ -35,8 +35,8 @@ export default function MemberDetailsForm({ userName }: { userName?: string }) {
 
   useEffect(() => {
     if (userName) {
-      setValue('firstName', userName.split(' ')[0]);
-      setValue('lastName', userName.split(' ')[1]);
+      setValue('firstName', userName.split(' ')[0], { shouldValidate: true });
+      setValue('lastName', userName.split(' ')[1], { shouldValidate: true });
     }
   }, [userName, setValue]);
 
@@ -74,7 +74,7 @@ export default function MemberDetailsForm({ userName }: { userName?: string }) {
         <Button
           type="submit"
           disabled={
-            !isValid || isSubmitting || (isSubmitSuccessful && !!errors)
+            !isValid || isSubmitting
           }
           isLoading={isSubmitting || (isSubmitSuccessful && !!errors)}
         >

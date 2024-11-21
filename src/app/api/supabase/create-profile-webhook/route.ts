@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
           id,
           email,
           stripeCustomerId,
-          credits: 1,
+          freeCredits: 1,
         },
       });
 

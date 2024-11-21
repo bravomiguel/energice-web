@@ -15,11 +15,11 @@ export default async function Page({
   noStore();
 
   // auth check
-  const session = await checkAuth();
+  const user = await checkAuth();
 
   // valid session check (i.e. paid for / used credit, and within time limit)
   const { data: plungeSession, status: plungeSessionStatus } =
-    await checkPlungeSession(session.user.id);
+    await checkPlungeSession(user.id);
   // redirect to home screen, if no valid session
   if (!plungeSession || !plungeSession.sessionStart) {
     redirect('/');
@@ -36,7 +36,9 @@ export default async function Page({
   // calculate session seconds left, before passing it to client (put this into session context?)
   const now = new Date();
   const sessionEnd = new Date(
-    plungeSession.sessionStart.getTime() + SESSION_MAX_TIME_SECS * 1000 + 8 * 1000,
+    plungeSession.sessionStart.getTime() +
+      SESSION_MAX_TIME_SECS * 1000 +
+      8 * 1000,
   );
   const sessionSecsLeft = getTimeDiffSecs(now, sessionEnd);
 

@@ -28,11 +28,7 @@ import { waiverDataSchema } from '@/lib/validations';
 
 const homemadeApple = Homemade_Apple({ weight: '400', subsets: ['latin'] });
 
-export default function ESigBlock({
-  name,
-}: {
-  name?: Profile['name'];
-}) {
+export default function ESigBlock({ name }: { name?: Profile['name'] }) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [fullName, setFullName] = useState(`${name}`);
   const isValid = useMemo(() => {
@@ -153,7 +149,9 @@ export default function ESigBlock({
         )}
         <div className="mt-4 grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
           <span className="col-start-1 row-start-1">Participant Name:</span>
-          <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">{name}</span>
+          <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">
+            {name}
+          </span>
           <span className="col-start-1 row-start-2">Date signed:</span>
           <span className="col-start-2 row-start-2 border-b border-zinc-700 px-2 font-medium">
             {new Date().toLocaleDateString('en-US')}
@@ -194,7 +192,7 @@ function DisclosureCheckBox({
       <Checkbox
         id="disclosure"
         onCheckedChange={(checked) => {
-          const isChecked = checked === true ?? false;
+          const isChecked = checked === true;
           setIsChecked(isChecked);
         }}
       />
@@ -206,7 +204,7 @@ function DisclosureCheckBox({
         <Link
           className="underline"
           target="_blank"
-          href="https://koldup.com/#electronic-signatures-disclosure"
+          href="https://energicelife.com/#electronic-signatures-disclosure"
         >
           electronic records and signatures
         </Link>

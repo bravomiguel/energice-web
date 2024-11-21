@@ -38,14 +38,12 @@ import { DurationDropdown } from './duration-dropdown';
 export default function UnitDetails({
   unitStatus,
   unitId,
-  paidCredits,
-  hasFreeCredit,
+  freeCredits,
   isMember,
 }: {
   unitStatus: string;
   unitId: string;
-  paidCredits: number;
-  hasFreeCredit: boolean;
+  freeCredits: number;
   isMember: boolean;
 }) {
   const [plungeTimerVals, setPlungeTimerVals] = useState({
@@ -109,18 +107,9 @@ export default function UnitDetails({
             console.error({ error: respApplyUnlimited.error });
             toast.error(respApplyUnlimited.error);
           }
-        } else if (paidCredits > 0) {
+        } else if (freeCredits > 0) {
           // if paid credit available, apply it in the back-end, and redirect to unlock screen
           const respApplyCredit = await applyPaidCredit({
-            sessionId,
-          });
-          if (respApplyCredit?.error) {
-            console.error({ error: respApplyCredit.error });
-            toast.error(respApplyCredit.error);
-          }
-        } else if (hasFreeCredit) {
-          // if free credit available, apply it in the back-end, and redirect to unlock screen
-          const respApplyCredit = await applyFreeCredit({
             sessionId,
           });
           if (respApplyCredit?.error) {
@@ -217,14 +206,14 @@ export default function UnitDetails({
             <span className="text-lg font-bold w-fit text-center whitespace-nowrap">
               Unlimited
             </span>
-          ) : paidCredits > 0 || hasFreeCredit ? (
+          ) : freeCredits > 0 ? (
             <span className="text-lg font-bold w-fit text-center whitespace-nowrap">
-              {paidCredits > 0
-                ? `${paidCredits} credit${paidCredits > 1 ? 's' : ''}`
+              {freeCredits > 0
+                ? `${freeCredits} credit${freeCredits > 1 ? 's' : ''}`
                 : 'free credit'}
             </span>
           ) : (
-            <span className="text-4xl font-bold">$9</span>
+            <span className="text-4xl font-bold">$20</span>
           )}
           <Button
             disabled={unitStatus !== 'Ready' || !isValid || isPending}

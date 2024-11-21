@@ -3,25 +3,15 @@ import { redirect } from 'next/navigation';
 import {
   checkPlungeSession,
   checkAuth,
-  getUserProfileById,
+  getProfileById,
 } from '@/lib/server-utils';
-import { Button } from '@/components/ui/button';
 import SignOutBtn from '@/components/buttons/sign-out-btn';
 import DeleteAccountBtn from '@/components/buttons/delete-account-btn';
 import prisma from '@/lib/db';
 
 export default async function Home() {
   const user = await checkAuth();
-
-  // get profile
-  let profile;
-  try {
-    profile = await prisma.profile.findUnique({
-      where: { id: user?.id },
-    });
-  } catch (e) {
-    console.error(e);
-  }
+  const profile = await getProfileById(user.id);
 
   // onboarded check
   if (!profile?.name) redirect('/member-details');

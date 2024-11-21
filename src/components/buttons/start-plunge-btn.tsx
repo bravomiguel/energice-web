@@ -11,7 +11,7 @@ export default function StartPlungeBtn({ className, variant, children }: { class
   const [isPending, startTransition] = useTransition();
   const navigateToUnit = async () => {
     startTransition(async () => {
-      router.push(`/unit/${process.env.NEXT_PUBLIC_TEXAS_IRON_GYM_ID}`);
+      router.push(`/unit/${process.env.NEXT_PUBLIC_SWEAT440_HIGHLAND_ID}`);
     });
   };
   return (

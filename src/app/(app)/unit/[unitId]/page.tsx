@@ -8,7 +8,6 @@ import { Unit } from '@prisma/client';
 import {
   checkPlungeSession,
   checkAuth,
-  getLockByLockId,
   getUnitById,
   getProfileById,
 } from '@/lib/server-utils';
@@ -52,24 +51,6 @@ export default async function Page({
     redirect('/');
   }
 
-  // get unit lock
-  const lock = await getLockByLockId(unit.lockDeviceId);
-  // console.log({lockProperties: lock.data?.properties});
-  let unitStatus: 'Ready' | 'Offline' | 'In use' = 'Ready';
-  if (
-    process.env.VERCEL_ENV === 'production'
-    // || process.env.PREVIEW_ENV === 'preview-lock'
-  ) {
-    unitStatus =
-      lock.data === null
-        ? 'Offline'
-        : !lock.data.properties.online
-        ? 'Offline'
-        : !lock.data.properties.locked
-        ? 'In use'
-        : 'Ready';
-  }
-
   const hostGMapsUrl = `https://www.google.com/maps/search/?api=1&query=${unit.hostAddress
     .toLowerCase()
     .replace(' ', '+')}/&query_place_id=${unit.hostGMapsPlaceId}`;
@@ -90,14 +71,10 @@ export default async function Page({
           <LiaExternalLinkAltSolid className="w-4 h-4" />
         </Link>
       </div>
-      <div className="space-y-1">
-        <PlungeStatus unitStatus={unitStatus} />
-        <PlungeImage imageUrl={unit.imageUrl} />
-      </div>
+      <PlungeImage imageUrl={unit.imageUrl} />
       {/* <FreeCreditModal hasFreeCredit={profile.hasFreeCredit} /> */}
       <UnitDetails
         unitId={unitId}
-        unitStatus={unitStatus}
         freeCredits={profile.freeCredits}
         isMember={profile.isMember}
       />

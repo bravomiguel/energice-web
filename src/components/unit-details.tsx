@@ -34,14 +34,18 @@ import {
 import { HOW_IT_WORKS_ARRAY } from '@/lib/constants';
 import PlungeTipsCarousel from './plunge-tips-carousel';
 import { DurationDropdown } from './duration-dropdown';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from './ui/accordion';
 
 export default function UnitDetails({
-  unitStatus,
   unitId,
   freeCredits,
   isMember,
 }: {
-  unitStatus: string;
   unitId: string;
   freeCredits: number;
   isMember: boolean;
@@ -185,19 +189,11 @@ export default function UnitDetails({
         </div>
 
         <div className="flex flex-col gap-3 py-4 border-b">
-          <div className="flex gap-3 items-center">
-            <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
-            <p className="">How it works</p>
-          </div>
-          <HowItWorksCarousel />
+          <HowItWorksItem />
         </div>
 
         <div className="flex flex-col gap-3 py-4 border-b">
-          <div className="flex gap-3 items-center">
-            <RiLightbulbFlashLine className="ml-1 h-7 w-7 text-zinc-500 self-start" />
-            <p className="">Plunge Tips</p>
-          </div>
-          <PlungeTipsCarousel />
+          <PlungeTipsItem />
         </div>
       </div>
       <BottomNav className="gap-1 pt-2 pb-3">
@@ -216,7 +212,7 @@ export default function UnitDetails({
             <span className="text-4xl font-bold">$20</span>
           )}
           <Button
-            disabled={unitStatus !== 'Ready' || !isValid || isPending}
+            disabled={!isValid || isPending}
             isLoading={isPending}
             className="w-full"
             onClick={async () => {
@@ -279,5 +275,41 @@ function HowItWorksCarousel() {
       <CarouselNext className="-translate-x-[170%]" />
       <CarouselPrevious className="translate-x-[170%]" />
     </Carousel>
+  );
+}
+
+function HowItWorksItem() {
+  return (
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>
+          <div className="flex gap-3 items-center">
+            <GoChecklist className="ml-1 h-7 w-7 text-zinc-500 self-start" />
+            <p className="">How it works</p>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="mt-4">
+          <HowItWorksCarousel />
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  );
+}
+
+function PlungeTipsItem() {
+  return (
+    <Accordion type="single" collapsible className="w-full">
+      <AccordionItem value="item-1">
+        <AccordionTrigger>
+          <div className="flex gap-3 items-center">
+            <RiLightbulbFlashLine className="ml-1 h-7 w-7 text-zinc-500 self-start" />
+            <p className="">Plunge Tips</p>
+          </div>
+        </AccordionTrigger>
+        <AccordionContent className="mt-4">
+          <PlungeTipsCarousel />
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
   );
 }

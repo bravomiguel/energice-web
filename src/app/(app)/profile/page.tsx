@@ -11,6 +11,7 @@ import PlungePlansSection from '@/components/plunge-plans-section';
 import ProfileSettings from '@/components/profile-settings';
 import { checkAuth, getProfileById } from '@/lib/server-utils';
 import PlungeOffersSection from '@/components/plunge-credits-section';
+import FreeCreditModal from '@/components/free-credit-modal';
 
 export default async function Page() {
   noStore();
@@ -70,6 +71,8 @@ export default async function Page() {
           <SignOutBtn />
           <DeleteAccountBtn />
         </section>
+
+        <FreeCreditModal freeCredits={profile.freeCredits} />
       </main>
       <footer className="flex flex-col gap-1 items-center border-t-2 border-zinc-200 pt-4 pb-8 mt-8">
         <Subtitle className="text-zinc-700">Logged in as</Subtitle>

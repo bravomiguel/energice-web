@@ -14,11 +14,11 @@ import {
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 
 export default function FreeCreditModal({
-  hasFreeCredit,
+  freeCredits,
 }: {
-  hasFreeCredit: boolean;
+  freeCredits: number;
 }) {
-  const [isOpen, setIsOpen] = useState(hasFreeCredit);
+  const [isOpen, setIsOpen] = useState(freeCredits > 0);
   const { numberOfSessions } = usePlungeSessions();
   const dialogDescription =
     numberOfSessions === 0
@@ -28,7 +28,7 @@ export default function FreeCreditModal({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
         <DialogHeader className="mb-3">
-          <DialogTitle className='text-xl'>1x free plunge credit</DialogTitle>
+          <DialogTitle className="text-xl">Free plunge credit</DialogTitle>
         </DialogHeader>
         <DialogDescription className="text-xl text-zinc-800 text-center mb-5">
           {dialogDescription}

@@ -10,7 +10,6 @@ import StartPlungeSection from '@/components/start-plunge-section';
 import PlungePlansSection from '@/components/plunge-plans-section';
 import ProfileSettings from '@/components/profile-settings';
 import { checkAuth, getProfileById } from '@/lib/server-utils';
-import PlungeOffersSection from '@/components/plunge-credits-section';
 import FreeCreditModal from '@/components/free-credit-modal';
 
 export default async function Page() {
@@ -30,7 +29,7 @@ export default async function Page() {
         <div className="flex flex-col gap-1">
           {true ? (
             <>
-              <H1>Hey {`Miguel`}</H1>{' '}
+              <H1>Hey {profile.name?.split(' ')[0]}</H1>{' '}
               <Subtitle>{`Let's get you feeling great 🚀`}</Subtitle>
             </>
           ) : (
@@ -54,8 +53,6 @@ export default async function Page() {
           memberPayFailed={profile.memberPayFailed}
           memberRenewing={profile.memberRenewing}
         />
-
-        {/* <PlungeOffersSection isOnboarded={isOnboarded} /> */}
 
         <section>
           <H2 className="mb-3">Settings</H2>

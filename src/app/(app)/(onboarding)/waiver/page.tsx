@@ -23,9 +23,9 @@ export default async function Page() {
           You must sign this waiver in order to use the cold plunge
         </Subtitle>
       </div>
-      <WaiverTerms name={user?.user_metadata?.name} />
+      <WaiverTerms name={profile.name} />
       {/* <ESigAgreementCheckBox /> */}
-      <ESigBlock name={user?.user_metadata?.name} />
+      <ESigBlock name={profile.name} />
     </main>
   );
 }

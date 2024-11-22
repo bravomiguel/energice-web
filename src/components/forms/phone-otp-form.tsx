@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 
 import { Button } from '../ui/button';
 import BottomNav from '../bottom-nav';
-import { useTransition } from 'react';
+import { useEffect, useRef, useTransition } from 'react';
 import { TPhoneOtpForm } from '@/lib/types';
 import { phoneOtpSchema } from '@/lib/validations';
 import {
@@ -40,21 +40,13 @@ export default function PhoneOtpForm({ isOtpSent }: { isOtpSent: boolean }) {
   // console.log({isValid, errors: errors.token})
 
   const phone = form.watch('phone', '');
-  // const token = form.watch('token', '');
+  const token = form.watch('token', '');
   // console.log({ phone });
   // console.log({ token });
 
-  // useEffect(() => {
-  //   if (token.length == 6) {
-  //     form.trigger('token').then((isValid) => {
-  //       if (isValid) {
-  //         form.handleSubmit(onSubmit)(); // Call handleSubmit programmatically
-  //       }
-  //     });
-  //   }
-  // }, [token, form]);
-
   const [isPending, startTransition] = useTransition();
+  const submitBtnRef = useRef<HTMLButtonElement>(null);
+  const tokenInputRef = useRef<HTMLInputElement>(null);
 
   const handleSendOtp = async (data: Pick<TPhoneOtpForm, 'phone'>) => {
     const validatedData = phoneOtpSchema.pick({ phone: true }).safeParse(data);
@@ -88,6 +80,17 @@ export default function PhoneOtpForm({ isOtpSent }: { isOtpSent: boolean }) {
     }
     toast.success('Phone confirmed!');
   };
+
+  useEffect(() => {
+    if (token.length == 6) {
+      form.trigger('token').then((isValid) => {
+        if (isValid) {
+          if (submitBtnRef.current) submitBtnRef.current.click();
+          if (tokenInputRef.current) tokenInputRef.current.blur();
+        }
+      });
+    }
+  }, [token, form]);
 
   return (
     <>
@@ -158,6 +161,7 @@ export default function PhoneOtpForm({ isOtpSent }: { isOtpSent: boolean }) {
                   <InputOTP
                     maxLength={6}
                     {...field}
+                    ref={tokenInputRef}
                     type="tel"
                     inputMode="numeric"
                   >
@@ -182,6 +186,7 @@ export default function PhoneOtpForm({ isOtpSent }: { isOtpSent: boolean }) {
           {isOtpSent && (
             <BottomNav>
               <Button
+                ref={submitBtnRef}
                 type="submit"
                 disabled={!isValid || isSubmitting}
                 isLoading={isSubmitting}

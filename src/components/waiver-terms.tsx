@@ -25,7 +25,7 @@ export default function WaiverTerms({
         <p>
           {`This Cold Plunge Waiver and Release of Liability ("Waiver") is made and entered into as of ${new Date().toLocaleDateString(
             'en-US',
-          )} by and between KoldUp and our partner gyms ("Provider"), and you, `}
+          )} by and between Bravo Software Solutions LLC and our partner gyms ("Provider"), and you, `}
           <span className="font-semibold underline">{name}</span>
           {`, the undersigned participant ("Participant").`}
         </p>
@@ -93,7 +93,7 @@ export default function WaiverTerms({
       </div>
       <div className="flex flex-col gap-4">
         <H2>5. Governing Law</H2>
-        <p>{`This Waiver shall be governed by and construed in accordance with the laws of the specific State in which the Participant usese the Services.`}</p>
+        <p>{`This Waiver shall be governed by and construed in accordance with the laws of the specific State in which the Participant uses the Services.`}</p>
       </div>
       <div className="flex flex-col gap-4">
         <H2>6. Entire Agreement</H2>

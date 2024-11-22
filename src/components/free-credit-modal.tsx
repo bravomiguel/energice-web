@@ -28,9 +28,9 @@ export default function FreeCreditModal({
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
         <DialogHeader className="mb-3">
-          <DialogTitle className="text-xl">Free plunge credit</DialogTitle>
+          <DialogTitle className="text-lg">Free plunge credit</DialogTitle>
         </DialogHeader>
-        <DialogDescription className="text-xl text-zinc-800 text-center mb-5">
+        <DialogDescription className="text-lg text-zinc-800 text-center mb-5">
           {dialogDescription}
         </DialogDescription>
         <DialogFooter className="flex flex-col gap-2 mb-3">

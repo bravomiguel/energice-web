@@ -14,7 +14,7 @@ datasource db {
 model Profile {
   id               String    @id
   email            String    @unique
-  stripeCustomerId String?
+  stripeCustomerId String    @unique
   phone            String?
   name             String?
   isWaiverSigned   Boolean   @default(false)

@@ -307,7 +307,7 @@ export async function deleteProfile() {
       where: { id },
       data: {
         name: null,
-        stripeCustomerId: null,
+        // stripeCustomerId: null,
         isWaiverSigned: false,
         waiverSignedAt: null,
         waiverSigName: null,

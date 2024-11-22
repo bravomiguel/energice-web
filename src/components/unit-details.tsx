@@ -207,7 +207,7 @@ export default function UnitDetails({
                 `${freeCredits} credit${freeCredits > 1 ? 's' : ''}`}
             </span>
           ) : (
-            <span className="text-4xl font-bold">$20</span>
+            <span className="text-3xl font-bold">$25</span>
           )}
           <Button
             disabled={!isValid || isPending}

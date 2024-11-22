@@ -54,7 +54,7 @@ export default async function Page() {
           memberRenewing={profile.memberRenewing}
         />
 
-        <PlungeOffersSection isOnboarded={isOnboarded} />
+        {/* <PlungeOffersSection isOnboarded={isOnboarded} /> */}
 
         <section>
           <H2 className="mb-3">Settings</H2>

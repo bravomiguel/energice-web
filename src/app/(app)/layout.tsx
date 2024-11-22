@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/sonner';
 import PlungeSessionsContextProvider from '@/contexts/sessions-context-provider';
 import TopBar from '@/components/top-bar';
 import { Session } from '@prisma/client';
-import { getSessionsByprofileId } from '@/lib/server-utils';
+import { checkAuth, getSessionsByprofileId } from '@/lib/server-utils';
 
 export const viewport: Viewport = {
   themeColor: '#f4f4f5',
@@ -15,7 +15,8 @@ export default async function Layout({
 }: {
   children: React.ReactNode;
 }) {
-  const plungeSessions = await getSessionsByprofileId('1');
+  const user = await checkAuth();
+  const plungeSessions = await getSessionsByprofileId(user.id);
 
   return (
     <>

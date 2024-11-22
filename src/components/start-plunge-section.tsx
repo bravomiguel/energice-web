@@ -26,6 +26,7 @@ export default function StartPlungeSection({
   if (plungeSessionsNum === 0) {
     return (
       <section>
+        <H2 className="mb-3">Start plunge</H2>
         <StartFirstPlungeAlert freeCredits={freeCredits} isMember={isMember} />
       </section>
     );
@@ -54,7 +55,7 @@ function StartFirstPlungeAlert({
         <AlertDescription>
           {isMember || freeCredits
             ? `Take your first plunge and feel amazing!`
-            : `Start plunging for just $9 per session`}
+            : `Start plunging for just $25 per session`}
         </AlertDescription>
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start first plunge</StartPlungeBtn>
@@ -88,7 +89,7 @@ function StartNewPlungeAlert({
         <AlertDescription>
           {isMember || freeCredits
             ? `Feel amazing in just a few minutes`
-            : `Get plunging for just $9 per session`}
+            : `Get plunging for just $25 per session`}
         </AlertDescription>
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start session</StartPlungeBtn>

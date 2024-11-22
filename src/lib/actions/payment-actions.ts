@@ -49,7 +49,6 @@ export async function plungeCheckoutSession(data: {
       success_url: `${BASE_URL}/session/${sessionId}/unlock`,
       cancel_url: `${BASE_URL}/unit/${unitId}`,
       metadata: {
-        price_id: process.env.PLUNGE_PRICE_ID_NONMEMBERS,
         session_id: sessionId,
       },
     });

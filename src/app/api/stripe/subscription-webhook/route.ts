@@ -12,7 +12,7 @@ export async function POST(request: Request) {
     event = stripe.webhooks.constructEvent(
       body,
       signature,
-      process.env.SUBSCRIPTION_WEBHOOK_SECRET,
+      process.env.SUBSCRIPTION_PAYMENT_SECRET,
     );
   } catch (error) {
     console.log('Webhook verification failed', error);

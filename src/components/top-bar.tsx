@@ -21,7 +21,6 @@ export default function TopBar() {
   const isConfirmPhone = activePathname.startsWith('/confirm-phone');
 
   const isUnit = activePathname.startsWith('/unit');
-  console.log({isUnit})
 
   const { activeSessionId, activeSessionSecsLeft, activePlungeSecs } =
     usePlungeSessions();

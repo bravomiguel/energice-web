@@ -110,7 +110,6 @@ export async function checkPlungeSession(profileId: Profile['id']): Promise<{
       profileId,
       OR: [
         { hasPaid: true },
-        { hasUsedCredit: true },
         { hasUsedUnlimited: true },
         { hasUsedFreeCredit: true },
       ],

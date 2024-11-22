@@ -14,7 +14,7 @@ export async function plungeCheckoutSession(data: {
   sessionId: Session['id'];
 }) {
   // authentication check
-  const session = await checkAuth();
+  const user = await checkAuth();
 
   // validation check
   const validatedData = z
@@ -36,10 +36,10 @@ export async function plungeCheckoutSession(data: {
   let checkoutSession;
   try {
     checkoutSession = await stripe.checkout.sessions.create({
-      customer_email: 'email@email.com',
+      customer_email: user.email,
       line_items: [
         {
-          price: process.env.PLUNGE_PRICE_ID,
+          price: process.env.PLUNGE_PRICE_ID_NONMEMBERS,
           quantity: 1,
           tax_rates: [process.env.TAX_RATE_ID],
         },
@@ -49,40 +49,9 @@ export async function plungeCheckoutSession(data: {
       success_url: `${BASE_URL}/session/${sessionId}/unlock`,
       cancel_url: `${BASE_URL}/unit/${unitId}`,
       metadata: {
-        price_id: process.env.PLUNGE_PRICE_ID,
+        price_id: process.env.PLUNGE_PRICE_ID_NONMEMBERS,
         session_id: sessionId,
       },
-    });
-  } catch (e) {
-    return {
-      error: 'Checkout failed, please try again',
-    };
-  }
-
-  // redirect user
-  redirect(checkoutSession.url);
-}
-
-export async function packCheckoutSession() {
-  // authentication check
-  const session = await checkAuth();
-
-  // create checkout session
-  let checkoutSession;
-  try {
-    checkoutSession = await stripe.checkout.sessions.create({
-      customer_email: 'email@email.com',
-      line_items: [
-        {
-          price: process.env.PACK_PRICE_ID,
-          quantity: 5,
-          tax_rates: [process.env.TAX_RATE_ID],
-        },
-      ],
-      mode: 'payment',
-      success_url: `${BASE_URL}/profile`,
-      cancel_url: `${BASE_URL}/profile`,
-      metadata: { price_id: process.env.PACK_PRICE_ID, quantity: 5 },
     });
   } catch (e) {
     return {

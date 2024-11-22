@@ -5,20 +5,15 @@ import { z } from 'zod';
 import { Session, Unit } from '@prisma/client';
 
 import prisma from '@/lib/db';
-import {
-  plungeTimerSecsSchema,
-} from '@/lib/validations';
-import {
-  checkAuth,
-  getSessionById,
-} from '@/lib/server-utils';
+import { plungeTimerSecsSchema } from '@/lib/validations';
+import { checkAuth, getSessionById } from '@/lib/server-utils';
 
 export async function createSession(data: {
   unitId: Unit['id'];
   plungeTimerSecs: Session['plungeTimerSecs'];
 }) {
   // auth check
-  const session = await checkAuth();
+  const user = await checkAuth();
 
   // validation check
   const validatedData = z
@@ -41,7 +36,7 @@ export async function createSession(data: {
   let newSession;
   try {
     newSession = await prisma.session.create({
-      data: { profileId: '1', unitId, plungeTimerSecs },
+      data: { profileId: user.id, unitId, plungeTimerSecs },
     });
   } catch (e) {
     // console.log(e);
@@ -59,7 +54,7 @@ export async function createSession(data: {
 
 export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
   // auth check
-  const session = await checkAuth();
+  const user = await checkAuth();
 
   // validation check
   const validatedData = z
@@ -84,108 +79,38 @@ export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
       error: 'Session not found',
     };
   }
-  if (plungeSession.profileId !== '1') {
+  if (plungeSession.profileId !== user.id) {
     return {
       error: 'Not authorized',
     };
   }
 
+  // decrement free credits balance by 1.
+  try {
+    await prisma.profile.update({
+      where: { id: user.id },
+      data: {
+        freeCredits: { decrement: 1 },
+      },
+    });
+  } catch (e) {
+    console.error(e);
+    return {
+      error: 'Failed to apply free credit.',
+    };
+  }
+
+  // mark session with free credit flag
   try {
     await prisma.session.update({
       where: { id: sessionId },
       data: {
-        hasUsedCredit: true,
+        hasUsedFreeCredit: true,
       },
     });
   } catch (e) {
     return {
       error: 'Failed to apply free credit',
-    };
-  }
-
-  // try {
-  //   await prisma.profile.update({
-  //     where: { id: '1' },
-  //     data: {
-  //       hasFreeCredit: false,
-  //     },
-  //   });
-  // } catch (e) {
-  //   return {
-  //     error: 'Failed to apply free credit.',
-  //   };
-  // }
-
-  // redirect to unlock screen
-  redirect(`/session/${sessionId}/unlock`);
-}
-
-export async function applyPaidCredit(data: { sessionId: Session['id'] }) {
-  // auth check
-  const session = await checkAuth();
-
-  // validation check
-  const validatedData = z
-    .object({
-      sessionId: z.string().trim().min(1),
-    })
-    .safeParse(data);
-
-  if (!validatedData.success) {
-    return {
-      error: validatedData.error.issues[0].message,
-    };
-  }
-
-  const { sessionId } = validatedData.data;
-
-  // authorization check
-  const plungeSession = await getSessionById(sessionId);
-
-  if (!plungeSession) {
-    return {
-      error: 'Session not found',
-    };
-  }
-  if (plungeSession.profileId !== '1') {
-    return {
-      error: 'Not authorized',
-    };
-  }
-
-  try {
-    await prisma.session.update({
-      where: { id: sessionId },
-      data: {
-        hasUsedCredit: true,
-      },
-    });
-  } catch (e) {
-    return {
-      error: 'Failed to apply credit',
-    };
-  }
-
-  try {
-    const userRecord = await prisma.profile.findFirst({
-      where: { id: '1' },
-    });
-
-    if (!userRecord) {
-      return {
-        error: 'Failed to apply plunge credit',
-      };
-    }
-
-    await prisma.profile.update({
-      where: { id: '1' },
-      data: {
-        credits: userRecord.credits - 1,
-      },
-    });
-  } catch (e) {
-    return {
-      error: 'Failed to apply credit.',
     };
   }
 
@@ -195,7 +120,7 @@ export async function applyPaidCredit(data: { sessionId: Session['id'] }) {
 
 export async function applyUnlimited(data: { sessionId: Session['id'] }) {
   // auth check
-  const session = await checkAuth();
+  const user = await checkAuth();
 
   // validation check
   const validatedData = z
@@ -220,7 +145,7 @@ export async function applyUnlimited(data: { sessionId: Session['id'] }) {
       error: 'Session not found',
     };
   }
-  if (plungeSession.profileId !== '1') {
+  if (plungeSession.profileId !== user.id) {
     return {
       error: 'Not authorized',
     };
@@ -239,26 +164,13 @@ export async function applyUnlimited(data: { sessionId: Session['id'] }) {
     };
   }
 
-  // try {
-  //   await prisma.profile.update({
-  //     where: { id: '1' },
-  //     data: {
-  //       hasFreeCredit: false,
-  //     },
-  //   });
-  // } catch (e) {
-  //   return {
-  //     error: 'Failed to apply unlimited membership.',
-  //   };
-  // }
-
   // redirect to unlock screen
   redirect(`/session/${sessionId}/unlock`);
 }
 
 export async function startSession(data: { sessionId: Session['id'] }) {
   // auth check
-  const session = await checkAuth();
+  const user = await checkAuth();
 
   // validation check
   const validatedData = z
@@ -283,7 +195,7 @@ export async function startSession(data: { sessionId: Session['id'] }) {
       error: 'Session not found',
     };
   }
-  if (plungeSession.profileId !== '1') {
+  if (plungeSession.profileId !== user.id) {
     return {
       error: 'Not authorized',
     };
@@ -311,7 +223,7 @@ export async function endSession(data: {
   totalPlungeSecs: Session['totalPlungeSecs'];
 }) {
   // auth check
-  const session = await checkAuth();
+  const user = await checkAuth();
 
   // validation check
   const validatedData = z
@@ -337,7 +249,7 @@ export async function endSession(data: {
       error: 'Session not found',
     };
   }
-  if (plungeSession.profileId !== '1') {
+  if (plungeSession.profileId !== user.id) {
     return {
       error: 'Not authorized',
     };

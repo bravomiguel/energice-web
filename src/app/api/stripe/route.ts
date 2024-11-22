@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     // update session record, if individual plunge payment
     if (
       event.data.object.metadata.price_id ===
-      process.env.PLUNGE_PRICE_ID
+      process.env.PLUNGE_PRICE_ID_NONMEMBERS
     ) {
       await prisma.session.update({
         where: { id: event.data.object.metadata.session_id },

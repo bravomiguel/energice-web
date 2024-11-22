@@ -12,11 +12,11 @@ export default async function Page({
 }) {
   noStore();
   // auth check
-  const session = await checkAuth();
+  const user = await checkAuth();
 
   // valid session check (i.e. paid for / used credit, and within time limit)
   const { data: plungeSession, status: plungeSessionStatus } =
-    await checkPlungeSession(session.user.id);
+    await checkPlungeSession(user.id);
   // redirect to home screen, if no valid session
   if (!plungeSession) redirect('/');
   // redirect to session screen, if session is valid and has already started

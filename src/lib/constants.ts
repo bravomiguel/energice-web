@@ -11,7 +11,7 @@ export const BASE_URL =
 
 export const APP_PATHNAMES = ['/', '/profile', '/unit'];
 
-const GCLOUD_BASE_URL = `https://storage.googleapis.com`;
+export const GCLOUD_BASE_URL = `https://storage.googleapis.com`;
 
 // console.log(process.env.VERCEL_ENV);
 

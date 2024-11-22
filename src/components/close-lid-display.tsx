@@ -17,6 +17,7 @@ import Subtitle from './subtitle';
 import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
+import { GCLOUD_BASE_URL } from '@/lib/constants';
 
 // const GDRIVE_BASE_URL = `https://drive.usercontent.google.com/download`;
 const SUPABASE_BASE_URL = `https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public`;
@@ -80,8 +81,7 @@ export default function CloseLidDisplay({
             url={
               process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
                 ? `/explainer-videos/how-it-works-5.mp4`
-                : `${SUPABASE_BASE_URL}/explainer-videos/how-it-works-5.mp4`
-              // : `${GDRIVE_BASE_URL}?id=1cHn90blKGo5fdSmiXhijvPe-HtRSMQlH`
+                : `${GCLOUD_BASE_URL}/explainer-videos/how-it-works-5.mp4`
             }
             playing
             playsinline

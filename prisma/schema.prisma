@@ -37,7 +37,6 @@ model Profile {
 model Session {
   id                String    @id @default(uuid())
   hasPaid           Boolean   @default(false)
-  hasUsedCredit     Boolean   @default(false)
   hasUsedUnlimited  Boolean   @default(false)
   hasUsedFreeCredit Boolean   @default(false)
   amountSubtotal    Int?

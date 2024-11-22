@@ -1,7 +1,6 @@
 import H1 from '@/components/h1';
-import SessionEndContinueBtn from '@/components/session-end-continue-btn';
+import SessionEndContinueBtn from '@/components/buttons/session-end-continue-btn';
 import Subtitle from '@/components/subtitle';
-import SuccessPlungeTime from '@/components/success-plunge-time';
 import { getSessionById } from '@/lib/server-utils';
 import { formatSecsToMins } from '@/lib/utils';
 import { Session } from '@prisma/client';

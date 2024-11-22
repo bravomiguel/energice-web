@@ -137,7 +137,7 @@ export async function getLatestEligibleCode(data: { unitId: Unit['id'] }) {
 
 export async function unlockAction(data: { unitId: Unit['id'] }) {
   // auth check
-  const session = await checkAuth();
+  const user = await checkAuth();
 
   // validation check
   const validatedData = z
@@ -156,7 +156,7 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
 
   // valid session check (i.e. paid for, and within time limit)
   const { data: plungeSession, status: plungeStatus } =
-    await checkPlungeSession('1');
+    await checkPlungeSession(user.id);
   if (plungeStatus === 'none_valid') {
     return {
       error: 'No valid session found',

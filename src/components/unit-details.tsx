@@ -16,7 +16,6 @@ import BottomNav from './bottom-nav';
 import PenaltyChargeWarning from './penalty-charge-warning';
 import {
   applyFreeCredit,
-  applyPaidCredit,
   createSession,
   applyUnlimited,
 } from '@/lib/actions/session-actions';
@@ -112,8 +111,8 @@ export default function UnitDetails({
             toast.error(respApplyUnlimited.error);
           }
         } else if (freeCredits > 0) {
-          // if paid credit available, apply it in the back-end, and redirect to unlock screen
-          const respApplyCredit = await applyPaidCredit({
+          // if free credit available, apply it in the back-end, and redirect to unlock screen
+          const respApplyCredit = await applyFreeCredit({
             sessionId,
           });
           if (respApplyCredit?.error) {
@@ -204,9 +203,8 @@ export default function UnitDetails({
             </span>
           ) : freeCredits > 0 ? (
             <span className="text-lg font-bold w-fit text-center whitespace-nowrap">
-              {freeCredits > 0
-                ? `${freeCredits} credit${freeCredits > 1 ? 's' : ''}`
-                : 'free credit'}
+              {freeCredits > 0 &&
+                `${freeCredits} credit${freeCredits > 1 ? 's' : ''}`}
             </span>
           ) : (
             <span className="text-4xl font-bold">$20</span>

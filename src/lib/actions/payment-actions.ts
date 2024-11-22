@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { Session, Unit, Profile } from '@prisma/client';
 
 import { checkAuth } from '@/lib/server-utils';
-import { BASE_URL } from '@/lib/constants';
+import { headers } from 'next/headers';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -32,6 +32,8 @@ export async function plungeCheckoutSession(data: {
 
   const { unitId, sessionId } = validatedData.data;
 
+  const origin = (await headers()).get('origin');
+
   // create checkout session
   let checkoutSession;
   try {
@@ -46,8 +48,8 @@ export async function plungeCheckoutSession(data: {
       ],
       mode: 'payment',
       // allow_promotion_codes: true,
-      success_url: `${BASE_URL}/session/${sessionId}/unlock`,
-      cancel_url: `${BASE_URL}/unit/${unitId}`,
+      success_url: `${origin}/session/${sessionId}/unlock`,
+      cancel_url: `${origin}/unit/${unitId}`,
       metadata: {
         session_id: sessionId,
       },
@@ -64,15 +66,17 @@ export async function plungeCheckoutSession(data: {
 
 export async function subscriptionCheckoutSession() {
   // authentication check
-  const session = await checkAuth();
+  const user = await checkAuth();
+
+  const origin = (await headers()).get('origin');
 
   // create checkout session
   let checkoutSession;
   try {
     checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
-      allow_promotion_codes: true,
-      customer_email: 'email@email.com',
+      // allow_promotion_codes: true,
+      customer_email: user.email,
       line_items: [
         {
           price: process.env.SUBSCRIPTION_PRICE_ID_NONMEMBERS,
@@ -80,8 +84,8 @@ export async function subscriptionCheckoutSession() {
           tax_rates: [process.env.TAX_RATE_ID],
         },
       ],
-      success_url: `${BASE_URL}/profile`,
-      cancel_url: `${BASE_URL}/profile`,
+      success_url: `${origin}/profile`,
+      cancel_url: `${origin}/profile`,
       metadata: { price_id: process.env.SUBSCRIPTION_PRICE_ID_NONMEMBERS },
     });
   } catch (e) {
@@ -115,9 +119,11 @@ export async function billingPortalSession(data: {
 
   const { stripeCustomerId } = validatedData.data;
 
+  const origin = (await headers()).get('origin');
+
   const portalSession = await stripe.billingPortal.sessions.create({
     customer: stripeCustomerId,
-    return_url: `${BASE_URL}/profile`,
+    return_url: `${origin}/profile`,
   });
 
   // redirect user

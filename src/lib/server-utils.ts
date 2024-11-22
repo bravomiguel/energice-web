@@ -39,7 +39,7 @@ export async function getUserByEmail(userEmail: Profile['email']) {
 export async function getProfileById(userId: User['id']) {
   // get profile
   const profile = await prisma.profile.findUnique({
-    where: { id: userId },
+    where: { id: userId, deleted: false },
   });
 
   if (!profile) {

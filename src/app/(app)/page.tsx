@@ -28,7 +28,7 @@ export default async function Home() {
   }
 
   // redirect to profile (currently, no need for home screen)
-  redirect('/coming-soon');
+  redirect('/profile');
 
   return (
     <main className="h-screen">

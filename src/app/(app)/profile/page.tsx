@@ -14,8 +14,6 @@ import { checkAuth, getProfileById } from '@/lib/server-utils';
 import FreeCreditModal from '@/components/free-credit-modal';
 
 export default async function Page() {
-  redirect('/coming-soon');
-
   noStore();
 
   const user = await checkAuth();

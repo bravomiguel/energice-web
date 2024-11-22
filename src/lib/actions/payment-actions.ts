@@ -75,14 +75,14 @@ export async function subscriptionCheckoutSession() {
       customer_email: 'email@email.com',
       line_items: [
         {
-          price: process.env.SUBSCRIPTION_PRICE_ID,
+          price: process.env.SUBSCRIPTION_PRICE_ID_NONMEMBERS,
           quantity: 1,
           tax_rates: [process.env.TAX_RATE_ID],
         },
       ],
       success_url: `${BASE_URL}/profile`,
       cancel_url: `${BASE_URL}/profile`,
-      metadata: { price_id: process.env.SUBSCRIPTION_PRICE_ID },
+      metadata: { price_id: process.env.SUBSCRIPTION_PRICE_ID_NONMEMBERS },
     });
   } catch (e) {
     return {

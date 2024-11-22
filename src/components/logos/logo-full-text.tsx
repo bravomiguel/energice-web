@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
-import logoFullText from '../../public/energice_logo_text.svg';
+import logoFullText from '../../../public/energice_logo_text.svg';
 import { cn } from '@/lib/utils';
 
 export default function LogoFullText({ className }: { className?: string }) {

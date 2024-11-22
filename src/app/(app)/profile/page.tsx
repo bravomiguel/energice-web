@@ -1,4 +1,5 @@
 import { unstable_noStore as noStore } from 'next/cache';
+import { redirect } from 'next/navigation';
 
 import DeleteAccountBtn from '@/components/buttons/delete-account-btn';
 import SignOutBtn from '@/components/buttons/sign-out-btn';
@@ -13,6 +14,8 @@ import { checkAuth, getProfileById } from '@/lib/server-utils';
 import FreeCreditModal from '@/components/free-credit-modal';
 
 export default async function Page() {
+  redirect('/coming-soon');
+
   noStore();
 
   const user = await checkAuth();

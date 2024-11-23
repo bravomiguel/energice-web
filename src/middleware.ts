@@ -41,6 +41,7 @@ export async function middleware(request: NextRequest) {
   const isPhoneConfirmed = !!user.data.user?.phone_confirmed_at;
 
   const isPKCERoute = request.nextUrl.pathname.startsWith('/api/auth');
+  const isStripeWhRoute = request.nextUrl.pathname.startsWith('/api/stripe');
 
   const isAuthRoute = request.nextUrl.pathname.startsWith('/signin');
   const isConfirmPhoneRoute =
@@ -53,7 +54,7 @@ export async function middleware(request: NextRequest) {
   // console.log({ isSupabaseWhRoute });
 
   // Allow PKCE confirmation route without authentication check
-  if (isPKCERoute) {
+  if (isPKCERoute || isStripeWhRoute) {
     return response;
   }
 

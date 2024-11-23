@@ -101,9 +101,6 @@ export async function subscriptionCheckoutSession() {
 export async function billingPortalSession(data: {
   stripeCustomerId: Profile['stripeCustomerId'];
 }) {
-  // authentication check
-  const session = await checkAuth();
-
   // validation check
   const validatedData = z
     .object({

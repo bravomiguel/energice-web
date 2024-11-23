@@ -11,7 +11,8 @@ const nextConfig = {
         hostname: "drive.usercontent.google.com",
       },
     ]
-  }
+  },
+  trailingSlash: false,
 };
 
 export default nextConfig;

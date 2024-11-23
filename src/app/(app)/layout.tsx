@@ -20,7 +20,7 @@ export default async function Layout({
 
   return (
     <>
-      <div className="relative flex flex-col px-4 min-h-screen w-full max-w-md">
+      <div className="relative flex flex-col px-4 min-h-screen w-full max-w-md overflow-visible">
         <PlungeSessionsContextProvider data={plungeSessions}>
           {/* <PlungeSessionsContextProvider> */}
           <TopBar />

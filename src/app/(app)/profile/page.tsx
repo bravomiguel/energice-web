@@ -28,7 +28,7 @@ export default async function Page() {
     <>
       <main className="relative flex-1 flex flex-col gap-8">
         <div className="flex flex-col gap-1">
-          {true ? (
+          {profile.name ? (
             <>
               <H1>Hey {profile.name?.split(' ')[0]}</H1>{' '}
               <Subtitle>{`Let's get you feeling great 🚀`}</Subtitle>

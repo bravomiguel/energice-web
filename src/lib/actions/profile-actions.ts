@@ -10,12 +10,17 @@ import {
   waiverDataSchema,
   phoneOtpSchema,
 } from '@/lib/validations';
-import { checkAuth } from '@/lib/server-utils';
+import { checkAuth, getProfileById } from '@/lib/server-utils';
 import { TMemberDetailsForm, TPhoneOtpForm } from '@/lib/types';
 import { createServerClient } from '@/lib/supabase/server';
 import { signOut } from './auth-actions';
-import { createCustomer, deleteCustomer } from './payment-actions';
-import { User } from '@supabase/supabase-js';
+import {
+  createCustomer,
+  deleteCustomer,
+  updateCustomerName,
+} from './payment-actions';
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export async function sendPhoneOtp(data: Pick<TPhoneOtpForm, 'phone'>) {
   // data validation check
@@ -169,7 +174,20 @@ export async function addMemberDetails(data: TMemberDetailsForm) {
     };
   }
 
-  redirect('waiver');
+  // update stripe customer name
+  const { stripeCustomerId } = await getProfileById(user.id);
+  const updateCustResp = await updateCustomerName({
+    stripeCustomerId,
+    name,
+  });
+  if (updateCustResp?.error) {
+    console.error('Error updating stripe customer:', updateCustResp.error);
+    return {
+      error: 'Failed to update stripe customer',
+    };
+  }
+
+  redirect('/waiver');
 }
 
 export async function signWaiver(data: Pick<Profile, 'waiverSigName'>) {

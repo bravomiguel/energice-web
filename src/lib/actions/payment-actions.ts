@@ -170,6 +170,45 @@ export async function createCustomer(data: { email: Profile['email'] }) {
   return { stripeCustomerId };
 }
 
+export async function updateCustomerName(data: {
+  stripeCustomerId: Profile['stripeCustomerId'];
+  name: Profile['name'];
+}) {
+  // validation check
+  const validatedData = z
+    .object({
+      stripeCustomerId: z.string(),
+      name: z.string(),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    console.error(
+      'Error validating data:',
+      validatedData.error.issues[0].message,
+    );
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { stripeCustomerId, name } = validatedData.data;
+
+  let customer;
+  try {
+    customer = await stripe.customers.update(stripeCustomerId, {
+      name,
+    });
+  } catch (e) {
+    // @ts-ignore
+    console.error(e.raw.code + ': ' + e.raw.message);
+    return {
+      // @ts-ignore
+      error: `${e.raw.message}`,
+    };
+  }
+}
+
 export async function deleteCustomer(data: {
   stripeCustomerId: Profile['stripeCustomerId'];
 }) {

@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { Session, Unit, Profile } from '@prisma/client';
 
-import { checkAuth } from '@/lib/server-utils';
+import { checkAuth, getProfileById } from '@/lib/server-utils';
 import { headers } from 'next/headers';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -13,7 +13,6 @@ export async function plungeCheckoutSession(data: {
   unitId: Unit['id'];
   sessionId: Session['id'];
 }) {
-  // authentication check
   const user = await checkAuth();
 
   // validation check
@@ -34,11 +33,14 @@ export async function plungeCheckoutSession(data: {
 
   const origin = (await headers()).get('origin');
 
+  const profile = await getProfileById(user.id);
+
   // create checkout session
   let checkoutSession;
   try {
     checkoutSession = await stripe.checkout.sessions.create({
-      customer_email: user.email,
+      customer: profile.stripeCustomerId,
+      // customer_email: user.email,
       line_items: [
         {
           price: process.env.PLUNGE_PRICE_ID_NONMEMBERS,
@@ -55,6 +57,7 @@ export async function plungeCheckoutSession(data: {
       },
     });
   } catch (e) {
+    console.error(e);
     return {
       error: 'Checkout failed, please try again',
     };
@@ -65,8 +68,9 @@ export async function plungeCheckoutSession(data: {
 }
 
 export async function subscriptionCheckoutSession() {
-  // authentication check
   const user = await checkAuth();
+
+  const profile = await getProfileById(user.id);
 
   const origin = (await headers()).get('origin');
 
@@ -76,7 +80,8 @@ export async function subscriptionCheckoutSession() {
     checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
       // allow_promotion_codes: true,
-      customer_email: user.email,
+      // customer_email: user.email,
+      customer: profile.stripeCustomerId,
       line_items: [
         {
           price: process.env.SUBSCRIPTION_PRICE_ID_NONMEMBERS,

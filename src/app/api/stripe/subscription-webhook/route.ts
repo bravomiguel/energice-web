@@ -28,7 +28,7 @@ export async function POST(request: Request) {
       await prisma.profile.update({
         where: { email: event.data.object.customer_email },
         data: {
-          stripeCustomerId: event.data.object.customer,
+          // stripeCustomerId: event.data.object.customer,
           isMember: true,
           memberPeriodEnd: new Date(
             event.data.object.lines.data[0].period.end * 1000,
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
       await prisma.profile.update({
         where: { email: event.data.object.customer_email },
         data: {
-          stripeCustomerId: event.data.object.customer,
+          // stripeCustomerId: event.data.object.customer,
           isMember: true,
           memberRenewing: true,
           memberPayFailed: false,
@@ -61,7 +61,7 @@ export async function POST(request: Request) {
       await prisma.profile.update({
         where: { email: event.data.object.customer_email },
         data: {
-          stripeCustomerId: event.data.object.customer,
+          // stripeCustomerId: event.data.object.customer,
           isMember: false,
           memberPayFailed: true,
         },
@@ -71,7 +71,7 @@ export async function POST(request: Request) {
       await prisma.profile.update({
         where: { stripeCustomerId: event.data.object.customer },
         data: {
-          stripeCustomerId: event.data.object.customer,
+          // stripeCustomerId: event.data.object.customer,
           memberPeriodEnd: new Date(
             event.data.object.current_period_end * 1000,
           ),
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
       await prisma.profile.update({
         where: { stripeCustomerId: event.data.object.customer },
         data: {
-          stripeCustomerId: event.data.object.customer,
+          // stripeCustomerId: event.data.object.customer,
           isMember: false,
           memberPayFailed: null,
           memberPeriodEnd: null,

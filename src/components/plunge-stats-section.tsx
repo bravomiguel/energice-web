@@ -33,7 +33,7 @@ export default function PlungeStatsSection({
 
   return (
     <section>
-      <H2 className="mb-6">Plunge Stats</H2>
+      <H2 className="mb-3">Plunge Stats</H2>
       <Card className='pt-5'>
         <CardContent className="flex w-full justify-between">
           <StatCard

@@ -390,6 +390,20 @@ export async function confirmPartnerMembership(data: {
 
   const { email, unitId, navToUnit } = validatedData.data;
 
+  // check if provided email already assigned
+  let isMembershipAssigned;
+  try {
+    const profile = await prisma.profile.findFirst({ where: { email } });
+    isMembershipAssigned = !!profile?.sweat440MemberEmail;
+  } catch (e) {
+    console.error(e);
+    return { error: 'Lookup error, please try again' };
+  }
+
+  if (isMembershipAssigned) {
+    return { error: 'Membership is assigned to a different account.' };
+  }
+
   // check if provided email is in sweat400 member email list
   let sweat440Email;
   try {
@@ -398,18 +412,11 @@ export async function confirmPartnerMembership(data: {
     });
   } catch (e) {
     console.error(e);
-    return { error: 'Lookup error, please try again' };
+    return { error: 'Lookup error, please try again.' };
   }
 
-  // return error message if no member email found
   if (!sweat440Email) {
     return { error: 'No member found with this email' };
-  }
-
-  // return error if member email already assigned to different user
-  const profile = await getProfileById(user.id);
-  if (profile.sweat440MemberEmail === email) {
-    return { error: 'Membership already assigned to a different account.' };
   }
 
   // add sweat440 email to user record, and add extra member credit

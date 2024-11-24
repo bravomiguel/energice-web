@@ -57,10 +57,10 @@ export default function StartPlungeSection({
       <H2 className="mb-3">Start Plunge</H2>
       <Carousel className="w-full mx-auto relative z-10">
         <CarouselContent>
-          <CarouselItem className="basis-5/6">
+          <CarouselItem className="basis-[87%]">
             <PlungeCard sweat440MemberOption={true} />
           </CarouselItem>
-          <CarouselItem className="basis-5/6">
+          <CarouselItem className="basis-[87%]">
             <PlungeCard sweat440MemberOption={false} />
           </CarouselItem>
         </CarouselContent>

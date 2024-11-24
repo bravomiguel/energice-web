@@ -4,7 +4,6 @@ import { RiWaterFlashFill } from 'react-icons/ri';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import StartPlungeBtn from './buttons/start-plunge-btn';
-import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import { Profile } from '@prisma/client';
 import H2 from './h2';
 import {
@@ -15,15 +14,9 @@ import {
   CardHeader,
   CardTitle,
 } from './ui/card';
-import { Label } from './ui/label';
 import { Button } from './ui/button';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from './ui/carousel';
+import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
+import { Infinity, Tickets } from 'lucide-react';
 
 export default function StartPlungeSection({
   isOnboarded,
@@ -31,29 +24,18 @@ export default function StartPlungeSection({
   isMember,
 }: {
   isOnboarded: boolean;
-  freeCredits?: Profile['freeCredits'];
+  freeCredits: Profile['freeCredits'];
   isMember: Profile['isMember'];
 }) {
-  const { numberOfSessions: plungeSessionsNum } = usePlungeSessions();
-
   if (!isOnboarded) {
     return null;
   }
 
-  if (!isMember || freeCredits) {
+  if (isMember || freeCredits > 0) {
     return (
       <section className="space-y-4">
         <H2 className="mb-3">Start plunge</H2>
-        <Carousel className="w-full mx-auto relative z-10">
-          <CarouselContent>
-            <CarouselItem className="basis-5/6">
-              <PlungeCard isSweat440Member={true} />
-            </CarouselItem>
-            <CarouselItem className="basis-5/6">
-              <PlungeCard isSweat440Member={false} />
-            </CarouselItem>
-          </CarouselContent>
-        </Carousel>
+        <StartNewPlungeAlert freeCredits={freeCredits} isMember={isMember} />
       </section>
     );
   }
@@ -61,7 +43,16 @@ export default function StartPlungeSection({
   return (
     <section className="space-y-4">
       <H2 className="mb-3">Start plunge</H2>
-      <StartNewPlungeAlert freeCredits={freeCredits} isMember={isMember} />
+      <Carousel className="w-full mx-auto relative z-10">
+        <CarouselContent>
+          <CarouselItem className="basis-5/6">
+            <PlungeCard isSweat440Member={true} />
+          </CarouselItem>
+          <CarouselItem className="basis-5/6">
+            <PlungeCard isSweat440Member={false} />
+          </CarouselItem>
+        </CarouselContent>
+      </Carousel>
     </section>
   );
 }
@@ -86,7 +77,7 @@ function PlungeCard({ isSweat440Member }: { isSweat440Member: boolean }) {
         {/* <div className="border-l-[1px] border-zinc-400 h-7" /> */}
       </CardContent>
       <CardFooter>
-        <Button className="w-full text-sm">Start session</Button>
+        <StartPlungeBtn className='w-full'>Start session</StartPlungeBtn>
       </CardFooter>
     </Card>
   );
@@ -96,29 +87,35 @@ function StartNewPlungeAlert({
   freeCredits,
   isMember,
 }: {
-  freeCredits?: Profile['freeCredits'];
+  freeCredits: Profile['freeCredits'];
   isMember: Profile['isMember'];
 }) {
   return (
     <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
       <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
       <div className="space-y-3">
-        <AlertTitle>New plunge session</AlertTitle>
-        <AlertDescription>
-          {isMember || freeCredits
-            ? `Feel amazing in just a few minutes`
-            : `Get plunging for just $25 per session`}
-        </AlertDescription>
+        <AlertTitle>Plunge Session</AlertTitle>
+        <AlertDescription>Feel amazing in just a few minutes.</AlertDescription>
         <div className="flex flex-col w-full">
           <StartPlungeBtn>Start session</StartPlungeBtn>
         </div>
         {isMember ? (
           <AlertDescription className="font-semibold text-end">
-            Unlimited access
+            <div className="flex gap-2 items-center justify-end">
+              <p>Unlimited access</p>
+              <Infinity className="h-5 w-5" />
+            </div>
           </AlertDescription>
-        ) : freeCredits && freeCredits > 0 ? (
+        ) : freeCredits > 0 ? (
           <AlertDescription className="font-semibold text-end">
-            {`Free credits:  ${freeCredits}`}
+            <div className="flex gap-2 items-center justify-end">
+              <p>
+                {freeCredits === 1
+                  ? `1 free credit`
+                  : `${freeCredits} free credits`}
+              </p>
+              <Tickets className="h-5 w-5" />
+            </div>
           </AlertDescription>
         ) : null}
       </div>

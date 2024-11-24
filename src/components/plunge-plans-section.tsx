@@ -35,7 +35,7 @@ export default function PlungePlansSection({
   if (memberPayFailed)
     return (
       <section>
-        <H2 className="mb-3">Membership</H2>
+        <H2 className="mb-3">Memberships</H2>
         <div className="space-y-3">
           {/* <PlungeOption /> */}
           <ManageSubscriptionOption
@@ -64,7 +64,7 @@ export default function PlungePlansSection({
 
   return (
     <section>
-      <H2 className="mb-3">Membership</H2>
+      <H2 className="mb-3">Memberships</H2>
       <div className="space-y-3">
         {/* <PlungeOption /> */}
         {/* <PackOption /> */}

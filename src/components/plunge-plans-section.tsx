@@ -112,7 +112,7 @@ function MembershipCard({
   return (
     <Card className="w-full relative overflow-hidden bg-zinc-50">
       <CardHeader className="mt-3 pb-3">
-        <div className="w-full bg-sky-900 absolute top-0 left-0 px-6 py-1 text-zinc-100 uppercase text-sm">
+        <div className="w-full bg-sky-900 absolute top-0 left-0 px-6 py-1 text-zinc-100 uppercase text-xs">
           {sweat440MemberOption ? `Sweat440 Highland Members` : `Non-Members`}
         </div>
         <div className="flex gap-2 items-center">

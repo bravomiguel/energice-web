@@ -87,12 +87,15 @@ function PlungeCard({
             {sweat440MemberOption ? `Sweat440 Highland Members` : `Non-Members`}
           </div>
         )}
-        <CardTitle>Single Plunge</CardTitle>
-        <CardDescription className="text-sm leading-[18px]">
-          1 cold plunge session up to 10 mins long
+        <div className='flex gap-2 items-center'>
+          <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
+          <CardTitle>Single Plunge</CardTitle>
+        </div>
+        <CardDescription className="text-sm">
+          1 cold plunge session.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-4 pb-4">
         <p className="text-3xl font-semibold">
           {sweat440MemberOption ? `US$20` : `US$25`}
         </p>

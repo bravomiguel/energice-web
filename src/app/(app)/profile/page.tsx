@@ -61,6 +61,7 @@ export default async function Page() {
           memberPeriodEnd={profile.memberPeriodEnd}
           memberPayFailed={profile.memberPayFailed}
           memberRenewing={profile.memberRenewing}
+          isSweat440Member={profile.isSweat440Member}
         />
 
         <PlungeOffersSection isOnboarded={isOnboarded} />

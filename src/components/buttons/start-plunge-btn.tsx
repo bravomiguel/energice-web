@@ -28,7 +28,7 @@ export default function StartPlungeBtn({
   const navigateToUnit = async () => {
     startTransition(async () => {
       if (isSweat440Member === false && sweat440MemberOption === true) {
-        router.push(`/partner-membership/${unitId}?navToUnit=true`);
+        router.push(`/partner-membership/${unitId}?singlePlunge=true`);
       } else {
         router.push(`/unit/${unitId}`);
       }

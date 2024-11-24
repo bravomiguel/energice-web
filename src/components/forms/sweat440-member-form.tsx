@@ -16,10 +16,14 @@ import Link from 'next/link';
 
 export default function PartnerMemberForm({
   unitId,
-  navToUnit,
+  singlePlunge,
+  unlimitedMembership,
+  extraCredit,
 }: {
   unitId: Unit['id'];
-  navToUnit: boolean;
+  singlePlunge: boolean;
+  unlimitedMembership: boolean;
+  extraCredit: boolean;
 }) {
   const {
     register,
@@ -33,7 +37,7 @@ export default function PartnerMemberForm({
   const onSubmit = handleSubmit(async (data) => {
     const response = await confirmPartnerMembership({
       ...data,
-      navToUnit,
+      singlePlunge,
       unitId,
     });
     if (response?.error) {
@@ -41,7 +45,13 @@ export default function PartnerMemberForm({
       toast.error(response.error);
       return;
     }
-    toast.success('SWEAT440 membership confirmed!');
+    if (singlePlunge || unlimitedMembership) {
+      toast.success('Unlocked Member Pricing!');
+    } else if (extraCredit) {
+      toast.success('Unlocked extra credit!');
+    } else {
+      toast.success('SWEAT440 membership confirmed!');
+    }
   });
 
   return (
@@ -55,7 +65,7 @@ export default function PartnerMemberForm({
           )}
         </div>
 
-        <p className="text-zinc-500 text-sm">{`Note for new members: Our system can take up to 48 hours to update. If your membership is not coming up, please contact us below and we'll get this resolved ASAP.`}</p>
+        <p className="text-zinc-500 text-sm">{`Note for new members: Our system can take up to 48 hours to update. If your membership is not coming up, please contact us below.`}</p>
       </div>
 
       <BottomNav>

@@ -12,10 +12,16 @@ export default async function Page({
   searchParams,
 }: {
   params: { unitId: Unit['id'] };
-  searchParams: Promise<{ navToUnit?: string }>;
+  searchParams: Promise<{
+    singlePlunge?: string;
+    unlimitedMembership?: string;
+    extraCredit?: string;
+  }>;
 }) {
   const params = await searchParams;
-  const navToUnit = params.navToUnit === 'true';
+  const singlePlunge = params.singlePlunge === 'true';
+  const unlimitedMembership = params.unlimitedMembership === 'true';
+  const extraCredit = params.extraCredit === 'true';
 
   const user = await checkAuth();
   const profile = await getProfileById(user.id);
@@ -26,13 +32,23 @@ export default async function Page({
     <main className="relative flex-1 flex flex-col gap-6">
       <div className="flex flex-col gap-1">
         <Sweat440Logo className="w-36" />
-        <H1>Confirm Membership</H1>
+        <H1>
+          {singlePlunge || unlimitedMembership
+            ? 'Access Member Pricing'
+            : extraCredit
+            ? 'Get Extra Credit'
+            : 'Confirm Membership'}
+        </H1>
         <Subtitle>
-          Enter the email you used for your membership at SWEAT440 Austin
-          Highland
+          Please confirm your membership email for SWEAT440 Austin Highland
         </Subtitle>
       </div>
-      <PartnerMemberForm unitId={unitId} navToUnit={navToUnit} />
+      <PartnerMemberForm
+        unitId={unitId}
+        singlePlunge={singlePlunge}
+        unlimitedMembership={unlimitedMembership}
+        extraCredit={extraCredit}
+      />
     </main>
   );
 }

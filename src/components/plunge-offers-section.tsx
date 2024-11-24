@@ -1,6 +1,5 @@
 'use client';
 
-import { Profile } from '@prisma/client';
 import H2 from './h2';
 import {
   Card,
@@ -12,6 +11,8 @@ import {
 } from './ui/card';
 import { Button } from './ui/button';
 import { BsFillBox2HeartFill } from 'react-icons/bs';
+import { useRouter } from 'next/navigation';
+import { useTransition } from 'react';
 
 export default function PlungeOffersSection({
   isOnboarded,
@@ -33,9 +34,19 @@ export default function PlungeOffersSection({
 }
 
 function ExtraCreditCard() {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const navToSweat400MemberScreen = async () => {
+    startTransition(async () => {
+      router.push(
+        `/partner-membership/${process.env.NEXT_PUBLIC_SWEAT440_HIGHLAND_ID}?extraCredit=true`,
+      );
+    });
+  };
+
   return (
     <Card className="w-full relative overflow-hidden bg-zinc-50">
-      <CardHeader className='mt-3 pb-3'>
+      <CardHeader className="mt-3 pb-3">
         <div className="w-full bg-indigo-900 absolute top-0 left-0 px-6 py-1 text-zinc-100 uppercase text-xs">
           Sweat440 Highland Members
         </div>
@@ -53,7 +64,12 @@ function ExtraCreditCard() {
         </p> */}
       </CardContent>
       <CardFooter>
-        <Button className="bg-indigo-800 hover:bg-indigo-800/90 w-full">
+        <Button
+          className="bg-indigo-800 hover:bg-indigo-800/90 w-full"
+          onClick={async () => await navToSweat400MemberScreen()}
+          disabled={isPending}
+          isLoading={isPending}
+        >
           Get extra credit
         </Button>
       </CardFooter>

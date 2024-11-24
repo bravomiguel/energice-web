@@ -371,7 +371,7 @@ export async function deleteProfile() {
 export async function confirmPartnerMembership(data: {
   email: TPartnerMemberForm['email'];
   unitId: Unit['id'];
-  navToUnit: boolean;
+  singlePlunge: boolean;
 }) {
   // get user
   const user = await checkAuth();
@@ -379,7 +379,7 @@ export async function confirmPartnerMembership(data: {
   // validation check
   const validatedData = PartnerMemberSchema.extend({
     unitId: z.string(),
-    navToUnit: z.boolean(),
+    singlePlunge: z.boolean(),
   }).safeParse(data);
 
   if (!validatedData.success) {
@@ -388,7 +388,7 @@ export async function confirmPartnerMembership(data: {
     };
   }
 
-  const { email, unitId, navToUnit } = validatedData.data;
+  const { email, unitId, singlePlunge } = validatedData.data;
 
   // check if provided email already assigned
   let isMembershipAssigned;
@@ -430,7 +430,7 @@ export async function confirmPartnerMembership(data: {
     return { error: 'No member found with this email.' };
   }
 
-  if (navToUnit) {
+  if (singlePlunge) {
     redirect(`/unit/${unitId}`);
   }
 

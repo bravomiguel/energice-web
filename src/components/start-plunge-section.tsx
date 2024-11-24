@@ -37,7 +37,7 @@ export default function StartPlungeSection({
   if (isMember || freeCredits > 0) {
     return (
       <section className="space-y-4">
-        <H2 className="mb-3">Start plunge</H2>
+        <H2 className="mb-3">Start Plunge</H2>
         <StartNewPlungeAlert freeCredits={freeCredits} isMember={isMember} />
       </section>
     );
@@ -46,7 +46,7 @@ export default function StartPlungeSection({
   if (isSweat440Member) {
     return (
       <section className="space-y-4">
-        <H2 className="mb-3">Start plunge</H2>
+        <H2 className="mb-3">Start Plunge</H2>
         <PlungeCard
           isSweat440Member={isSweat440Member}
           sweat440MemberOption={true}
@@ -57,7 +57,7 @@ export default function StartPlungeSection({
 
   return (
     <section className="space-y-4">
-      <H2 className="mb-3">Start plunge</H2>
+      <H2 className="mb-3">Start Plunge</H2>
       <Carousel className="w-full mx-auto relative z-10">
         <CarouselContent>
           <CarouselItem className="basis-5/6">
@@ -81,12 +81,11 @@ function PlungeCard({
 }) {
   return (
     <Card className="w-full relative overflow-hidden bg-zinc-50">
-      <CardHeader className='mt-3 pb-3'>
+      <CardHeader className="mt-3 pb-3">
+        <div className="w-full bg-indigo-900 absolute top-0 left-0 px-6 py-1 text-zinc-100 uppercase text-xs">
+          {sweat440MemberOption ? `Sweat440 Highland Members` : `Non-Members`}
+        </div>
 
-          <div className="w-full bg-indigo-900 absolute top-0 left-0 px-6 py-1 text-zinc-100 uppercase text-xs">
-            {sweat440MemberOption ? `Sweat440 Highland Members` : `Non-Members`}
-          </div>
-       
         <div className="flex gap-2 items-center">
           {isSweat440Member && (
             <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />

@@ -111,18 +111,18 @@ function MembershipCard({
 }) {
   return (
     <Card className="w-full relative overflow-hidden bg-zinc-50">
-      <CardHeader className={cn('pb-3', { 'mt-3': !isSweat440Member })}>
-        {!isSweat440Member && (
-          <div className="w-full bg-sky-900 absolute top-0 left-0 px-6 py-1 text-zinc-100 uppercase text-sm">
-            {sweat440MemberOption ? `Sweat440 Highland Members` : `Non-Members`}
-          </div>
-        )}
+      <CardHeader className="mt-3 pb-3">
+        <div className="w-full bg-sky-900 absolute top-0 left-0 px-6 py-1 text-zinc-100 uppercase text-sm">
+          {sweat440MemberOption ? `Sweat440 Highland Members` : `Non-Members`}
+        </div>
         <div className="flex gap-2 items-center">
-          <div className="relative flex items-center justify-center h-min w-min">
-            <BsFillBox2HeartFill className="h-5 w-5 fill-sky-700" />
-            <div className="h-2.5 w-2 bg-sky-700 absolute translate-y-1" />
-            <FaInfinity className="h-3 w-3 fill-cyan-100 absolute translate-y-0.5" />
-          </div>
+          {isSweat440Member && (
+            <div className="relative flex items-center justify-center h-min w-min">
+              <BsFillBox2HeartFill className="h-5 w-5 fill-sky-700" />
+              <div className="h-2.5 w-2 bg-sky-700 absolute translate-y-1" />
+              <FaInfinity className="h-3 w-3 fill-cyan-100 absolute translate-y-0.5" />
+            </div>
+          )}
           <CardTitle>Unlimited Plunges</CardTitle>
         </div>
         <CardDescription className="text-sm">

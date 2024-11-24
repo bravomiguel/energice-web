@@ -81,14 +81,16 @@ function PlungeCard({
 }) {
   return (
     <Card className="w-full relative overflow-hidden bg-zinc-50">
-      <CardHeader className={cn('pb-3', { 'mt-3': !isSweat440Member })}>
-        {!isSweat440Member && (
-          <div className="w-full bg-indigo-900 absolute top-0 left-0 px-6 py-1 text-zinc-100 uppercase text-sm">
+      <CardHeader className='mt-3 pb-3'>
+
+          <div className="w-full bg-indigo-900 absolute top-0 left-0 px-6 py-1 text-zinc-100 uppercase text-xs">
             {sweat440MemberOption ? `Sweat440 Highland Members` : `Non-Members`}
           </div>
-        )}
-        <div className='flex gap-2 items-center'>
-          <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
+       
+        <div className="flex gap-2 items-center">
+          {isSweat440Member && (
+            <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
+          )}
           <CardTitle>Single Plunge</CardTitle>
         </div>
         <CardDescription className="text-sm">

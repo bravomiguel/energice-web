@@ -14,6 +14,8 @@ import { checkAuth, getProfileById } from '@/lib/server-utils';
 import FreeCreditModal from '@/components/free-credit-modal';
 import PlungeOffersSection from '@/components/plunge-offers-section';
 import { Badge } from '@/components/ui/badge';
+import Sweat440MembershipsSection from '@/components/sweat440-membership-section';
+import Sweat440ShieldWhite from '@/components/logos/sweat440-shield-white';
 
 export default async function Page() {
   noStore();
@@ -35,7 +37,8 @@ export default async function Page() {
               <H1>Hey {profile.name?.split(' ')[0]}</H1>{' '}
               <Subtitle>{`Let's get you feeling great 🚀`}</Subtitle>
               {profile.isSweat440Member && (
-                <Badge className="w-fit mt-1 bg-indigo-900 hover:bg-indigo-800 uppercase">
+                <Badge className="w-fit mt-1 bg-indigo-900 hover:bg-indigo-900/90 uppercase flex gap-1">
+                  {/* <Sweat440ShieldWhite className="h-4 w-4" /> */}
                   SWEAT440 Member
                 </Badge>
               )}
@@ -65,6 +68,11 @@ export default async function Page() {
         />
 
         <PlungeOffersSection
+          isOnboarded={isOnboarded}
+          isSweat440Member={profile.isSweat440Member}
+        />
+
+        <Sweat440MembershipsSection
           isOnboarded={isOnboarded}
           isSweat440Member={profile.isSweat440Member}
         />

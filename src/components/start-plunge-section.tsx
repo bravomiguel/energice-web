@@ -17,15 +17,18 @@ import {
 import { Button } from './ui/button';
 import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
 import { Infinity, Tickets } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function StartPlungeSection({
   isOnboarded,
   freeCredits,
   isMember,
+  isSweat440Member,
 }: {
   isOnboarded: boolean;
   freeCredits: Profile['freeCredits'];
   isMember: Profile['isMember'];
+  isSweat440Member: Profile['isSweat440Member'];
 }) {
   if (!isOnboarded) {
     return null;
@@ -40,16 +43,28 @@ export default function StartPlungeSection({
     );
   }
 
+  if (isSweat440Member) {
+    return (
+      <section className="space-y-4">
+        <H2 className="mb-3">Start plunge</H2>
+        <PlungeCard
+          isSweat440Member={isSweat440Member}
+          sweat440MemberOption={true}
+        />
+      </section>
+    );
+  }
+
   return (
     <section className="space-y-4">
       <H2 className="mb-3">Start plunge</H2>
       <Carousel className="w-full mx-auto relative z-10">
         <CarouselContent>
           <CarouselItem className="basis-5/6">
-            <PlungeCard isSweat440Member={true} />
+            <PlungeCard sweat440MemberOption={true} />
           </CarouselItem>
           <CarouselItem className="basis-5/6">
-            <PlungeCard isSweat440Member={false} />
+            <PlungeCard sweat440MemberOption={false} />
           </CarouselItem>
         </CarouselContent>
       </Carousel>
@@ -57,13 +72,21 @@ export default function StartPlungeSection({
   );
 }
 
-function PlungeCard({ isSweat440Member }: { isSweat440Member: boolean }) {
+function PlungeCard({
+  isSweat440Member,
+  sweat440MemberOption,
+}: {
+  isSweat440Member?: boolean;
+  sweat440MemberOption: boolean;
+}) {
   return (
     <Card className="w-full relative overflow-hidden bg-zinc-50">
-      <CardHeader className="mt-3 pb-3">
-        <div className="w-full bg-indigo-900 absolute top-0 left-0 px-6 py-1 text-zinc-100 uppercase text-sm">
-          {isSweat440Member ? `Sweat440 Highland Members` : `Non-Members`}
-        </div>
+      <CardHeader className={cn('pb-3', { 'mt-3': !isSweat440Member })}>
+        {!isSweat440Member && (
+          <div className="w-full bg-indigo-900 absolute top-0 left-0 px-6 py-1 text-zinc-100 uppercase text-sm">
+            {sweat440MemberOption ? `Sweat440 Highland Members` : `Non-Members`}
+          </div>
+        )}
         <CardTitle>Single Plunge</CardTitle>
         <CardDescription className="text-sm leading-[18px]">
           1 cold plunge session up to 10 mins long
@@ -71,13 +94,13 @@ function PlungeCard({ isSweat440Member }: { isSweat440Member: boolean }) {
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-3xl font-semibold">
-          {isSweat440Member ? `US$20` : `US$25`}
+          {sweat440MemberOption ? `US$20` : `US$25`}
         </p>
 
         {/* <div className="border-l-[1px] border-zinc-400 h-7" /> */}
       </CardContent>
       <CardFooter>
-        <StartPlungeBtn className='w-full'>Start session</StartPlungeBtn>
+        <StartPlungeBtn className="w-full">Start session</StartPlungeBtn>
       </CardFooter>
     </Card>
   );

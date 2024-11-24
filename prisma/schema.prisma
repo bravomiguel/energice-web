@@ -22,6 +22,7 @@ model Profile {
   waiverSigName    String?
   freeCredits      Int       @default(0)
   isMember         Boolean   @default(false)
+  isSweat440Member Boolean   @default(false)
   memberPayFailed  Boolean?
   memberPeriodEnd  DateTime?
   memberRenewing   Boolean?

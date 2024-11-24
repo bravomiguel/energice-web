@@ -13,6 +13,7 @@ import ProfileSettings from '@/components/profile-settings';
 import { checkAuth, getProfileById } from '@/lib/server-utils';
 import FreeCreditModal from '@/components/free-credit-modal';
 import PlungeOffersSection from '@/components/plunge-offers-section';
+import { Badge } from '@/components/ui/badge';
 
 export default async function Page() {
   noStore();
@@ -33,6 +34,11 @@ export default async function Page() {
             <>
               <H1>Hey {profile.name?.split(' ')[0]}</H1>{' '}
               <Subtitle>{`Let's get you feeling great 🚀`}</Subtitle>
+              {profile.isSweat440Member && (
+                <Badge className="w-fit mt-1 bg-indigo-900 hover:bg-indigo-800 uppercase">
+                  SWEAT440 Member
+                </Badge>
+              )}
             </>
           ) : (
             <H1>{`Let's get you feeling great 🚀`}</H1>
@@ -44,12 +50,13 @@ export default async function Page() {
         <StartPlungeSection
           isOnboarded={isOnboarded}
           freeCredits={profile.freeCredits}
-          isMember={!!profile.isMember}
+          isMember={profile.isMember}
+          isSweat440Member={profile.isSweat440Member}
         />
 
         <PlungePlansSection
           isOnboarded={isOnboarded}
-          isMember={!!profile.isMember}
+          isMember={profile.isMember}
           stripeCustomerId={profile?.stripeCustomerId ?? ''}
           memberPeriodEnd={profile.memberPeriodEnd}
           memberPayFailed={profile.memberPayFailed}

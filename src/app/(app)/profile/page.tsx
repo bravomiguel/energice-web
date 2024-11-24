@@ -64,7 +64,10 @@ export default async function Page() {
           isSweat440Member={profile.isSweat440Member}
         />
 
-        <PlungeOffersSection isOnboarded={isOnboarded} />
+        <PlungeOffersSection
+          isOnboarded={isOnboarded}
+          isSweat440Member={profile.isSweat440Member}
+        />
 
         <section>
           <H2 className="mb-3">Settings</H2>

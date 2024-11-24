@@ -130,7 +130,7 @@ function MembershipCard({
       </CardHeader>
       <CardContent className="space-y-1 pb-4">
         <p className="text-3xl font-semibold">
-          {sweat440MemberOption ? `US$99` : `US$149`}
+          {sweat440MemberOption ? `$99` : `$149`}
         </p>
         <p className="text-xs text-zinc-600">
           Auto-renews each month. Cancel any time.

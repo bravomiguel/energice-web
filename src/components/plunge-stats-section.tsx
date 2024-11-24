@@ -10,8 +10,13 @@ import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import H2 from './h2';
 import OnboardReturnBtn from './buttons/onboard-return-btn';
 import { cn } from '@/lib/utils';
+import { Card, CardContent, CardHeader } from './ui/card';
 
-export default function PlungeStatsSection({ isOnboarded }: { isOnboarded: boolean }) {
+export default function PlungeStatsSection({
+  isOnboarded,
+}: {
+  isOnboarded: boolean;
+}) {
   const {
     numberOfSessions: plungeSessionsNum,
     avgPlungeSecs,
@@ -29,25 +34,27 @@ export default function PlungeStatsSection({ isOnboarded }: { isOnboarded: boole
   return (
     <section>
       <H2 className="mb-6">Plunge Stats</H2>
-      <div className="flex w-full justify-between px-2">
-        <StatCard
-          stat={currentStreakDays}
-          statLabel="Streak days"
-          statIcon={
-            <AiFillThunderbolt className="w-10 h-10 fill-green-koldup" />
-          }
-        />
-        <StatCard
-          stat={plungeSessionsNum}
-          statLabel="Total plunges"
-          statIcon={<FaPlay className="w-9 h-9 fill-green-koldup" />}
-        />
-        <StatCard
-          stat={avgPlungeSecs}
-          statLabel="Avg time"
-          statIcon={<BsStopwatchFill className="w-9 h-9 fill-green-koldup" />}
-        />
-      </div>
+      <Card className='pt-5'>
+        <CardContent className="flex w-full justify-between">
+          <StatCard
+            stat={currentStreakDays}
+            statLabel="Streak days"
+            statIcon={
+              <AiFillThunderbolt className="w-10 h-10 fill-green-koldup" />
+            }
+          />
+          <StatCard
+            stat={plungeSessionsNum}
+            statLabel="Total plunges"
+            statIcon={<FaPlay className="w-9 h-9 fill-green-koldup" />}
+          />
+          <StatCard
+            stat={avgPlungeSecs}
+            statLabel="Avg time"
+            statIcon={<BsStopwatchFill className="w-9 h-9 fill-green-koldup" />}
+          />
+        </CardContent>
+      </Card>
     </section>
   );
 }

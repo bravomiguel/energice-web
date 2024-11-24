@@ -95,7 +95,7 @@ function PlungeCard({
       </CardHeader>
       <CardContent className="space-y-4 pb-4">
         <p className="text-3xl font-semibold">
-          {sweat440MemberOption ? `US$20` : `US$25`}
+          {sweat440MemberOption ? `$20` : `$25`}
         </p>
 
         {/* <div className="border-l-[1px] border-zinc-400 h-7" /> */}

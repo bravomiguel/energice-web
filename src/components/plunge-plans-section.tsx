@@ -77,8 +77,8 @@ export default function PlungePlansSection({
       <section className="space-y-4">
         <H2 className="mb-3">Memberships</H2>
         <MembershipCard
-          isSweat440Member={isSweat440Member}
           sweat440MemberOption={true}
+          isSweat440Member={isSweat440Member}
         />
       </section>
     );
@@ -90,7 +90,10 @@ export default function PlungePlansSection({
       <Carousel className="w-full mx-auto relative z-10">
         <CarouselContent>
           <CarouselItem className="basis-[87%]">
-            <MembershipCard sweat440MemberOption={true} />
+            <MembershipCard
+              sweat440MemberOption={true}
+              isSweat440Member={isSweat440Member}
+            />
           </CarouselItem>
           <CarouselItem className="basis-[87%]">
             <MembershipCard sweat440MemberOption={false} />
@@ -136,6 +139,8 @@ function MembershipCard({
       <CardFooter className="flex flex-col w-full gap-2 items-end">
         <CheckoutBtn
           className="bg-cyan-700 hover:bg-cyan-700/90 w-full"
+          sweat440MemberOption={sweat440MemberOption}
+          isSweat440Member={isSweat440Member}
           checkoutAction={subscriptionCheckoutSession}
         >
           Get unlimited

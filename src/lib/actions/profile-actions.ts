@@ -22,6 +22,7 @@ import { signOut } from './auth-actions';
 import {
   createCustomer,
   deleteCustomer,
+  subscriptionCheckoutSession,
   updateCustomerName,
 } from './payment-actions';
 
@@ -372,6 +373,7 @@ export async function confirmPartnerMembership(data: {
   email: TPartnerMemberForm['email'];
   unitId: Unit['id'];
   singlePlunge: boolean;
+  unlimitedMembership: boolean;
 }) {
   // get user
   const user = await checkAuth();
@@ -380,6 +382,7 @@ export async function confirmPartnerMembership(data: {
   const validatedData = PartnerMemberSchema.extend({
     unitId: z.string(),
     singlePlunge: z.boolean(),
+    unlimitedMembership: z.boolean(),
   }).safeParse(data);
 
   if (!validatedData.success) {
@@ -388,7 +391,8 @@ export async function confirmPartnerMembership(data: {
     };
   }
 
-  const { email, unitId, singlePlunge } = validatedData.data;
+  const { email, unitId, singlePlunge, unlimitedMembership } =
+    validatedData.data;
 
   // check if provided email already assigned
   let isMembershipAssigned;
@@ -432,6 +436,10 @@ export async function confirmPartnerMembership(data: {
 
   if (singlePlunge) {
     redirect(`/unit/${unitId}`);
+  }
+
+  if (unlimitedMembership) {
+    return;
   }
 
   redirect('/');

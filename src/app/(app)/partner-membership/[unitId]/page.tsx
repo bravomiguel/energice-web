@@ -33,14 +33,15 @@ export default async function Page({
       <div className="flex flex-col gap-1">
         <Sweat440Logo className="w-36" />
         <H1>
-          {singlePlunge || unlimitedMembership
-            ? 'Access Member Pricing'
-            : extraCredit
-            ? 'Get Extra Credit'
-            : 'Confirm Membership'}
+          Confirm Membership
         </H1>
         <Subtitle>
-          Please confirm your membership email for SWEAT440 Austin Highland
+          Enter your membership email for SWEAT440 Austin Highland
+          {singlePlunge || unlimitedMembership
+            ? ', to unlock member pricing'
+            : extraCredit
+            ? ', to claim your extra credit'
+            : null}
         </Subtitle>
       </div>
       <PartnerMemberForm

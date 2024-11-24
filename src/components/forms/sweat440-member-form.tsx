@@ -13,6 +13,9 @@ import BottomNav from '../bottom-nav';
 import { Unit } from '@prisma/client';
 import { confirmPartnerMembership } from '@/lib/actions/profile-actions';
 import Link from 'next/link';
+import { sleep } from '@/lib/utils';
+import { useState } from 'react';
+import { subscriptionCheckoutSession } from '@/lib/actions/payment-actions';
 
 export default function PartnerMemberForm({
   unitId,
@@ -25,6 +28,8 @@ export default function PartnerMemberForm({
   unlimitedMembership: boolean;
   extraCredit: boolean;
 }) {
+  const [redirectingToCheckout, setRedirectingToCheckout] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -38,6 +43,7 @@ export default function PartnerMemberForm({
     const response = await confirmPartnerMembership({
       ...data,
       singlePlunge,
+      unlimitedMembership,
       unitId,
     });
     if (response?.error) {
@@ -45,10 +51,15 @@ export default function PartnerMemberForm({
       toast.error(response.error);
       return;
     }
-    if (singlePlunge || unlimitedMembership) {
-      toast.success('Unlocked Member Pricing!');
+    if (singlePlunge) {
+      toast.success('Unlocked SWEAT440 member pricing!');
+    } else if (unlimitedMembership) {
+      toast.success('Unlocked SWEAT440 member pricing!');
+      setRedirectingToCheckout(() => true);
+      await sleep(2000);
+      await subscriptionCheckoutSession();
     } else if (extraCredit) {
-      toast.success('Unlocked extra credit!');
+      toast.success('Extra credit added!');
     } else {
       toast.success('SWEAT440 membership confirmed!');
     }
@@ -65,16 +76,16 @@ export default function PartnerMemberForm({
           )}
         </div>
 
-        <p className="text-zinc-500 text-sm">{`Note for new members: Our system can take up to 48 hours to update. If your membership is not coming up, please contact us below.`}</p>
+        <p className="text-zinc-500 text-sm">{`Note: Our system can take up to 48 hours to update. If your membership is not coming up, please contact us below.`}</p>
       </div>
 
       <BottomNav>
         <Button
           type="submit"
           disabled={!isValid || isSubmitting}
-          isLoading={isSubmitting}
+          isLoading={isSubmitting || redirectingToCheckout}
         >
-          Submit
+          Confirm email
         </Button>
         <Link
           href="https://energicelife.com/#help-and-support"

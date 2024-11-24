@@ -2,7 +2,6 @@
 
 import { RiWaterFlashFill } from 'react-icons/ri';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import StartPlungeBtn from './buttons/start-plunge-btn';
 import { Profile } from '@prisma/client';
 import H2 from './h2';
@@ -14,10 +13,8 @@ import {
   CardHeader,
   CardTitle,
 } from './ui/card';
-import { Button } from './ui/button';
 import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
 import { Infinity, Tickets } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 export default function StartPlungeSection({
   isOnboarded,
@@ -118,34 +115,41 @@ function StartNewPlungeAlert({
   isMember: Profile['isMember'];
 }) {
   return (
-    <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
-      <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
-      <div className="space-y-3">
-        <AlertTitle>Plunge Session</AlertTitle>
-        <AlertDescription>Feel amazing in just a few minutes.</AlertDescription>
-        <div className="flex flex-col w-full">
-          <StartPlungeBtn>Start session</StartPlungeBtn>
+    <Card className="w-full relative overflow-hidden bg-zinc-50">
+      <CardHeader className="pt-5 pb-3">
+        <div className="flex gap-2 items-center">
+          <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
+          <CardTitle>Plunge Session</CardTitle>
         </div>
-        {isMember ? (
-          <AlertDescription className="font-semibold text-end">
-            <div className="flex gap-2 items-center justify-end">
-              <p>Unlimited access</p>
-              <Infinity className="h-5 w-5" />
+        <CardDescription className="text-sm">
+          Feel amazing in just a few minutes.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pb-2"></CardContent>
+      <CardFooter className='pb-5'>
+        <div className='flex flex-col w-full gap-3'>
+          <StartPlungeBtn className="w-full">Start session</StartPlungeBtn>
+          {isMember ? (
+            <div className="font-semibold text-end text-sm">
+              <div className="flex gap-2 items-center justify-end">
+                <p>Unlimited access</p>
+                <Infinity className="h-5 w-5" />
+              </div>
             </div>
-          </AlertDescription>
-        ) : freeCredits > 0 ? (
-          <AlertDescription className="font-semibold text-end">
-            <div className="flex gap-2 items-center justify-end">
-              <p>
-                {freeCredits === 1
-                  ? `1 free credit`
-                  : `${freeCredits} free credits`}
-              </p>
-              <Tickets className="h-5 w-5" />
+          ) : freeCredits > 0 ? (
+            <div className="font-semibold text-end text-sm">
+              <div className="flex gap-2 items-center justify-end">
+                <p>
+                  {freeCredits === 1
+                    ? `1 free credit`
+                    : `${freeCredits} free credits`}
+                </p>
+                <Tickets className="h-5 w-5" />
+              </div>
             </div>
-          </AlertDescription>
-        ) : null}
-      </div>
-    </Alert>
+          ) : null}
+        </div>
+      </CardFooter>
+    </Card>
   );
 }

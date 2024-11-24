@@ -11,7 +11,7 @@ export default function SessionEndContinueBtn() {
   const [isPending, startTransition] = useTransition();
   const handleContinue = async () => {
     startTransition(async () => {
-      router.push("/profile");
+      router.push("/");
     });
   };
   return (

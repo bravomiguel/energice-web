@@ -2,16 +2,21 @@
 
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
-import { Profile } from '@prisma/client';
+import { Profile, Unit } from '@prisma/client';
 
 import prisma from '@/lib/db';
 import {
   memberDetailsSchema,
   waiverDataSchema,
   phoneOtpSchema,
+  PartnerMemberSchema,
 } from '@/lib/validations';
 import { checkAuth, getProfileById } from '@/lib/server-utils';
-import { TMemberDetailsForm, TPhoneOtpForm } from '@/lib/types';
+import {
+  TMemberDetailsForm,
+  TPhoneOtpForm,
+  TPartnerMemberForm,
+} from '@/lib/types';
 import { createServerClient } from '@/lib/supabase/server';
 import { signOut } from './auth-actions';
 import {
@@ -333,6 +338,7 @@ export async function deleteProfile() {
         memberPayFailed: null,
         memberPeriodEnd: null,
         memberRenewing: null,
+        sweat440MemberEmail: null,
         deleted: true,
         deletedAt: new Date(),
       },
@@ -360,4 +366,66 @@ export async function deleteProfile() {
   return {
     message: 'Profile successfully marked as deleted',
   };
+}
+
+export async function confirmPartnerMembership(data: {
+  email: TPartnerMemberForm['email'];
+  unitId: Unit['id'];
+  navToUnit: boolean;
+}) {
+  // get user
+  const user = await checkAuth();
+
+  // validation check
+  const validatedData = PartnerMemberSchema.extend({
+    unitId: z.string(),
+    navToUnit: z.boolean(),
+  }).safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { email, unitId, navToUnit } = validatedData.data;
+
+  // check if provided email is in sweat400 member email list
+  let sweat440Email;
+  try {
+    sweat440Email = await prisma.sweat440Member.findUnique({
+      where: { email },
+    });
+  } catch (e) {
+    console.error(e);
+    return { error: 'Lookup error, please try again' };
+  }
+
+  // return error message if no member email found
+  if (!sweat440Email) {
+    return { error: 'No member found with this email' };
+  }
+
+  // return error if member email already assigned to different user
+  const profile = await getProfileById(user.id);
+  if (profile.sweat440MemberEmail === email) {
+    return { error: 'Membership already assigned to a different account.' };
+  }
+
+  // add sweat440 email to user record, and add extra member credit
+  try {
+    await prisma.profile.update({
+      where: { id: user.id },
+      data: { sweat440MemberEmail: email, hasS440MemberCredit: true },
+    });
+  } catch (e) {
+    console.error(e);
+    return { error: 'No member found with this email.' };
+  }
+
+  if (navToUnit) {
+    redirect(`/unit/${unitId}`);
+  }
+
+  redirect('/');
 }

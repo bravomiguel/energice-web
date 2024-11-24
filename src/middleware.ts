@@ -46,9 +46,6 @@ export async function middleware(request: NextRequest) {
   const isAuthRoute = request.nextUrl.pathname.startsWith('/signin');
   const isConfirmPhoneRoute =
     request.nextUrl.pathname.startsWith('/confirm-phone');
-  const isMemberDetailsRoute =
-    request.nextUrl.pathname.startsWith('/member-details');
-  const isWaiverRoute = request.nextUrl.pathname.startsWith('/waiver');
   const isProfileRoute = request.nextUrl.pathname.startsWith('/profile');
 
   // console.log({ isSupabaseWhRoute });

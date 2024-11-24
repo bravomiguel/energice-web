@@ -25,7 +25,7 @@ export default function StartPlungeSection({
   isOnboarded: boolean;
   freeCredits: Profile['freeCredits'];
   isMember: Profile['isMember'];
-  isSweat440Member: Profile['isSweat440Member'];
+  isSweat440Member: boolean;
 }) {
   if (!isOnboarded) {
     return null;
@@ -35,7 +35,7 @@ export default function StartPlungeSection({
     return (
       <section className="space-y-4">
         <H2 className="mb-3">Start Plunge</H2>
-        <StartNewPlungeAlert freeCredits={freeCredits} isMember={isMember} />
+        <StartNewPlungeCard freeCredits={freeCredits} isMember={isMember} />
       </section>
     );
   }
@@ -58,7 +58,10 @@ export default function StartPlungeSection({
       <Carousel className="w-full mx-auto relative z-10">
         <CarouselContent>
           <CarouselItem className="basis-[87%]">
-            <PlungeCard sweat440MemberOption={true} />
+            <PlungeCard
+              sweat440MemberOption={true}
+              isSweat440Member={isSweat440Member}
+            />
           </CarouselItem>
           <CarouselItem className="basis-[87%]">
             <PlungeCard sweat440MemberOption={false} />
@@ -101,13 +104,19 @@ function PlungeCard({
         {/* <div className="border-l-[1px] border-zinc-400 h-7" /> */}
       </CardContent>
       <CardFooter>
-        <StartPlungeBtn className="w-full">Start session</StartPlungeBtn>
+        <StartPlungeBtn
+          className="w-full"
+          isSweat440Member={isSweat440Member}
+          sweat440MemberOption={sweat440MemberOption}
+        >
+          Start session
+        </StartPlungeBtn>
       </CardFooter>
     </Card>
   );
 }
 
-function StartNewPlungeAlert({
+function StartNewPlungeCard({
   freeCredits,
   isMember,
 }: {
@@ -126,8 +135,8 @@ function StartNewPlungeAlert({
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-2"></CardContent>
-      <CardFooter className='pb-5'>
-        <div className='flex flex-col w-full gap-3'>
+      <CardFooter className="pb-5">
+        <div className="flex flex-col w-full gap-3">
           <StartPlungeBtn className="w-full">Start session</StartPlungeBtn>
           {isMember ? (
             <div className="font-semibold text-end text-sm">

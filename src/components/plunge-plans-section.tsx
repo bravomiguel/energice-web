@@ -38,7 +38,7 @@ export default function PlungePlansSection({
   memberPeriodEnd?: Profile['memberPeriodEnd'];
   memberPayFailed?: Profile['memberPayFailed'];
   memberRenewing?: Profile['memberRenewing'];
-  isSweat440Member?: Profile['isSweat440Member'];
+  isSweat440Member?: boolean;
 }) {
   if (!isOnboarded) return null;
 
@@ -128,21 +128,21 @@ function MembershipCard({
           Unlimited cold plunge sessions each month.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-1 pb-4">
+      <CardContent className="pb-4">
         <p className="text-3xl font-semibold">
           {sweat440MemberOption ? `$99` : `$149`}
         </p>
-        <p className="text-xs text-zinc-600">
-          Auto-renews each month. Cancel any time.
-        </p>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="flex flex-col w-full gap-2 items-end">
         <CheckoutBtn
           className="bg-cyan-700 hover:bg-cyan-700/90 w-full"
           checkoutAction={subscriptionCheckoutSession}
         >
           Get unlimited
         </CheckoutBtn>
+        <p className="text-xs text-zinc-600">
+          Auto-renews each month. Cancel any time.
+        </p>
       </CardFooter>
     </Card>
   );

@@ -6,14 +6,35 @@ import { Button } from '../ui/button';
 import { useTransition } from 'react';
 import { cn } from '@/lib/utils';
 
-export default function StartPlungeBtn({ className, variant, children }: { className?: string, variant?: any, children: React.ReactNode }) {
+const unitId = process.env.NEXT_PUBLIC_SWEAT440_HIGHLAND_ID;
+
+export default function StartPlungeBtn({
+  className,
+  variant,
+  children,
+  isSweat440Member,
+  sweat440MemberOption,
+}: {
+  className?: string;
+  variant?: any;
+  children: React.ReactNode;
+  isSweat440Member?: boolean;
+  sweat440MemberOption?: boolean;
+}) {
+  // console.log({ isSweat440Member, sweat440MemberOption });
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+
   const navigateToUnit = async () => {
     startTransition(async () => {
-      router.push(`/unit/${process.env.NEXT_PUBLIC_SWEAT440_HIGHLAND_ID}`);
+      if (isSweat440Member === false && sweat440MemberOption === true) {
+        router.push(`/partner-membership/${unitId}?navToUnit=true`);
+      } else {
+        router.push(`/unit/${unitId}`);
+      }
     });
   };
+
   return (
     <Button
       className={cn(className)}

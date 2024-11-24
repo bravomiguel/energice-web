@@ -4,8 +4,6 @@ export const ONBOARDING_PATHNAMES = [
   '/waiver',
 ];
 
-export const APP_PATHNAMES = ['/', '/profile', '/unit'];
-
 export const GCLOUD_BASE_URL = `https://storage.googleapis.com`;
 
 // console.log(process.env.VERCEL_ENV);

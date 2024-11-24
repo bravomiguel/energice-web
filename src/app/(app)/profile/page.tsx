@@ -14,14 +14,15 @@ import { checkAuth, getProfileById } from '@/lib/server-utils';
 import FreeCreditModal from '@/components/free-credit-modal';
 import PlungeOffersSection from '@/components/plunge-offers-section';
 import { Badge } from '@/components/ui/badge';
-import Sweat440MembershipsSection from '@/components/sweat440-membership-section';
-import Sweat440ShieldWhite from '@/components/logos/sweat440-shield-white';
+import Sweat440MembershipSection from '@/components/sweat440-membership-section';
 
 export default async function Page() {
   noStore();
 
   const user = await checkAuth();
   const profile = await getProfileById(user.id);
+
+  const isSweat440Member = !!profile.sweat440MemberEmail;
 
   let isOnboarded = true;
   if (!profile.phone || !profile.name || !profile.isWaiverSigned) {
@@ -36,7 +37,7 @@ export default async function Page() {
             <>
               <H1>Hey {profile.name?.split(' ')[0]}</H1>{' '}
               <Subtitle>{`Let's get you feeling great 🚀`}</Subtitle>
-              {profile.isSweat440Member && (
+              {isSweat440Member && (
                 <Badge className="w-fit mt-1 bg-indigo-900 hover:bg-indigo-900/90 uppercase flex gap-1">
                   {/* <Sweat440ShieldWhite className="h-4 w-4" /> */}
                   SWEAT440 Member
@@ -54,7 +55,7 @@ export default async function Page() {
           isOnboarded={isOnboarded}
           freeCredits={profile.freeCredits}
           isMember={profile.isMember}
-          isSweat440Member={profile.isSweat440Member}
+          isSweat440Member={isSweat440Member}
         />
 
         <PlungePlansSection
@@ -64,17 +65,17 @@ export default async function Page() {
           memberPeriodEnd={profile.memberPeriodEnd}
           memberPayFailed={profile.memberPayFailed}
           memberRenewing={profile.memberRenewing}
-          isSweat440Member={profile.isSweat440Member}
+          isSweat440Member={isSweat440Member}
         />
 
         <PlungeOffersSection
           isOnboarded={isOnboarded}
-          isSweat440Member={profile.isSweat440Member}
+          isSweat440Member={isSweat440Member}
         />
 
-        <Sweat440MembershipsSection
+        <Sweat440MembershipSection
           isOnboarded={isOnboarded}
-          isSweat440Member={profile.isSweat440Member}
+          isSweat440Member={isSweat440Member}
         />
 
         <section>

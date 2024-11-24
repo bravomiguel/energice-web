@@ -15,12 +15,12 @@ import { toast } from 'sonner';
 
 export default function TopBar() {
   const activePathname = usePathname();
-  const isOnboarding = ONBOARDING_PATHNAMES.find(
+  const isOnboardingRoute = ONBOARDING_PATHNAMES.find(
     (pathName) => pathName === activePathname,
   );
-  const isConfirmPhone = activePathname.startsWith('/confirm-phone');
-
-  const isUnit = activePathname.startsWith('/unit');
+  const isConfirmPhoneRoute = activePathname.startsWith('/confirm-phone');
+  const isUnitRoute = activePathname.startsWith('/unit');
+  const isMemberConfirmRoute = activePathname.startsWith('/partner-membership');
 
   const { activeSessionId, activeSessionSecsLeft, activePlungeSecs } =
     usePlungeSessions();
@@ -66,15 +66,15 @@ export default function TopBar() {
       <nav className="w-full pt-3">
         <ul className="w-full flex gap-2 text-xs justify-between items-center text-indigo-800 ">
           <>
-            {isOnboarding && (
+            {isOnboardingRoute && (
               <>
                 <BackArrow label="Signin" handler={signOut} />
-                {!isConfirmPhone && <ProfileLink />}
+                {!isConfirmPhoneRoute && <ProfileLink />}
               </>
             )}
-            {isUnit && (
+            {(isUnitRoute || isMemberConfirmRoute) && (
               <>
-                <BackArrow href="/profile" isLink />
+                <BackArrow href="/" isLink />
               </>
             )}
           </>

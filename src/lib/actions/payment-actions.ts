@@ -89,8 +89,8 @@ export async function subscriptionCheckoutSession() {
           tax_rates: [process.env.TAX_RATE_ID],
         },
       ],
-      success_url: `${origin}/profile`,
-      cancel_url: `${origin}/profile`,
+      success_url: `${origin}/`,
+      cancel_url: `${origin}/`,
       metadata: { price_id: process.env.SUBSCRIPTION_PRICE_ID_NONMEMBERS },
     });
   } catch (e) {
@@ -125,7 +125,7 @@ export async function billingPortalSession(data: {
 
   const portalSession = await stripe.billingPortal.sessions.create({
     customer: stripeCustomerId,
-    return_url: `${origin}/profile`,
+    return_url: `${origin}/`,
   });
 
   // redirect user

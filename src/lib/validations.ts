@@ -88,13 +88,13 @@ export const memberDetailsSchema = z.object({
   // ]),
 });
 
-export const healthQuizDataSchema = z.array(
-  z.object({
-    id: z.number(),
-    question: z.string().trim().min(1),
-    answer: z.union([z.null(), z.boolean()]),
-  }),
-);
+export const PartnerMemberSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .email({ message: 'Not a valid email' })
+    .min(1, { message: 'Email is required' }),
+});
 
 export const plungeTimerSecsSchema = z.union([
   z

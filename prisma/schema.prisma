@@ -12,27 +12,28 @@ datasource db {
 }
 
 model Profile {
-  id               String    @id
-  email            String    @unique
-  stripeCustomerId String    @unique
-  phone            String?
-  name             String?
-  isWaiverSigned   Boolean   @default(false)
-  waiverSignedAt   DateTime?
-  waiverSigName    String?
-  freeCredits      Int       @default(0)
-  isMember         Boolean   @default(false)
-  isSweat440Member Boolean   @default(false)
-  memberPayFailed  Boolean?
-  memberPeriodEnd  DateTime?
-  memberRenewing   Boolean?
+  id                  String    @id
+  email               String    @unique
+  stripeCustomerId    String    @unique
+  phone               String?
+  name                String?
+  isWaiverSigned      Boolean   @default(false)
+  waiverSignedAt      DateTime?
+  waiverSigName       String?
+  freeCredits         Int       @default(0)
+  hasS440MemberCredit Boolean   @default(false)
+  isMember            Boolean   @default(false)
+  sweat440MemberEmail String?
+  memberPayFailed     Boolean?
+  memberPeriodEnd     DateTime?
+  memberRenewing      Boolean?
   // memberTrial      Boolean?
   // memberTrialEnd   DateTime?
-  sessions         Session[]
-  deleted          Boolean   @default(false)
-  deletedAt        DateTime?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  sessions            Session[]
+  deleted             Boolean   @default(false)
+  deletedAt           DateTime?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 }
 
 model Session {
@@ -65,4 +66,8 @@ model Unit {
   sessions         Session[]
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
+}
+
+model Sweat440Member {
+  email String @id
 }

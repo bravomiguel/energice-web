@@ -75,7 +75,7 @@ export default function AutoUnlock({
     return (
       <>
         <Link
-          href={'/profile'}
+          href={'/'}
           className="w-full flex gap-0.5 text-indigo-800 items-center text-xs"
         >
           <IoIosArrowBack className="h-7 w-7 text-indigo-700 -translate-x-2" />

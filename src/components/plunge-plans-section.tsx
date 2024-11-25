@@ -1,5 +1,7 @@
 'use client';
 
+import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { BsFillBox2HeartFill } from 'react-icons/bs';
 import { FaInfinity } from 'react-icons/fa6';
 import { MdOutlineAutorenew } from 'react-icons/md';
@@ -23,6 +25,18 @@ import {
 } from './ui/card';
 import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
 
+type TPlungePlansSection = {
+  isOnboarded: boolean;
+  isMember: boolean;
+  stripeCustomerId: string;
+  memberPeriodEnd?: Profile['memberPeriodEnd'];
+  memberPayFailed?: Profile['memberPayFailed'];
+  memberRenewing?: Profile['memberRenewing'];
+  isSweat440Member?: boolean;
+  foundingMemberRedemptions: number | null;
+  subscriptionSuccess: boolean;
+};
+
 export default function PlungePlansSection({
   isOnboarded,
   isMember,
@@ -32,16 +46,23 @@ export default function PlungePlansSection({
   memberRenewing,
   isSweat440Member,
   foundingMemberRedemptions,
-}: {
-  isOnboarded: boolean;
-  isMember: boolean;
-  stripeCustomerId: string;
-  memberPeriodEnd?: Profile['memberPeriodEnd'];
-  memberPayFailed?: Profile['memberPayFailed'];
-  memberRenewing?: Profile['memberRenewing'];
-  isSweat440Member?: boolean;
-  foundingMemberRedemptions: number | null;
-}) {
+  subscriptionSuccess,
+}: TPlungePlansSection) {
+  useEffect(() => {
+    let timerId: NodeJS.Timeout;
+    if (subscriptionSuccess) {
+      timerId = setTimeout(() => {
+        toast.success(`You've subscribed to Energice Unlimited!`);
+      });
+    }
+
+    return () => {
+      if (subscriptionSuccess) {
+        clearTimeout(timerId);
+      }
+    };
+  }, []);
+
   if (!isOnboarded) return null;
 
   if (memberPayFailed)
@@ -151,10 +172,9 @@ function MembershipCard({
               <p className="text-3xl">$49</p>
               <div className="h-8 border-[0.5px] border-zinc-600" />
               <p className="text-xs text-zinc-600 self-end">
+                Founding Member Rate <br />
                 {!!foundingMemberRedemptions
-                  ? `Founding Member Rate ${
-                      20 - foundingMemberRedemptions
-                    }/20 left`
+                  ? `${20 - foundingMemberRedemptions}/20 left`
                   : `Only 20 available`}
               </p>
             </div>
@@ -168,8 +188,8 @@ function MembershipCard({
             <div className="flex gap-2 items-center">
               <p className="text-3xl">$99</p>
               <div className="h-8 border-[0.5px] border-zinc-600" />
-              <p className="text-xs text-zinc-600 self-end pb-1">
-                December Special Rate Valid until Dec 31st
+              <p className="text-xs text-zinc-600 self-end">
+                Early Bird Rate <br /> Valid until Dec 31st
               </p>
             </div>
           </div>

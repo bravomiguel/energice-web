@@ -117,7 +117,7 @@ export async function subscriptionCheckoutSession(data: {
             : process.env.COUPON_SPECIAL_DEC_NONMEMBER,
         },
       ],
-      success_url: `${origin}/`,
+      success_url: `${origin}/profile?success=true`,
       cancel_url: `${origin}/`,
       metadata: { price_id: process.env.SUBSCRIPTION_PRICE_ID_NONMEMBERS },
     });

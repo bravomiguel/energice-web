@@ -17,8 +17,15 @@ import Sweat440MembershipSection from '@/components/sweat440-membership-section'
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-export default async function Page() {
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ success?: string }>;
+}) {
   noStore();
+
+  const params = await searchParams;
+  const subscriptionSuccess = params.success === 'true';
 
   const user = await checkAuth();
   const profile = await getProfileById(user.id);
@@ -85,6 +92,7 @@ export default async function Page() {
           memberRenewing={profile.memberRenewing}
           isSweat440Member={isSweat440Member}
           foundingMemberRedemptions={foundingMemberRedemptions ?? null}
+          subscriptionSuccess={subscriptionSuccess}
         />
 
         <PlungeOffersSection

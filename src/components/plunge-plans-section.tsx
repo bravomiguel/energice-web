@@ -31,6 +31,7 @@ export default function PlungePlansSection({
   memberPayFailed,
   memberRenewing,
   isSweat440Member,
+  foundingMemberRedemptions,
 }: {
   isOnboarded: boolean;
   isMember: boolean;
@@ -39,6 +40,7 @@ export default function PlungePlansSection({
   memberPayFailed?: Profile['memberPayFailed'];
   memberRenewing?: Profile['memberRenewing'];
   isSweat440Member?: boolean;
+  foundingMemberRedemptions: number | null;
 }) {
   if (!isOnboarded) return null;
 
@@ -79,6 +81,7 @@ export default function PlungePlansSection({
         <MembershipCard
           sweat440MemberOption={true}
           isSweat440Member={isSweat440Member}
+          foundingMemberRedemptions={foundingMemberRedemptions}
         />
       </section>
     );
@@ -93,6 +96,7 @@ export default function PlungePlansSection({
             <MembershipCard
               sweat440MemberOption={true}
               isSweat440Member={isSweat440Member}
+              foundingMemberRedemptions={foundingMemberRedemptions}
             />
           </CarouselItem>
           <CarouselItem className="basis-[87%]">
@@ -107,9 +111,11 @@ export default function PlungePlansSection({
 function MembershipCard({
   isSweat440Member,
   sweat440MemberOption,
+  foundingMemberRedemptions,
 }: {
   isSweat440Member?: boolean;
   sweat440MemberOption: boolean;
+  foundingMemberRedemptions?: number | null;
 }) {
   return (
     <Card className="w-full relative overflow-hidden bg-zinc-50">
@@ -132,9 +138,42 @@ function MembershipCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-4">
-        <p className="text-3xl font-semibold">
+        {/* <p className="text-3xl font-semibold">
           {sweat440MemberOption ? `$99` : `$149`}
-        </p>
+        </p> */}
+        {sweat440MemberOption ? (
+          <div className="flex gap-4 items-center">
+            <div className="w-fit relative flex justify-center items-center">
+              <p className="text-3xl text-zinc-400">$99</p>
+              <div className="border border-red-900 w-full -rotate-[20deg] absolute" />
+            </div>
+            <div className="flex gap-2 items-center">
+              <p className="text-3xl">$49</p>
+              <div className="h-8 border-[0.5px] border-zinc-600" />
+              <p className="text-xs text-zinc-600 self-end">
+                {!!foundingMemberRedemptions
+                  ? `Founding Member Rate ${
+                      20 - foundingMemberRedemptions
+                    }/20 left`
+                  : `Only 20 available`}
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="flex gap-4 ">
+            <div className="w-fit relative flex justify-center items-center">
+              <p className="text-3xl text-zinc-400">$149</p>
+              <div className="border border-red-900 w-full -rotate-[20deg] absolute" />
+            </div>
+            <div className="flex gap-2 items-center">
+              <p className="text-3xl">$99</p>
+              <div className="h-8 border-[0.5px] border-zinc-600" />
+              <p className="text-xs text-zinc-600 self-end pb-1">
+                December Special Rate Valid until Dec 31st
+              </p>
+            </div>
+          </div>
+        )}
       </CardContent>
       <CardFooter className="flex flex-col w-full gap-2 items-end">
         <CheckoutBtn

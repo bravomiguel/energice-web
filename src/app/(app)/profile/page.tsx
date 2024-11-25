@@ -15,6 +15,8 @@ import PlungeOffersSection from '@/components/plunge-offers-section';
 import { Badge } from '@/components/ui/badge';
 import Sweat440MembershipSection from '@/components/sweat440-membership-section';
 
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
 export default async function Page() {
   noStore();
 
@@ -30,6 +32,20 @@ export default async function Page() {
   if (!profile.phone || !profile.name || !profile.isWaiverSigned) {
     isOnboarded = false;
   }
+
+  // get number of times founding member coupon has been redeemed
+  let foundingMemberRedemptions: number | undefined;
+  try {
+    const coupon = await stripe.coupons.retrieve(
+      process.env.COUPON_FOUNDING_MEMBER,
+    );
+    foundingMemberRedemptions = coupon.times_redeemed;
+    // console.log({ coupon });
+  } catch (e) {
+    console.error(e);
+  }
+
+  // console.log({ foundingMemberRedemptions });
 
   return (
     <>
@@ -68,6 +84,7 @@ export default async function Page() {
           memberPayFailed={profile.memberPayFailed}
           memberRenewing={profile.memberRenewing}
           isSweat440Member={isSweat440Member}
+          foundingMemberRedemptions={foundingMemberRedemptions ?? null}
         />
 
         <PlungeOffersSection

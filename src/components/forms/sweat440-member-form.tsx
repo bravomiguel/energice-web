@@ -56,7 +56,7 @@ export default function PartnerMemberForm({
     } else if (unlimitedMembership) {
       toast.success('Unlocked SWEAT440 member pricing!');
       setRedirectingToCheckout(() => true);
-      await sleep(2000);
+      await sleep(1500);
       await subscriptionCheckoutSession();
     } else if (extraCredit) {
       toast.success('Extra credit added!');

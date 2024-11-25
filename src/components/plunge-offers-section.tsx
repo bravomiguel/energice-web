@@ -16,12 +16,12 @@ import { useTransition } from 'react';
 
 export default function PlungeOffersSection({
   isOnboarded,
-  isSweat440Member,
+  hasSweat440MemberCredit,
 }: {
   isOnboarded: boolean;
-  isSweat440Member: boolean;
+  hasSweat440MemberCredit: boolean;
 }) {
-  if (!isOnboarded || isSweat440Member) {
+  if (!isOnboarded || hasSweat440MemberCredit) {
     return null;
   }
 

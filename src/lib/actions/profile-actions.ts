@@ -371,6 +371,7 @@ export async function confirmPartnerMembership(data: {
   unitId: Unit['id'];
   singlePlunge: boolean;
   unlimitedMembership: boolean;
+  extraCredit: boolean;
 }) {
   // get user
   const user = await checkAuth();
@@ -380,6 +381,7 @@ export async function confirmPartnerMembership(data: {
     unitId: z.string(),
     singlePlunge: z.boolean(),
     unlimitedMembership: z.boolean(),
+    extraCredit: z.boolean(),
   }).safeParse(data);
 
   if (!validatedData.success) {
@@ -388,14 +390,14 @@ export async function confirmPartnerMembership(data: {
     };
   }
 
-  const { email, unitId, singlePlunge, unlimitedMembership } =
+  const { email, unitId, singlePlunge, unlimitedMembership, extraCredit } =
     validatedData.data;
 
-  // check if provided email already assigned
+  // check if provided email already assigned to another account
   let isMembershipAssigned;
   try {
     const profile = await prisma.profile.findFirst({
-      where: { email: email.toLowerCase() },
+      where: { email: email.toLowerCase(), id: { not: user.id } },
     });
     isMembershipAssigned = !!profile?.sweat440MemberEmail;
   } catch (e) {
@@ -426,7 +428,10 @@ export async function confirmPartnerMembership(data: {
   try {
     await prisma.profile.update({
       where: { id: user.id },
-      data: { sweat440MemberEmail: email.toLowerCase(), hasS440MemberCredit: true },
+      data: {
+        sweat440MemberEmail: email.toLowerCase(),
+        hasS440MemberCredit: extraCredit,
+      },
     });
   } catch (e) {
     console.error(e);

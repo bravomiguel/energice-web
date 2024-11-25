@@ -44,6 +44,7 @@ export default function PartnerMemberForm({
       ...data,
       singlePlunge,
       unlimitedMembership,
+      extraCredit,
       unitId,
     });
     if (response?.error) {

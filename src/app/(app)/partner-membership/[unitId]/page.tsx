@@ -26,15 +26,14 @@ export default async function Page({
   const user = await checkAuth();
   const profile = await getProfileById(user.id);
 
-  if (!!profile.sweat440MemberEmail) redirect('/');
+  if (!!profile.sweat440MemberEmail && !extraCredit) redirect('/');
+  if (profile.hasS440MemberCredit && extraCredit) redirect('/');
 
   return (
     <main className="relative flex-1 flex flex-col gap-6">
       <div className="flex flex-col gap-1">
         <Sweat440Logo className="w-36" />
-        <H1>
-          Confirm Membership
-        </H1>
+        <H1>Confirm Membership</H1>
         <Subtitle>
           Enter your membership email for SWEAT440 Austin Highland
           {singlePlunge || unlimitedMembership

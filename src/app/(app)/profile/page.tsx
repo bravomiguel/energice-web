@@ -97,7 +97,7 @@ export default async function Page({
 
         <PlungeOffersSection
           isOnboarded={isOnboarded}
-          isSweat440Member={isSweat440Member}
+          hasSweat440MemberCredit={profile.hasS440MemberCredit}
         />
 
         <Sweat440MembershipSection

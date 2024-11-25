@@ -29,8 +29,9 @@ export default function MemberDetailsForm({ userName }: { userName?: string }) {
     if (response?.error) {
       console.error({ error: response.error });
       toast.error(response.error);
-      // return;
+      return;
     }
+    toast.success('Member details added');
   });
 
   useEffect(() => {

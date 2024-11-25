@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { Session, Unit, Profile } from '@prisma/client';
 
-import { checkAuth, getProfileById } from '@/lib/server-utils';
+import { checkAuth, getOrCreateProfileById } from '@/lib/server-utils';
 import { headers } from 'next/headers';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -35,7 +35,7 @@ export async function plungeCheckoutSession(data: {
 
   const origin = (await headers()).get('origin');
 
-  const profile = await getProfileById(user.id);
+  const profile = await getOrCreateProfileById(user.id);
 
   // create checkout session
   let checkoutSession;
@@ -45,7 +45,9 @@ export async function plungeCheckoutSession(data: {
       // customer_email: user.email,
       line_items: [
         {
-          price: sweat440MemberOption ? process.env.PLUNGE_PRICE_ID_MEMBER : process.env.PLUNGE_PRICE_ID_NONMEMBER,
+          price: sweat440MemberOption
+            ? process.env.PLUNGE_PRICE_ID_MEMBER
+            : process.env.PLUNGE_PRICE_ID_NONMEMBER,
           quantity: 1,
           tax_rates: [process.env.TAX_RATE_ID],
         },
@@ -53,7 +55,9 @@ export async function plungeCheckoutSession(data: {
       mode: 'payment',
       // allow_promotion_codes: true,
       success_url: `${origin}/session/${sessionId}/unlock`,
-      cancel_url: sweat440MemberOption ? `${origin}/unit/${unitId}?sweat440Member=true` : `${origin}/unit/${unitId}`,
+      cancel_url: sweat440MemberOption
+        ? `${origin}/unit/${unitId}?sweat440Member=true`
+        : `${origin}/unit/${unitId}`,
       metadata: {
         session_id: sessionId,
       },
@@ -89,7 +93,7 @@ export async function subscriptionCheckoutSession(data: {
 
   const { sweat440MemberOption } = validatedData.data;
 
-  const profile = await getProfileById(user.id);
+  const profile = await getOrCreateProfileById(user.id);
 
   const origin = (await headers()).get('origin');
 
@@ -118,7 +122,7 @@ export async function subscriptionCheckoutSession(data: {
         },
       ],
       success_url: `${origin}/profile?success=true`,
-      cancel_url: `${origin}/`,
+      cancel_url: `${origin}/profile`,
       metadata: { price_id: process.env.SUBSCRIPTION_PRICE_ID_NONMEMBERS },
     });
   } catch (e) {

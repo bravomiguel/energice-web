@@ -41,6 +41,7 @@ export default function CheckoutBtn({
       }
     });
   };
+
   return (
     <Button
       className={cn(className)}

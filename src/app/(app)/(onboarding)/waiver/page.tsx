@@ -6,11 +6,11 @@ import Subtitle from '@/components/subtitle';
 import WaiverTerms from '@/components/waiver-terms';
 // import { checkAuth, getUserById } from '@/lib/server-utils';
 import ESigBlock from '@/components/e-sig-block';
-import { checkAuth, getProfileById } from '@/lib/server-utils';
+import { checkAuth, getOrCreateProfileById } from '@/lib/server-utils';
 
 export default async function Page() {
   const user = await checkAuth();
-  const profile = await getProfileById(user.id);
+  const profile = await getOrCreateProfileById(user.id);
 
   if (!profile.name) redirect('/member-details');
   if (profile?.isWaiverSigned) redirect('/');

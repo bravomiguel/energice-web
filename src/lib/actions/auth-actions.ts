@@ -2,6 +2,7 @@
 
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
+import { z } from 'zod';
 
 import { signinSchema } from '@/lib/validations';
 import { TSigninForm } from '@/lib/types';
@@ -11,9 +12,14 @@ import {
 } from '@/lib/supabase/server';
 import { deleteProfile } from './profile-actions';
 
-export async function signinWithEmail(data: TSigninForm) {
+export async function signinWithEmail(
+  data: TSigninForm & { prelaunchCheckout: boolean },
+) {
+  console.log({ data });
   // validation check
-  const validatedData = signinSchema.safeParse(data);
+  const validatedData = signinSchema
+    .extend({ prelaunchCheckout: z.boolean() })
+    .safeParse(data);
 
   if (!validatedData.success) {
     console.error(validatedData.error.message);
@@ -22,7 +28,7 @@ export async function signinWithEmail(data: TSigninForm) {
     };
   }
 
-  const { email } = validatedData.data;
+  const { email, prelaunchCheckout } = validatedData.data;
 
   const supabase = await createServerClient();
 
@@ -31,7 +37,9 @@ export async function signinWithEmail(data: TSigninForm) {
   const { error } = await supabase.auth.signInWithOtp({
     email: email.toLowerCase(),
     options: {
-      emailRedirectTo: `${origin}/api/auth/email-callback`,
+      emailRedirectTo: prelaunchCheckout
+        ? `${origin}/api/auth/email-callback?prelaunchCheckout=true&`
+        : `${origin}/api/auth/email-callback?`,
     },
   });
 
@@ -42,7 +50,11 @@ export async function signinWithEmail(data: TSigninForm) {
     };
   }
 
-  redirect('/signin?success=true');
+  redirect(
+    prelaunchCheckout
+      ? '/signin?prelaunchCheckout=true&success=true'
+      : '/signin?success=true',
+  );
 }
 
 export async function signinWithGoogle() {

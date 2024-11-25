@@ -8,6 +8,7 @@ import { isWithinTimeLimit } from './utils';
 import { createServerClient } from './supabase/server';
 import { User } from '@supabase/supabase-js';
 import { signOut } from './actions/auth-actions';
+import { createProfile } from './actions/profile-actions';
 
 // --- auth utils ---
 
@@ -36,15 +37,28 @@ export async function getUserByEmail(userEmail: Profile['email']) {
   return user;
 }
 
-export async function getProfileById(userId: User['id']) {
+export async function getOrCreateProfileById(userId: User['id']) {
   // get profile
   const profile = await prisma.profile.findUnique({
     where: { id: userId, deleted: false },
   });
 
   if (!profile) {
-    await signOut();
-    redirect('/signin');
+    console.log('Profile not found. Creating new profile.');
+    const { data: newProfileData, error: newProfileError } =
+      await createProfile();
+
+    if (newProfileError) {
+      await signOut();
+      redirect('/signin');
+    }
+
+    if (!newProfileData) {
+      await signOut();
+      redirect('/signin');
+    }
+
+    return newProfileData;
   }
 
   return profile;

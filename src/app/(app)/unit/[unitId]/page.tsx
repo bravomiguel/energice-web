@@ -9,7 +9,7 @@ import {
   checkPlungeSession,
   checkAuth,
   getUnitById,
-  getProfileById,
+  getOrCreateProfileById,
 } from '@/lib/server-utils';
 import H1 from '@/components/h1';
 import Image from 'next/image';
@@ -30,7 +30,7 @@ export default async function Page({
 
   // auth check
   const user = await checkAuth();
-  const profile = await getProfileById(user.id);
+  const profile = await getOrCreateProfileById(user.id);
 
   // onboarded check
   if (!profile?.name) redirect('/member-details');
@@ -57,7 +57,8 @@ export default async function Page({
     .toLowerCase()
     .replace(' ', '+')}/&query_place_id=${unit.hostGMapsPlaceId}`;
 
-  const totalFreeCredits = profile.freeCredits + Number(profile.hasS440MemberCredit);
+  const totalFreeCredits =
+    profile.freeCredits + Number(profile.hasS440MemberCredit);
 
   return (
     <main className="relative flex-1 flex flex-col gap-6">

@@ -9,11 +9,21 @@ import PlungeStatsSection from '@/components/plunge-stats-section';
 import StartPlungeSection from '@/components/start-plunge-section';
 import PlungePlansSection from '@/components/plunge-plans-section';
 import ProfileSettings from '@/components/profile-settings';
-import { checkAuth, getProfileById } from '@/lib/server-utils';
+import { checkAuth, getOrCreateProfileById } from '@/lib/server-utils';
 import FreeCreditModal from '@/components/free-credit-modal';
 import PlungeOffersSection from '@/components/plunge-offers-section';
 import { Badge } from '@/components/ui/badge';
 import Sweat440MembershipSection from '@/components/sweat440-membership-section';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { IoArrowUndoSharp } from 'react-icons/io5';
+import OnboardReturnBtn from '@/components/buttons/onboard-return-btn';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
@@ -28,7 +38,7 @@ export default async function Page({
   const subscriptionSuccess = params.success === 'true';
 
   const user = await checkAuth();
-  const profile = await getProfileById(user.id);
+  const profile = await getOrCreateProfileById(user.id);
 
   const isSweat440Member = !!profile.sweat440MemberEmail;
 
@@ -74,6 +84,16 @@ export default async function Page({
           )}
         </div>
 
+        {!isOnboarded && (
+          <section className="space-y-4">
+            <H2 className="mb-3">Onboarding</H2>
+            <CompleteOnboardingCard
+              isNameSaved={!!profile.name}
+              isWaiverSigned={profile.isWaiverSigned}
+            />
+          </section>
+        )}
+
         <PlungeStatsSection isOnboarded={isOnboarded} />
 
         <StartPlungeSection
@@ -84,7 +104,7 @@ export default async function Page({
         />
 
         <PlungePlansSection
-          isOnboarded={isOnboarded}
+          // isOnboarded={isOnboarded}
           isMember={profile.isMember}
           stripeCustomerId={profile?.stripeCustomerId ?? ''}
           memberPeriodEnd={profile.memberPeriodEnd}
@@ -127,5 +147,37 @@ export default async function Page({
         <p className="text-sm text-zinc-600">{user.email}</p>
       </footer>
     </>
+  );
+}
+
+function CompleteOnboardingCard({
+  isNameSaved,
+  isWaiverSigned,
+}: {
+  isNameSaved: boolean;
+  isWaiverSigned: boolean;
+}) {
+  return (
+    <Card className="w-full relative overflow-hidden bg-zinc-50">
+      <CardHeader className="pt-5 pb-3">
+        <div className="flex gap-2 items-center">
+          <IoArrowUndoSharp className="h-5 w-5 fill-indigo-800" />
+          <CardTitle>Complete onboarding</CardTitle>
+        </div>
+        <CardDescription className="text-sm">
+          {`You've just got a couple more steps left to start plunging`}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pb-2"></CardContent>
+      <CardFooter className="pb-5">
+        <OnboardReturnBtn
+          className="w-full"
+          isNameSaved={isNameSaved}
+          isWaiverSigned={isWaiverSigned}
+        >
+          Return to onboarding
+        </OnboardReturnBtn>
+      </CardFooter>
+    </Card>
   );
 }

@@ -26,7 +26,6 @@ import {
 import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
 
 type TPlungePlansSection = {
-  isOnboarded: boolean;
   isMember: boolean;
   stripeCustomerId: string;
   memberPeriodEnd?: Profile['memberPeriodEnd'];
@@ -38,7 +37,6 @@ type TPlungePlansSection = {
 };
 
 export default function PlungePlansSection({
-  isOnboarded,
   isMember,
   stripeCustomerId,
   memberPeriodEnd,
@@ -63,22 +61,17 @@ export default function PlungePlansSection({
     };
   }, []);
 
-  if (!isOnboarded) return null;
-
   if (memberPayFailed)
     return (
       <section>
         <H2 className="mb-3">Memberships</H2>
         <div className="space-y-3">
-          {/* <PlungeOption /> */}
           <ManageSubscriptionOption
             stripeCustomerId={stripeCustomerId}
             memberPayFailed={memberPayFailed}
             memberPeriodEnd={memberPeriodEnd}
             memberRenewing={memberRenewing}
           />
-          {/* <PackOption /> */}
-          {/* <SubscriptionOption /> */}
         </div>
       </section>
     );
@@ -159,9 +152,6 @@ function MembershipCard({
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-4">
-        {/* <p className="text-3xl font-semibold">
-          {sweat440MemberOption ? `$99` : `$149`}
-        </p> */}
         {sweat440MemberOption ? (
           <div className="flex gap-4 items-center">
             <div className="w-fit relative flex justify-center items-center">

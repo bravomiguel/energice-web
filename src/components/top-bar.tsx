@@ -69,7 +69,8 @@ export default function TopBar() {
             {isOnboardingRoute && (
               <>
                 <BackArrow label="Signin" handler={signOut} />
-                {!isConfirmPhoneRoute && <ProfileLink />}
+                {/* {!isConfirmPhoneRoute && <ProfileLink />} */}
+                <ProfileLink />
               </>
             )}
             {(isUnitRoute || isMemberConfirmRoute) && (

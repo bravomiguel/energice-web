@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 
 import H1 from '@/components/h1';
 import Subtitle from '@/components/subtitle';
-import { checkAuth, getProfileById } from '@/lib/server-utils';
+import { checkAuth, getOrCreateProfileById } from '@/lib/server-utils';
 import Sweat440Logo from '@/components/logos/sweat440-logo';
 import PartnerMemberForm from '@/components/forms/sweat440-member-form';
 import { Unit } from '@prisma/client';
@@ -24,7 +24,7 @@ export default async function Page({
   const extraCredit = params.extraCredit === 'true';
 
   const user = await checkAuth();
-  const profile = await getProfileById(user.id);
+  const profile = await getOrCreateProfileById(user.id);
 
   if (!!profile.sweat440MemberEmail && !extraCredit) redirect('/');
   if (profile.hasS440MemberCredit && extraCredit) redirect('/');

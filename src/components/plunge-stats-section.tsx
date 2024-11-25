@@ -3,17 +3,17 @@
 import { AiFillThunderbolt } from 'react-icons/ai';
 import { BsStopwatchFill } from 'react-icons/bs';
 import { FaPlay } from 'react-icons/fa6';
-import { IoArrowUndoSharp } from 'react-icons/io5';
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import H2 from './h2';
-import OnboardReturnBtn from './buttons/onboard-return-btn';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardHeader } from './ui/card';
+import {
+  Card,
+  CardContent,
+} from './ui/card';
 
 export default function PlungeStatsSection({
-  isOnboarded,
+  isOnboarded
 }: {
   isOnboarded: boolean;
 }) {
@@ -24,7 +24,7 @@ export default function PlungeStatsSection({
   } = usePlungeSessions();
 
   if (!isOnboarded) {
-    return <CompleteOnboardingAlert />;
+    return null;
   }
 
   if (plungeSessionsNum === 0) {
@@ -34,7 +34,7 @@ export default function PlungeStatsSection({
   return (
     <section>
       <H2 className="mb-3">Plunge Stats</H2>
-      <Card className='pt-5'>
+      <Card className="pt-5">
         <CardContent className="flex w-full justify-between">
           <StatCard
             stat={currentStreakDays}
@@ -129,21 +129,4 @@ function PlungeTimeStat({ stat }: { stat: number }) {
       </div>
     );
   }
-}
-
-function CompleteOnboardingAlert() {
-  return (
-    <Alert className="bg-indigo-100 text-zinc-700 pr-10 pt-5">
-      <IoArrowUndoSharp className="h-5 w-5 fill-indigo-800" />
-      <div className="space-y-3">
-        <AlertTitle>Complete onboarding</AlertTitle>
-        <AlertDescription>
-          {`You've just got a couple more steps left to start plunging`}
-        </AlertDescription>
-        <div className="flex flex-col w-full">
-          <OnboardReturnBtn>Return to onboarding</OnboardReturnBtn>
-        </div>
-      </div>
-    </Alert>
-  );
 }

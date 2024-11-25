@@ -169,7 +169,9 @@ export default function ESigBlock({ name }: { name?: Profile['name'] }) {
               if (response?.error) {
                 console.error({ error: response.error });
                 toast.error(response.error);
+                return;
               }
+              toast.success('Waiver signed successfully');
             });
           }}
         >

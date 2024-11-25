@@ -47,6 +47,9 @@ export async function middleware(request: NextRequest) {
   const isConfirmPhoneRoute =
     request.nextUrl.pathname.startsWith('/confirm-phone');
   const isProfileRoute = request.nextUrl.pathname.startsWith('/profile');
+  const isPartnerMembershipRoute = request.nextUrl.pathname.startsWith(
+    '/partner-membership',
+  );
 
   // console.log({ isSupabaseWhRoute });
 
@@ -70,7 +73,8 @@ export async function middleware(request: NextRequest) {
     isAuthenticated &&
     !isPhoneConfirmed &&
     !isConfirmPhoneRoute &&
-    !isProfileRoute
+    !isProfileRoute && 
+    !isPartnerMembershipRoute
   ) {
     return NextResponse.redirect(new URL('/confirm-phone', request.url));
   }

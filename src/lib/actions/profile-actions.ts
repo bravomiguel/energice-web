@@ -11,7 +11,7 @@ import {
   phoneOtpSchema,
   PartnerMemberSchema,
 } from '@/lib/validations';
-import { checkAuth, getProfileById } from '@/lib/server-utils';
+import { checkAuth, getOrCreateProfileById } from '@/lib/server-utils';
 import {
   TMemberDetailsForm,
   TPhoneOtpForm,
@@ -178,7 +178,7 @@ export async function addMemberDetails(data: TMemberDetailsForm) {
   }
 
   // update stripe customer name
-  const { stripeCustomerId } = await getProfileById(user.id);
+  const { stripeCustomerId } = await getOrCreateProfileById(user.id);
   const updateCustResp = await updateCustomerName({
     stripeCustomerId,
     name,
@@ -231,6 +231,7 @@ export async function createProfile() {
   if (!email) {
     signOut();
     redirect('/signin');
+    // return { data: null, error: 'Email not found.' };
   }
 
   // Create stripe customer id
@@ -239,29 +240,27 @@ export async function createProfile() {
   });
   if (!stripeCustomerId) {
     console.error('Error creating stripe customer id:', error);
-    return {
-      error: 'Failed to create profile',
-    };
+    return { data: null, error: 'Failed to create profile' };
   }
 
   // Grab deleted profile based on email, if it exists
-  let deletedProfile;
+  let profile;
   try {
-    deletedProfile = await prisma.profile.findUnique({
+    profile = await prisma.profile.findUnique({
       where: {
         email,
-        deleted: true,
+        // deleted: true,
       },
     });
   } catch (e) {
     console.error('Error checking for existing profile:', e);
-    return { error: 'Failed to create profile' };
+    return { data: null, error: 'Failed to create profile' };
   }
 
   // reinstate deleted profile if it exists (with new customer id)
-  if (deletedProfile) {
+  if (profile && profile.deleted) {
     try {
-      await prisma.profile.update({
+      const reinstatedProfile = await prisma.profile.update({
         where: {
           email,
         },
@@ -274,6 +273,8 @@ export async function createProfile() {
       });
 
       console.log('Profile reinstated successfully');
+
+      return { data: reinstatedProfile, error: null };
     } catch (e) {
       console.error('Error reinstating profile', e);
       return { error: 'Failed to create profile' };
@@ -281,9 +282,9 @@ export async function createProfile() {
   }
 
   // create new profile otherwise
-  if (!deletedProfile) {
+  if (!profile) {
     try {
-      await prisma.profile.create({
+      const newProfile = await prisma.profile.create({
         data: {
           id,
           email,
@@ -293,13 +294,16 @@ export async function createProfile() {
       });
 
       console.log('Profile created successfully');
+
+      return { data: newProfile, error: null };
     } catch (e) {
       console.error('Error creating profile:', e);
-      return { error: 'Failed to create profile' };
+      return { data: null, error: 'Failed to create profile' };
     }
   }
 
-  return { message: 'Profile created successfully' };
+  // return profile if it already exists and is active
+  return { data: profile, error: null };
 }
 
 export async function deleteProfile() {
@@ -337,6 +341,7 @@ export async function deleteProfile() {
         memberPeriodEnd: null,
         memberRenewing: null,
         sweat440MemberEmail: null,
+        hasS440MemberCredit: false,
         deleted: true,
         deletedAt: new Date(),
       },

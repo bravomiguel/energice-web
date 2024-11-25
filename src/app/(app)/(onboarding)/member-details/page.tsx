@@ -3,11 +3,11 @@ import { redirect } from 'next/navigation';
 import H1 from '@/components/h1';
 import MemberDetailsForm from '@/components/forms/member-details-form';
 import Subtitle from '@/components/subtitle';
-import { checkAuth, getProfileById } from '@/lib/server-utils';
+import { checkAuth, getOrCreateProfileById } from '@/lib/server-utils';
 
 export default async function Page() {
   const user = await checkAuth();
-  const profile = await getProfileById(user.id);
+  const profile = await getOrCreateProfileById(user.id);
 
   if (profile?.isWaiverSigned) redirect('/');
   if (profile?.name) redirect('/waiver');

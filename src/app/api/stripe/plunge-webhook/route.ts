@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     return Response.json(null, { status: 400 });
   }
 
-  console.log({sessionId: event.data.object.metadata.session_id});
+  console.log({ sessionId: event.data.object.metadata.session_id });
 
   // reflect payment in db
   if (event.type === 'checkout.session.completed') {

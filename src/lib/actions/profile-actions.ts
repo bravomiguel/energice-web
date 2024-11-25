@@ -435,7 +435,7 @@ export async function confirmPartnerMembership(data: {
   }
 
   if (singlePlunge) {
-    redirect(`/unit/${unitId}`);
+    redirect(`/unit/${unitId}?sweat440Member=true`);
   }
 
   if (unlimitedMembership) {

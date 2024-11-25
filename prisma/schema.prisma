@@ -27,8 +27,6 @@ model Profile {
   memberPayFailed     Boolean?
   memberPeriodEnd     DateTime?
   memberRenewing      Boolean?
-  // memberTrial      Boolean?
-  // memberTrialEnd   DateTime?
   sessions            Session[]
   deleted             Boolean   @default(false)
   deletedAt           DateTime?
@@ -71,3 +69,9 @@ model Unit {
 model Sweat440Member {
   email String @id
 }
+
+// model Price {
+//   id                 String @id
+//   code               String
+//   pricePerUnit       Int
+// }

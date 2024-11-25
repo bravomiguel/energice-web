@@ -1,4 +1,4 @@
-import { unstable_noStore as noStore } from 'next/cache';
+// import { unstable_noStore as noStore } from 'next/cache';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { IoLocationOutline } from 'react-icons/io5';
@@ -20,10 +20,13 @@ import { cn } from '@/lib/utils';
 
 export default async function Page({
   params: { unitId },
+  searchParams,
 }: {
   params: { unitId: Unit['id'] };
+  searchParams: Promise<{ sweat440Member?: string }>;
 }) {
-  noStore();
+  const params = await searchParams;
+  const sweat440MemberOption = params.sweat440Member === 'true';
 
   // auth check
   const user = await checkAuth();
@@ -75,26 +78,9 @@ export default async function Page({
         unitId={unitId}
         freeCredits={profile.freeCredits}
         isMember={profile.isMember}
+        sweat440MemberOption={sweat440MemberOption}
       />
     </main>
-  );
-}
-
-function PlungeStatus({
-  unitStatus,
-}: {
-  unitStatus: 'Offline' | 'In use' | 'Ready';
-}) {
-  return (
-    <div className="flex gap-1.5 ml-0.5 -mt-2 items-center -translate-y-0.5">
-      <div
-        className={cn('h-2.5 w-2.5 rounded-full bg-green-400', {
-          'bg-zinc-400': unitStatus === 'Offline',
-          'bg-amber-400': unitStatus === 'In use',
-        })}
-      ></div>
-      <p className="text-xs font-medium text-zinc-500">{unitStatus}</p>
-    </div>
   );
 }
 

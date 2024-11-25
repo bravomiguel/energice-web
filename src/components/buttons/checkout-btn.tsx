@@ -44,7 +44,7 @@ export default function CheckoutBtn({
   return (
     <Button
       className={cn(className)}
-      onClick={async () => await createSubscriptionCheckout()}
+      onClick={createSubscriptionCheckout}
       disabled={isPending}
       isLoading={isPending}
       variant={variant}

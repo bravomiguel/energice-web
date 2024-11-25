@@ -33,7 +33,7 @@ export default function PartnerMemberForm({
   const {
     register,
     handleSubmit,
-    formState: { errors, isValid, isSubmitting, isSubmitSuccessful },
+    formState: { errors, isValid, isSubmitting },
   } = useForm<TPartnerMemberForm>({
     resolver: zodResolver(PartnerMemberSchema),
     mode: 'onBlur',
@@ -52,16 +52,16 @@ export default function PartnerMemberForm({
       return;
     }
     if (singlePlunge) {
-      toast.success('Unlocked SWEAT440 member pricing!');
+      toast.success('SWEAT440 membership confirmed');
     } else if (unlimitedMembership) {
-      toast.success('Unlocked SWEAT440 member pricing!');
+      toast.success('SWEAT440 membership confirmed');
       setRedirectingToCheckout(() => true);
-      await sleep(1500);
-      await subscriptionCheckoutSession();
+      await sleep(1000);
+      await subscriptionCheckoutSession({ sweat440MemberOption: true });
     } else if (extraCredit) {
-      toast.success('Extra credit added!');
+      toast.success('Extra credit added');
     } else {
-      toast.success('SWEAT440 membership confirmed!');
+      toast.success('SWEAT440 membership confirmed');
     }
   });
 

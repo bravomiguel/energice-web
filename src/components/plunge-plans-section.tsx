@@ -141,7 +141,9 @@ function MembershipCard({
           className="bg-cyan-700 hover:bg-cyan-700/90 w-full"
           sweat440MemberOption={sweat440MemberOption}
           isSweat440Member={isSweat440Member}
-          checkoutAction={subscriptionCheckoutSession}
+          checkoutAction={async () =>
+            subscriptionCheckoutSession({ sweat440MemberOption })
+          }
         >
           Get unlimited
         </CheckoutBtn>

@@ -44,10 +44,12 @@ export default function UnitDetails({
   unitId,
   freeCredits,
   isMember,
+  sweat440MemberOption,
 }: {
   unitId: string;
   freeCredits: number;
   isMember: boolean;
+  sweat440MemberOption: boolean;
 }) {
   const [plungeTimerVals, setPlungeTimerVals] = useState({
     mins: '01',
@@ -124,6 +126,7 @@ export default function UnitDetails({
           const respCheckout = await plungeCheckoutSession({
             unitId,
             sessionId,
+            sweat440MemberOption,
           });
           if (respCheckout?.error) {
             console.error({ error: respCheckout.error });
@@ -207,7 +210,7 @@ export default function UnitDetails({
                 `${freeCredits} credit${freeCredits > 1 ? 's' : ''}`}
             </span>
           ) : (
-            <span className="text-3xl font-bold">$25</span>
+            <span className="text-3xl font-bold">{sweat440MemberOption ? `$20` : `$25`}</span>
           )}
           <Button
             disabled={!isValid || isPending}

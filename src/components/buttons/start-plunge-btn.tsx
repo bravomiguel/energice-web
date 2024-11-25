@@ -31,7 +31,12 @@ export default function StartPlungeBtn({
         router.push(`/partner-membership/${unitId}?singlePlunge=true`);
         return;
       }
-      router.push(`/unit/${unitId}`);
+
+      if (sweat440MemberOption) {
+        router.push(`/unit/${unitId}?sweat440Member=true`);
+      } else {
+        router.push(`/unit/${unitId}`);
+      }
     });
   };
 

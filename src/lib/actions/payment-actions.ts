@@ -12,6 +12,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 export async function plungeCheckoutSession(data: {
   unitId: Unit['id'];
   sessionId: Session['id'];
+  sweat440MemberOption: boolean;
 }) {
   const user = await checkAuth();
 
@@ -20,6 +21,7 @@ export async function plungeCheckoutSession(data: {
     .object({
       unitId: z.string().trim().min(1),
       sessionId: z.string().trim().min(1),
+      sweat440MemberOption: z.boolean(),
     })
     .safeParse(data);
 
@@ -29,7 +31,7 @@ export async function plungeCheckoutSession(data: {
     };
   }
 
-  const { unitId, sessionId } = validatedData.data;
+  const { unitId, sessionId, sweat440MemberOption } = validatedData.data;
 
   const origin = (await headers()).get('origin');
 
@@ -43,7 +45,7 @@ export async function plungeCheckoutSession(data: {
       // customer_email: user.email,
       line_items: [
         {
-          price: process.env.PLUNGE_PRICE_ID_NONMEMBERS,
+          price: sweat440MemberOption ? process.env.PLUNGE_PRICE_ID_MEMBER : process.env.PLUNGE_PRICE_ID_NONMEMBER,
           quantity: 1,
           tax_rates: [process.env.TAX_RATE_ID],
         },
@@ -51,7 +53,7 @@ export async function plungeCheckoutSession(data: {
       mode: 'payment',
       // allow_promotion_codes: true,
       success_url: `${origin}/session/${sessionId}/unlock`,
-      cancel_url: `${origin}/unit/${unitId}`,
+      cancel_url: sweat440MemberOption ? `${origin}/unit/${unitId}?sweat440Member=true` : `${origin}/unit/${unitId}`,
       metadata: {
         session_id: sessionId,
       },
@@ -67,8 +69,25 @@ export async function plungeCheckoutSession(data: {
   redirect(checkoutSession.url);
 }
 
-export async function subscriptionCheckoutSession() {
+export async function subscriptionCheckoutSession(data: {
+  sweat440MemberOption: boolean;
+}) {
   const user = await checkAuth();
+
+  // validation check
+  const validatedData = z
+    .object({
+      sweat440MemberOption: z.boolean(),
+    })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { sweat440MemberOption } = validatedData.data;
 
   const profile = await getProfileById(user.id);
 
@@ -84,9 +103,18 @@ export async function subscriptionCheckoutSession() {
       customer: profile.stripeCustomerId,
       line_items: [
         {
-          price: process.env.SUBSCRIPTION_PRICE_ID_NONMEMBERS,
+          price: sweat440MemberOption
+            ? process.env.SUBSCRIPTION_PRICE_ID_MEMBER
+            : process.env.SUBSCRIPTION_PRICE_ID_NONMEMBER,
           quantity: 1,
           tax_rates: [process.env.TAX_RATE_ID],
+        },
+      ],
+      discounts: [
+        {
+          coupon: sweat440MemberOption
+            ? process.env.COUPON_FOUNDING_MEMBER
+            : process.env.COUPON_SPECIAL_DEC_NONMEMBER,
         },
       ],
       success_url: `${origin}/`,

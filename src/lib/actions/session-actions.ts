@@ -6,7 +6,7 @@ import { Session, Unit } from '@prisma/client';
 
 import prisma from '@/lib/db';
 import { plungeTimerSecsSchema } from '@/lib/validations';
-import { checkAuth, getSessionById } from '@/lib/server-utils';
+import { checkAuth, getProfileById, getSessionById } from '@/lib/server-utils';
 
 export async function createSession(data: {
   unitId: Unit['id'];
@@ -85,19 +85,41 @@ export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
     };
   }
 
-  // decrement free credits balance by 1.
-  try {
-    await prisma.profile.update({
-      where: { id: user.id },
-      data: {
-        freeCredits: { decrement: 1 },
-      },
-    });
-  } catch (e) {
-    console.error(e);
-    return {
-      error: 'Failed to apply free credit.',
-    };
+  // check how many free credits left
+  const profile = await getProfileById(user.id);
+
+  if (profile.freeCredits > 0) {
+    // decrement free credits balance by 1.
+    try {
+      await prisma.profile.update({
+        where: { id: user.id },
+        data: {
+          freeCredits: { decrement: 1 },
+        },
+      });
+    } catch (e) {
+      console.error(e);
+      return {
+        error: 'Failed to apply free credit.',
+      };
+    }
+  }
+
+  if (profile.freeCredits === 0) {
+    // set extra credit to false
+    try {
+      await prisma.profile.update({
+        where: { id: user.id },
+        data: {
+          hasS440MemberCredit: false,
+        },
+      });
+    } catch (e) {
+      console.error(e);
+      return {
+        error: 'Failed to apply free credit.',
+      };
+    }
   }
 
   // mark session with free credit flag

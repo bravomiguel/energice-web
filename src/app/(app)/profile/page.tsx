@@ -1,5 +1,4 @@
 import { unstable_noStore as noStore } from 'next/cache';
-import { redirect } from 'next/navigation';
 
 import DeleteAccountBtn from '@/components/buttons/delete-account-btn';
 import SignOutBtn from '@/components/buttons/sign-out-btn';
@@ -23,6 +22,9 @@ export default async function Page() {
   const profile = await getProfileById(user.id);
 
   const isSweat440Member = !!profile.sweat440MemberEmail;
+
+  const totalFreeCredits =
+    profile.freeCredits + Number(profile.hasS440MemberCredit);
 
   let isOnboarded = true;
   if (!profile.phone || !profile.name || !profile.isWaiverSigned) {
@@ -53,7 +55,7 @@ export default async function Page() {
 
         <StartPlungeSection
           isOnboarded={isOnboarded}
-          freeCredits={profile.freeCredits}
+          freeCredits={totalFreeCredits}
           isMember={profile.isMember}
           isSweat440Member={isSweat440Member}
         />
@@ -93,7 +95,7 @@ export default async function Page() {
           <DeleteAccountBtn />
         </section>
 
-        <FreeCreditModal freeCredits={profile.freeCredits} />
+        {/* <FreeCreditModal freeCredits={profile.freeCredits} /> */}
       </main>
       <footer className="flex flex-col gap-1 items-center border-t-2 border-zinc-200 pt-4 pb-8 mt-8">
         <Subtitle className="text-zinc-700">Logged in as</Subtitle>

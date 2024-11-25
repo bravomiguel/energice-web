@@ -264,7 +264,7 @@ function ManageSubscriptionOption({
           {memberPeriodEnd && !memberPayFailed ? (
             <p className="flex gap-1 w-full justify-end items-center text-sm">
               <span className="font-semibold">
-                {memberRenewing ? `Renews on ` : `Cancels on `}
+                {memberRenewing ? `Renews on ` : `Canceled. Expires on `}
                 {memberPeriodEnd.toLocaleDateString('en-US', {
                   month: 'short',
                   day: '2-digit',

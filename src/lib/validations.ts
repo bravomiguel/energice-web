@@ -7,7 +7,8 @@ export const signinSchema = z.object({
     .string()
     .trim()
     .email({ message: 'Not a valid email' })
-    .min(1, { message: 'Email is required' }),
+    .min(1, { message: 'Email is required' })
+    .transform((val) => val.toLowerCase()),
 });
 
 export const phoneOtpSchema = z.object({
@@ -93,7 +94,8 @@ export const PartnerMemberSchema = z.object({
     .string()
     .trim()
     .email({ message: 'Not a valid email' })
-    .min(1, { message: 'Email is required' }),
+    .min(1, { message: 'Email is required' })
+    .transform((val) => val.toLowerCase()),
 });
 
 export const plungeTimerSecsSchema = z.union([

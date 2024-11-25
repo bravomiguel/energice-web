@@ -29,7 +29,7 @@ export async function signinWithEmail(data: TSigninForm) {
   const origin = (await headers()).get('origin');
 
   const { error } = await supabase.auth.signInWithOtp({
-    email,
+    email: email.toLowerCase(),
     options: {
       emailRedirectTo: `${origin}/api/auth/email-callback`,
     },

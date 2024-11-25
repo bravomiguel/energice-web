@@ -22,11 +22,8 @@ import { signOut } from './auth-actions';
 import {
   createCustomer,
   deleteCustomer,
-  subscriptionCheckoutSession,
   updateCustomerName,
 } from './payment-actions';
-
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export async function sendPhoneOtp(data: Pick<TPhoneOtpForm, 'phone'>) {
   // data validation check
@@ -68,7 +65,7 @@ export async function sendPhoneOtp(data: Pick<TPhoneOtpForm, 'phone'>) {
   // console.log({ profileEmail: profile?.email });
   // console.log({ userEmail: user.email });
 
-  if (profile && profile.email !== user.email) {
+  if (profile && profile.email.toLowerCase() !== user.email?.toLowerCase()) {
     console.error('Phone is registered to a different account.');
     return {
       error: 'This phone is registered to a different account.',
@@ -397,7 +394,9 @@ export async function confirmPartnerMembership(data: {
   // check if provided email already assigned
   let isMembershipAssigned;
   try {
-    const profile = await prisma.profile.findFirst({ where: { email } });
+    const profile = await prisma.profile.findFirst({
+      where: { email: email.toLowerCase() },
+    });
     isMembershipAssigned = !!profile?.sweat440MemberEmail;
   } catch (e) {
     console.error(e);
@@ -412,7 +411,7 @@ export async function confirmPartnerMembership(data: {
   let sweat440Email;
   try {
     sweat440Email = await prisma.sweat440Member.findUnique({
-      where: { email },
+      where: { email: email.toLowerCase() },
     });
   } catch (e) {
     console.error(e);
@@ -427,7 +426,7 @@ export async function confirmPartnerMembership(data: {
   try {
     await prisma.profile.update({
       where: { id: user.id },
-      data: { sweat440MemberEmail: email, hasS440MemberCredit: true },
+      data: { sweat440MemberEmail: email.toLowerCase(), hasS440MemberCredit: true },
     });
   } catch (e) {
     console.error(e);

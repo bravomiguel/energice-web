@@ -70,7 +70,7 @@ function ExtraCreditCard() {
           disabled={isPending}
           isLoading={isPending}
         >
-          Get extra credit
+          Claim credit
         </Button>
       </CardFooter>
     </Card>

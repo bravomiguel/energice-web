@@ -15,6 +15,7 @@ import {
 } from './ui/card';
 import { Carousel, CarouselContent, CarouselItem } from './ui/carousel';
 import { Infinity, Tickets } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export default function StartPlungeSection({
   isOnboarded,
@@ -138,16 +139,20 @@ function StartNewPlungeCard({
       <CardFooter className="pb-5">
         <div className="flex flex-col w-full gap-3">
           <StartPlungeBtn className="w-full">Start session</StartPlungeBtn>
-          {isMember ? (
-            <div className="font-semibold text-end text-sm">
-              <div className="flex gap-2 items-center justify-end">
-                <p>Unlimited access</p>
+          <div
+            className={cn(
+              'font-semibold text-sm flex items-center justify-between w-full',
+              { 'justify-end': freeCredits > 0 && !isMember },
+            )}
+          >
+            {isMember && (
+              <div className="flex gap-2 items-center">
+                <p>Unlimited</p>
                 <Infinity className="h-5 w-5" />
               </div>
-            </div>
-          ) : freeCredits > 0 ? (
-            <div className="font-semibold text-end text-sm">
-              <div className="flex gap-2 items-center justify-end">
+            )}
+            {freeCredits > 0 && (
+              <div className="flex gap-2 items-center">
                 <p>
                   {freeCredits === 1
                     ? `1 free credit`
@@ -155,8 +160,8 @@ function StartNewPlungeCard({
                 </p>
                 <Tickets className="h-5 w-5" />
               </div>
-            </div>
-          ) : null}
+            )}
+          </div>
         </div>
       </CardFooter>
     </Card>

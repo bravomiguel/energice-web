@@ -118,7 +118,7 @@ export async function subscriptionCheckoutSession(data: {
         {
           coupon: sweat440MemberOption
             ? process.env.COUPON_FOUNDING_MEMBER
-            : process.env.COUPON_SPECIAL_DEC_NONMEMBER,
+            : process.env.COUPON_EARLY_BIRD_NONMEMBER,
         },
       ],
       success_url: `${origin}/profile?success=true`,

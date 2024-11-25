@@ -78,7 +78,7 @@ export default function PhoneOtpForm({ isOtpSent }: { isOtpSent: boolean }) {
       form.setValue('token', '');
       return;
     }
-    toast.success('Phone confirmed!');
+    toast.success('Phone confirmed');
   };
 
   useEffect(() => {

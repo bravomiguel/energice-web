@@ -24,8 +24,12 @@ import {
 } from '@/components/ui/card';
 import { IoArrowUndoSharp } from 'react-icons/io5';
 import OnboardReturnBtn from '@/components/buttons/onboard-return-btn';
+import Image from 'next/image';
+import { BsFillBox2HeartFill } from 'react-icons/bs';
+import { BsLightningChargeFill } from 'react-icons/bs';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const prelaunchView = process.env.PRELAUNCH_VIEW;
 
 export default async function Page({
   searchParams,
@@ -84,6 +88,13 @@ export default async function Page({
           )}
         </div>
 
+        {prelaunchView && (
+          <section className="space-y-4">
+            <H2 className="mb-3">Coming Soon</H2>
+            <ComingSoonCard />
+          </section>
+        )}
+
         {!isOnboarded && (
           <section className="space-y-4">
             <H2 className="mb-3">Onboarding</H2>
@@ -96,12 +107,14 @@ export default async function Page({
 
         <PlungeStatsSection isOnboarded={isOnboarded} />
 
-        <StartPlungeSection
-          isOnboarded={isOnboarded}
-          freeCredits={totalFreeCredits}
-          isMember={profile.isMember}
-          isSweat440Member={isSweat440Member}
-        />
+        {!prelaunchView && (
+          <StartPlungeSection
+            isOnboarded={isOnboarded}
+            freeCredits={totalFreeCredits}
+            isMember={profile.isMember}
+            isSweat440Member={isSweat440Member}
+          />
+        )}
 
         <PlungePlansSection
           // isOnboarded={isOnboarded}
@@ -115,10 +128,12 @@ export default async function Page({
           subscriptionSuccess={subscriptionSuccess}
         />
 
-        <PlungeOffersSection
-          isOnboarded={isOnboarded}
-          hasSweat440MemberCredit={profile.hasS440MemberCredit}
-        />
+        {!prelaunchView && (
+          <PlungeOffersSection
+            isOnboarded={isOnboarded}
+            hasSweat440MemberCredit={profile.hasS440MemberCredit}
+          />
+        )}
 
         <Sweat440MembershipSection
           isOnboarded={isOnboarded}
@@ -150,6 +165,41 @@ export default async function Page({
   );
 }
 
+function ComingSoonCard() {
+  return (
+    <Card className="w-full relative overflow-hidden bg-zinc-50">
+      <CardHeader className="py-5">
+        <div className="flex gap-2 items-center">
+          <BsLightningChargeFill className="h-5 w-5 fill-indigo-800" />
+          <CardTitle>The Ultimate Recovery Experience </CardTitle>
+        </div>
+        <CardDescription className="text-sm">
+          {`Landing at SWEAT440 Austin Highland on Dec 1st`}
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pb-2 space-y-5">
+        <div className="w-full h-[24vh] rounded-lg overflow-hidden flex justify-center items-center bg-zinc-200">
+          <Image
+            src={'/coming-soon.png'}
+            alt="cold plunge image"
+            width={300}
+            height={50}
+            className="w-full"
+            priority={true}
+          />
+        </div>
+        <div className="flex gap-2">
+          <BsFillBox2HeartFill className="h-5 w-5 fill-indigo-700" />
+          <p className="text-sm">
+            <span className="font-semibold">Launch Promo:</span> Free unlimited
+            plunges from Dec 1st - 7th!
+          </p>
+        </div>
+      </CardContent>
+      <CardFooter className="pb-5"></CardFooter>
+    </Card>
+  );
+}
 function CompleteOnboardingCard({
   isNameSaved,
   isWaiverSigned,

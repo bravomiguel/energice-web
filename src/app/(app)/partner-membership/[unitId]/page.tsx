@@ -36,8 +36,10 @@ export default async function Page({
         <H1>Confirm Membership</H1>
         <Subtitle>
           Enter your membership email for SWEAT440 Austin Highland
-          {singlePlunge || unlimitedMembership
+          {singlePlunge
             ? ', to unlock member pricing'
+            : unlimitedMembership
+            ? ', to unlock the Founding Member deal'
             : extraCredit
             ? ', to claim your extra credit'
             : null}

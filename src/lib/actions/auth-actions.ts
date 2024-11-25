@@ -15,7 +15,7 @@ import { deleteProfile } from './profile-actions';
 export async function signinWithEmail(
   data: TSigninForm & { prelaunchCheckout: boolean },
 ) {
-  console.log({ data });
+  // console.log({ data });
   // validation check
   const validatedData = signinSchema
     .extend({ prelaunchCheckout: z.boolean() })
@@ -57,15 +57,30 @@ export async function signinWithEmail(
   );
 }
 
-export async function signinWithGoogle() {
+export async function signinWithGoogle(data: { prelaunchCheckout: boolean }) {
+  const validatedData = z
+    .object({ prelaunchCheckout: z.boolean() })
+    .safeParse(data);
+
+  if (!validatedData.success) {
+    console.error(validatedData.error.message);
+    return {
+      error: validatedData.error.issues[0].message,
+    };
+  }
+
+  const { prelaunchCheckout } = validatedData.data;
+
   const origin = (await headers()).get('origin');
 
   const supabase = await createServerClient();
 
-  const { data, error } = await supabase.auth.signInWithOAuth({
+  const { data: dataOAuth, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${origin}/api/auth/google-callback`,
+      redirectTo: prelaunchCheckout
+        ? `${origin}/api/auth/google-callback?prelaunchCheckout=true`
+        : `${origin}/api/auth/google-callback`,
     },
   });
 
@@ -76,8 +91,8 @@ export async function signinWithGoogle() {
     };
   }
 
-  if (data.url) {
-    redirect(data.url); // use the redirect API for your server framework
+  if (dataOAuth.url) {
+    redirect(dataOAuth.url); // use the redirect API for your server framework
   }
 }
 

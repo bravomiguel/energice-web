@@ -35,7 +35,7 @@ export default function SigninForm({
 
   const handleGoogleSignin = async () => {
     startTransition(async () => {
-      const response = await signinWithGoogle();
+      const response = await signinWithGoogle({ prelaunchCheckout });
       if (response?.error) {
         console.error({ error: response.error });
         setGoogleSigninError(response.error);
@@ -46,7 +46,7 @@ export default function SigninForm({
 
   const onSubmit = handleSubmit(async (data) => {
     // console.log({...data, prelaunchCheckout});
-    const response = await signinWithEmail({...data, prelaunchCheckout});
+    const response = await signinWithEmail({ ...data, prelaunchCheckout });
     if (response?.error) {
       console.error({ error: response.error });
       setSignupError(response.error);

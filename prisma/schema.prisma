@@ -68,10 +68,5 @@ model Unit {
 
 model Sweat440Member {
   email String @id
+  name  String?
 }
-
-// model Price {
-//   id                 String @id
-//   code               String
-//   pricePerUnit       Int
-// }

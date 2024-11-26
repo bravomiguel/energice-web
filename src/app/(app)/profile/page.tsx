@@ -180,7 +180,7 @@ function ComingSoonCard() {
           <CardTitle>The Ultimate Recovery Experience </CardTitle>
         </div>
         <CardDescription className="text-sm">
-          {`Landing at SWEAT440 Austin Highland on Dec 1st`}
+          Landing at SWEAT440 Austin Highland <br /> on Dec 1st
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-2 space-y-5">

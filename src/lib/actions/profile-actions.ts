@@ -415,18 +415,18 @@ export async function confirmPartnerMembership(data: {
   }
 
   // check if provided email is in sweat400 member email list
-  let sweat440Email;
+  let sweat440Member;
   try {
-    const sweat440Member = await prisma.sweat440Member.findUnique({
+    sweat440Member = await prisma.sweat440Member.findUnique({
       where: { email: email.toLowerCase() },
     });
-    sweat440Email = sweat440Member?.email;
   } catch (e) {
     console.error(e);
     return { error: 'Lookup error, please try again.' };
   }
 
-  if (!sweat440Email) {
+  if (!sweat440Member?.email) {
+    console.log({ sweat440Member });
     return { error: 'No member found with this email' };
   }
 

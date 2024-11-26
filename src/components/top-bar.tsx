@@ -75,7 +75,7 @@ export default function TopBar() {
             )}
             {(isUnitRoute || isMemberConfirmRoute) && (
               <>
-                <BackArrow href="/" isLink />
+                <BackArrow href="/profile" isLink />
               </>
             )}
           </>

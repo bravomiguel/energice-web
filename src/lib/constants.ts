@@ -76,13 +76,13 @@ export const HOW_IT_WORKS_ARRAY: {
         ? `/explainer-videos/how-it-works-4.mp4`
         : `${GCLOUD_BASE_URL}/explainer-videos/how-it-works-4.mp4`,
   },
-  {
-    message: `Give the plunge a quick skim and close the lid. You did it!`,
-    url:
-      process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
-        ? `/explainer-videos/how-it-works-5.mp4`
-        : `${GCLOUD_BASE_URL}/explainer-videos/how-it-works-5.mp4`,
-  },
+  // {
+  //   message: `Give the plunge a quick skim and close the lid. You did it!`,
+  //   url:
+  //     process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
+  //       ? `/explainer-videos/how-it-works-5.mp4`
+  //       : `${GCLOUD_BASE_URL}/explainer-videos/how-it-works-5.mp4`,
+  // },
 ];
 
 export const PLUNGE_TIPS_ARRAY: {

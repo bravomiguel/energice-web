@@ -50,7 +50,7 @@ export default function PlungePlansSection({
     let timerId: NodeJS.Timeout;
     if (subscriptionSuccess) {
       timerId = setTimeout(() => {
-        toast.success(`You've subscribed to Energice Unlimited!`);
+        toast.success(`You're an Energice Unlimited Member!`);
       });
     }
 

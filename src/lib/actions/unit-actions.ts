@@ -190,7 +190,7 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
     process.env.PREVIEW_ENV === 'preview' ||
     process.env.PREVIEW_ENV === 'preview-pay'
   ) {
-    await sleep(8000);
+    await sleep(4000);
     return;
   } else if (
     process.env.VERCEL_ENV === 'production' ||
@@ -208,20 +208,25 @@ export async function unlockAction(data: { unitId: Unit['id'] }) {
         },
       );
 
+      // console.log({ actionResponse });
+
       await seam.actionAttempts.get({
         action_attempt_id: actionResponse.action_attempt_id,
       });
     } catch (e) {
       if (isSeamActionAttemptFailedError(e)) {
+        console.error(e);
         return {
           error: 'Unlocking unsuccessful, try again',
         };
       }
       if (isSeamActionAttemptTimeoutError(e)) {
+        console.error(e);
         return {
           error: 'Locking took too long',
         };
       }
+      console.error('Unlocking unsuccessful, for unknown reason');
       return {
         error: 'Unlocking unsuccessful, please try again',
       };

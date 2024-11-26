@@ -34,7 +34,7 @@ import { cn } from '@/lib/utils';
 import { Infinity, Tickets } from 'lucide-react';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const prelaunchView = process.env.PRELAUNCH_VIEW;
+const prelaunchView = process.env.PRELAUNCH_VIEW === 'true';
 
 export default async function Page({
   searchParams,
@@ -274,7 +274,7 @@ function StartNewPlungeCard({
       <CardContent className="pb-2"></CardContent>
       <CardFooter className="pb-5">
         <div className="flex flex-col w-full gap-3">
-          <Button className="w-full bg-zinc-400/50 hover:bg-zinc-400/50 cursor-not-allowed">
+          <Button className="w-full text-zinc-200 bg-zinc-400/50 hover:bg-zinc-400/50 cursor-not-allowed">
             Start on Dec 1st
           </Button>
           <div

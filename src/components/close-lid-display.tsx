@@ -18,6 +18,7 @@ import BottomNav from './bottom-nav';
 import { Button } from './ui/button';
 import { usePlungeSessions } from '@/contexts/sessions-context-provider';
 import { GCLOUD_BASE_URL } from '@/lib/constants';
+import Image from 'next/image';
 
 // const GDRIVE_BASE_URL = `https://drive.usercontent.google.com/download`;
 const SUPABASE_BASE_URL = `https://yzswukrjljsdoupmonyl.supabase.co/storage/v1/object/public`;
@@ -71,33 +72,22 @@ export default function CloseLidDisplay({
 
   return (
     <>
-      <div className="flex-1 h-full flex flex-col justify-center items-center gap-6 -translate-y-[10%] w-[300px] mx-auto">
+      <div className="flex-1 w-full h-full flex flex-col justify-center items-center gap-6 -translate-y-[10%]">
         <IoWarningOutline className="h-16 w-16 text-red-500" />
-        <Subtitle className="text-2xl text-zinc-600 font-normal text-center">
-          Please give the plunge a quick skim
-        </Subtitle>
-        <div className="h-[210px] w-[300px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
-          <ReactPlayer
-            url={
-              process.env.NEXT_PUBLIC_VERCEL_ENV === 'development'
-                ? `/explainer-videos/how-it-works-5.mp4`
-                : `${GCLOUD_BASE_URL}/explainer-videos/how-it-works-5.mp4`
-            }
-            playing
-            playsinline
-            // controls
-            loop
-            muted
-            width={300}
-            height={300}
-          />
-        </div>
         <Subtitle className="text-3xl text-zinc-900 font-medium flex flex-col gap-3 items-center">
-          {`and close the lid in`}
+          {`Close the lid in`}
           <span className="w-24 flex justify-start items-center text-red-500">
             {formatSecsToMins(closeSecsLeft)}
           </span>
         </Subtitle>
+        <div className="w-[300px] h-[210px] rounded-lg overflow-hidden flex justify-center items-center bg-gray-200 shadow-md">
+          <Image
+            src="/koldup_plunge.jpeg"
+            alt="cold plunge open image"
+            width={300}
+            height={50}
+          />
+        </div>
       </div>
       <BottomNav>
         <Button

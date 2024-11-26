@@ -39,6 +39,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from './ui/accordion';
+import StartSessionBtn from './buttons/start-session-btn';
+import { Infinity } from 'lucide-react';
 
 export default function UnitDetails({
   unitId,
@@ -201,7 +203,7 @@ export default function UnitDetails({
       <BottomNav className="gap-1 pt-2 pb-3">
         <div className="flex flex-row w-full gap-4 items-center">
           {isMember ? (
-            <span className="text-lg font-bold w-fit text-center whitespace-nowrap">
+            <span className="text-base font-bold w-fit text-center whitespace-nowrap">
               Unlimited
             </span>
           ) : freeCredits > 0 ? (
@@ -214,16 +216,26 @@ export default function UnitDetails({
               {sweat440MemberOption ? `$20` : `$25`}
             </span>
           )}
-          <Button
-            disabled={!isValid || isPending}
-            isLoading={isPending}
-            className="w-full"
-            onClick={async () => {
-              startTransition(async () => await handleStartSession());
-            }}
-          >
-            Start session
-          </Button>
+          {isMember || freeCredits > 0 ? (
+            <StartSessionBtn
+              isValid={isValid}
+              handleStartSession={handleStartSession}
+              isPending={isPending}
+              isMember={isMember}
+              hasFreeCredit={freeCredits > 0}
+            />
+          ) : (
+            <Button
+              disabled={!isValid || isPending}
+              isLoading={isPending}
+              className="w-full"
+              onClick={async () => {
+                startTransition(async () => await handleStartSession());
+              }}
+            >
+              Start session
+            </Button>
+          )}
         </div>
         <PenaltyChargeWarning />
       </BottomNav>

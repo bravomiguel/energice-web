@@ -279,7 +279,7 @@ function StartNewPlungeCard({
           </Button>
           <div
             className={cn(
-              'font-semibold text-sm flex items-center justify-between w-full',
+              'font-semibold text-sm flex items-center justify-between w-full text-zinc-400/90',
               { 'justify-end': freeCredits > 0 && !isMember },
             )}
           >

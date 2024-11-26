@@ -404,7 +404,7 @@ export async function confirmPartnerMembership(data: {
     const profile = await prisma.profile.findFirst({
       where: { email: email.toLowerCase(), id: { not: user.id } },
     });
-    isMembershipAssigned = !!profile?.sweat440MemberEmail;
+    isMembershipAssigned = !profile?.sweat440MemberEmail;
   } catch (e) {
     console.error(e);
     return { error: 'Lookup error, please try again' };

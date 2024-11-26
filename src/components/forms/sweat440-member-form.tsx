@@ -36,7 +36,7 @@ export default function PartnerMemberForm({
     formState: { errors, isValid, isSubmitting },
   } = useForm<TPartnerMemberForm>({
     resolver: zodResolver(PartnerMemberSchema),
-    mode: 'onBlur',
+    mode: 'onChange',
   });
 
   const onSubmit = handleSubmit(async (data) => {

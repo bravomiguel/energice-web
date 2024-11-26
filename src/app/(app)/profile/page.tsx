@@ -27,6 +27,11 @@ import OnboardReturnBtn from '@/components/buttons/onboard-return-btn';
 import Image from 'next/image';
 import { BsFillBox2HeartFill } from 'react-icons/bs';
 import { BsLightningChargeFill } from 'react-icons/bs';
+import { RiWaterFlashFill } from 'react-icons/ri';
+import { Profile } from '@prisma/client';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Infinity, Tickets } from 'lucide-react';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const prelaunchView = process.env.PRELAUNCH_VIEW;
@@ -111,7 +116,7 @@ export default async function Page({
           </section>
         )}
 
-        <PlungeStatsSection isOnboarded={isOnboarded} />
+        {!prelaunchView && <PlungeStatsSection isOnboarded={isOnboarded} />}
 
         {!prelaunchView && (
           <StartPlungeSection
@@ -120,6 +125,16 @@ export default async function Page({
             isMember={profile.isMember}
             isSweat440Member={isSweat440Member}
           />
+        )}
+
+        {prelaunchView && isOnboarded && (
+          <section>
+            <H2 className="mb-3">Start Plunge</H2>
+            <StartNewPlungeCard
+              freeCredits={totalFreeCredits}
+              isMember={profile.isMember}
+            />
+          </section>
         )}
 
         <PlungePlansSection
@@ -184,7 +199,7 @@ function ComingSoonCard() {
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-2 space-y-5">
-        <div className="w-full h-[24vh] rounded-lg overflow-hidden flex justify-center items-center bg-zinc-200">
+        <div className="w-full h-52 rounded-lg overflow-hidden flex justify-center items-center bg-zinc-200">
           <Image
             src={'/coming-soon.png'}
             alt="cold plunge image"
@@ -233,6 +248,59 @@ function CompleteOnboardingCard({
         >
           Return to onboarding
         </OnboardReturnBtn>
+      </CardFooter>
+    </Card>
+  );
+}
+
+function StartNewPlungeCard({
+  freeCredits,
+  isMember,
+}: {
+  freeCredits: Profile['freeCredits'];
+  isMember: Profile['isMember'];
+}) {
+  return (
+    <Card className="w-full relative overflow-hidden bg-zinc-300/50">
+      <CardHeader className="pt-5 pb-3">
+        <div className="flex gap-2 items-center">
+          <RiWaterFlashFill className="h-5 w-5 fill-zinc-400/90" />
+          <CardTitle className="text-zinc-400/90">Plunge Session</CardTitle>
+        </div>
+        <CardDescription className="text-sm text-zinc-400">
+          Energice your life. Start plunging from Dec 1st!
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pb-2"></CardContent>
+      <CardFooter className="pb-5">
+        <div className="flex flex-col w-full gap-3">
+          <Button className="w-full bg-zinc-400/50 hover:bg-zinc-400/50 cursor-not-allowed">
+            Start on Dec 1st
+          </Button>
+          <div
+            className={cn(
+              'font-semibold text-sm flex items-center justify-between w-full',
+              { 'justify-end': freeCredits > 0 && !isMember },
+            )}
+          >
+            {isMember && (
+              <div className="flex gap-2 items-center">
+                <p>Unlimited</p>
+                <Infinity className="h-5 w-5" />
+              </div>
+            )}
+            {freeCredits > 0 && (
+              <div className="flex gap-2 items-center">
+                <p>
+                  {freeCredits === 1
+                    ? `1 free credit`
+                    : `${freeCredits} free credits`}
+                </p>
+                <Tickets className="h-5 w-5" />
+              </div>
+            )}
+          </div>
+        </div>
       </CardFooter>
     </Card>
   );

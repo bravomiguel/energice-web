@@ -78,13 +78,19 @@ export default async function Page({
               <Subtitle>{`Let's get you feeling great 🚀`}</Subtitle>
               {isSweat440Member && (
                 <Badge className="w-fit mt-1 bg-indigo-900 hover:bg-indigo-900/90 uppercase flex gap-1">
-                  {/* <Sweat440ShieldWhite className="h-4 w-4" /> */}
                   SWEAT440 Member
                 </Badge>
               )}
             </>
           ) : (
-            <H1>{`Let's get you feeling great 🚀`}</H1>
+            <div className="flex flex-col gap-3">
+              <H1>{`Let's get you feeling great 🚀`}</H1>
+              {isSweat440Member && (
+                <Badge className="w-fit mt-1 bg-indigo-900 hover:bg-indigo-900/90 uppercase flex gap-1">
+                  SWEAT440 Member
+                </Badge>
+              )}
+            </div>
           )}
         </div>
 

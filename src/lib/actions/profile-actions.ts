@@ -417,9 +417,10 @@ export async function confirmPartnerMembership(data: {
   // check if provided email is in sweat400 member email list
   let sweat440Email;
   try {
-    sweat440Email = await prisma.sweat440Member.findUnique({
+    const sweat440Member = await prisma.sweat440Member.findUnique({
       where: { email: email.toLowerCase() },
     });
+    sweat440Email = sweat440Member?.email;
   } catch (e) {
     console.error(e);
     return { error: 'Lookup error, please try again.' };

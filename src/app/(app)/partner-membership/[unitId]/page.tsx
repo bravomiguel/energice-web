@@ -39,7 +39,7 @@ export default async function Page({
           {singlePlunge
             ? ', to unlock member pricing'
             : unlimitedMembership
-            ? ', to unlock the Founding Member deal'
+            ? ', to access the Founding Member deal'
             : extraCredit
             ? ', to claim your extra credit'
             : null}

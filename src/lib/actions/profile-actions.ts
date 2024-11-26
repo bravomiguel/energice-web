@@ -399,19 +399,17 @@ export async function confirmPartnerMembership(data: {
     validatedData.data;
 
   // check if provided email already assigned to another account
-  let isMembershipAssigned;
   try {
-    const profile = await prisma.profile.findFirst({
-      where: { email: email.toLowerCase(), id: { not: user.id } },
+    const existingProfile = await prisma.profile.findFirst({
+      where: { sweat440MemberEmail: email.toLowerCase(), id: { not: user.id } },
     });
-    isMembershipAssigned = !profile?.sweat440MemberEmail;
+
+    if (existingProfile) {
+      return { error: 'Membership is assigned to a different account.' };
+    }
   } catch (e) {
     console.error(e);
     return { error: 'Lookup error, please try again' };
-  }
-
-  if (isMembershipAssigned) {
-    return { error: 'Membership is assigned to a different account.' };
   }
 
   // check if provided email is in sweat400 member email list

@@ -92,13 +92,14 @@ export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
   // check how many free credits left
   const profile = await getOrCreateProfileById(user.id);
 
-  if (profile.freeCredits > 0) {
-    // decrement free credits balance by 1.
+  // if user has sweat440 member credit, use this one first
+  if (profile.hasS440MemberCredit) {
+    // set extra credit to false
     try {
       await prisma.profile.update({
         where: { id: user.id },
         data: {
-          freeCredits: { decrement: 1 },
+          hasS440MemberCredit: false,
         },
       });
     } catch (e) {
@@ -109,13 +110,14 @@ export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
     }
   }
 
-  if (profile.freeCredits === 0) {
-    // set extra credit to false
+  // if they have any other credits, use these
+  if (profile.freeCredits > 0) {
+    // decrement free credits balance by 1.
     try {
       await prisma.profile.update({
         where: { id: user.id },
         data: {
-          hasS440MemberCredit: false,
+          freeCredits: { decrement: 1 },
         },
       });
     } catch (e) {

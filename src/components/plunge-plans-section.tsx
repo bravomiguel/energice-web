@@ -162,7 +162,7 @@ function MembershipCard({
               <p className="text-3xl">$49</p>
               <div className="h-8 border-[0.5px] border-zinc-600" />
               <p className="text-xs text-zinc-600 self-end">
-                Founding Member Rate <br />
+                Founding Member <br />
                 {!!foundingMemberRedemptions
                   ? `${20 - foundingMemberRedemptions}/20 left`
                   : `Only 20 available`}
@@ -179,7 +179,7 @@ function MembershipCard({
               <p className="text-3xl">$99</p>
               <div className="h-8 border-[0.5px] border-zinc-600" />
               <p className="text-xs text-zinc-600 self-end">
-                Early Bird Rate <br /> Valid until Dec 31st
+                Early Bird <br /> Valid until Dec 31st
               </p>
             </div>
           </div>

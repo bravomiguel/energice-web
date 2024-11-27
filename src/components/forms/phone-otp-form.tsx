@@ -65,6 +65,7 @@ export default function PhoneOtpForm({ isOtpSent }: { isOtpSent: boolean }) {
         toast.warning(response.error);
         return;
       }
+      toast.success('Phone OTP sent');
     });
   };
 

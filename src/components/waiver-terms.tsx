@@ -25,7 +25,7 @@ export default function WaiverTerms({
         <p>
           {`This Cold Plunge Waiver and Release of Liability ("Waiver") is made and entered into as of ${new Date().toLocaleDateString(
             'en-US',
-          )} by and between Bravo Software Solutions LLC and our partner gyms ("Provider"), and you, `}
+          )} by and between Bravo Software Solutions LLC, doing business as "Energice", and our partner SWEAT440 ("Provider"), and you, `}
           <span className="font-semibold underline">{name}</span>
           {`, the undersigned participant ("Participant").`}
         </p>
@@ -107,34 +107,54 @@ export default function WaiverTerms({
         <H2>8. Binding Effect</H2>
         <p>{`This Waiver shall be binding upon and inure to the benefit of the parties hereto and their respective heirs, successors, and assigns.`}</p>
       </div>
-      <p className="font-semibold">{`Participant acknowledges that Participant has read this Waiver carefully and understands its terms. Participant agrees to be bound by this Waiver and signs it freely and voluntarily.`}</p>
 
-      {waiverSignedAt && waiverSigName && (
-        <div className="space-y-3 mt-4">
-          <div className="space-y-1">
-            <Label htmlFor="signature" className="font-normal">
-              Participant signature:
-            </Label>
-            <Input
-              id="signature"
-              type="text"
-              disabled
-              value={waiverSigName}
-              className={`${homemadeApple.className} disabled:opacity-100 pl-6 h-16 text-left`}
-            />
+      <div className="flex flex-col gap-4">
+        <H2>RELEASE:</H2>
+        <p>
+          I, the Participant, for myself and on behalf of my heirs, assigns,
+          personal representatives and next of kin, hereby release and hold
+          harmless SWEAT440, and all parent or affiliate companies as well as
+          their officers, officials, agents, and/or employees, other
+          participants, sponsoring agencies, sponsors, advertisers, and if
+          applicable, owners and lessors of premises used to conduct the event,
+          for any and all injury, disability, death, or loss or damage to person
+          or property arising out of the presence of a cold plunge use thereof,
+          whether caused by the fault of myself, SWEAT440 Austin Highland or
+          other associated third parties, to the fullest extent permitted by
+          law.
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-4 border-t-2 pt-4">
+        <H2>Signature</H2>
+        <p className="font-semibold">{`Participant acknowledges that Participant has read this Waiver carefully and understands its terms. Participant agrees to be bound by this Waiver and signs it freely and voluntarily.`}</p>
+        {waiverSignedAt && waiverSigName && (
+          <div className="space-y-3 mt-4">
+            <div className="space-y-1">
+              <Label htmlFor="signature" className="font-normal">
+                Participant signature:
+              </Label>
+              <Input
+                id="signature"
+                type="text"
+                disabled
+                value={waiverSigName}
+                className={`${homemadeApple.className} disabled:opacity-100 pl-6 h-16 text-left`}
+              />
+            </div>
+            <div className="grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
+              <span className="col-start-1 row-start-1">Participant Name:</span>
+              <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">
+                {name}
+              </span>
+              <span className="col-start-1 row-start-2">Date signed:</span>
+              <span className="col-start-2 row-start-2 border-b border-zinc-700 px-2 font-medium">
+                {waiverSignedAt.toLocaleDateString('en-US')}
+              </span>
+            </div>
           </div>
-          <div className="grid grid-cols-[auto_auto] grid-rows-2 gap-y-3 gap-x-4 justify-start">
-            <span className="col-start-1 row-start-1">Participant Name:</span>
-            <span className="col-start-2 row-start-1 border-b border-zinc-700 px-2 font-medium">
-              {name}
-            </span>
-            <span className="col-start-1 row-start-2">Date signed:</span>
-            <span className="col-start-2 row-start-2 border-b border-zinc-700 px-2 font-medium">
-              {waiverSignedAt.toLocaleDateString('en-US')}
-            </span>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

@@ -20,7 +20,7 @@ export default async function Page() {
       <div className="flex flex-col gap-1">
         <H1>Cold Plunge Waiver and Release of Liability</H1>
         <Subtitle>
-          You must sign this waiver in order to use the cold plunge
+          You must sign this Waiver and Release of Liability in order to use the cold plunge
         </Subtitle>
       </div>
       <WaiverTerms name={profile.name} />

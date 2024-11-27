@@ -25,7 +25,7 @@ export default function WaiverTerms({
         <p>
           {`This Cold Plunge Waiver and Release of Liability ("Waiver") is made and entered into as of ${new Date().toLocaleDateString(
             'en-US',
-          )} by and between Bravo Software Solutions LLC, doing business as "Energice", and our partner SWEAT440 ("Provider"), and you, `}
+          )} by and between Bravo Software Solutions LLC, doing business as Energice, and our partner SWEAT440 ("Provider"), and you, `}
           <span className="font-semibold underline">{name}</span>
           {`, the undersigned participant ("Participant").`}
         </p>

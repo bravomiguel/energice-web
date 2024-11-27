@@ -161,7 +161,7 @@ function MembershipCard({
             <div className="flex gap-2 items-center">
               <p className="text-3xl">$49</p>
               <div className="h-8 border-[0.5px] border-zinc-600" />
-              <p className="text-xs text-zinc-600 self-end">
+              <p className="text-xs text-zinc-600">
                 Founding Member <br />
                 {!!foundingMemberRedemptions
                   ? `${20 - foundingMemberRedemptions}/20 left`
@@ -178,7 +178,7 @@ function MembershipCard({
             <div className="flex gap-2 items-center">
               <p className="text-3xl">$99</p>
               <div className="h-8 border-[0.5px] border-zinc-600" />
-              <p className="text-xs text-zinc-600 self-end">
+              <p className="text-xs text-zinc-600">
                 Early Bird <br /> Valid until Dec 31st
               </p>
             </div>
@@ -245,7 +245,7 @@ function ManageSubscriptionOption({
         <CardDescription className="text-sm">
           {memberPayFailed
             ? `The last subscription payment failed. Please review your billing details.`
-            : `You've got unlimited access! Manage your billing details below.`}
+            : `You've got unlimited access! Reactivate your membership at no additional cost.`}
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-2"></CardContent>
@@ -276,7 +276,7 @@ function ManageSubscriptionOption({
                 await billingPortalSession({ stripeCustomerId })
               }
             >
-              Manage billing
+              {memberRenewing ? `Manage billing` : `Reactivate membership`}
             </CheckoutBtn>
           </div>
         </div>

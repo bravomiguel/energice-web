@@ -57,9 +57,6 @@ export default async function Page({
     .toLowerCase()
     .replace(' ', '+')}/&query_place_id=${unit.hostGMapsPlaceId}`;
 
-  const totalFreeCredits =
-    profile.freeCredits + Number(profile.hasS440MemberCredit);
-
   return (
     <main className="relative flex-1 flex flex-col gap-6">
       <div className="flex flex-col gap-1">
@@ -79,7 +76,7 @@ export default async function Page({
       <PlungeImage imageUrl={unit.imageUrl} />
       <UnitDetails
         unitId={unitId}
-        freeCredits={totalFreeCredits}
+        freeCredits={profile.freeCredits}
         isMember={profile.isMember}
         sweat440MemberOption={sweat440MemberOption}
       />

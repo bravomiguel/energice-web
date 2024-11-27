@@ -51,9 +51,6 @@ export default async function Page({
 
   const isSweat440Member = !!profile.sweat440MemberEmail;
 
-  const totalFreeCredits =
-    profile.freeCredits + Number(profile.hasS440MemberCredit);
-
   let isOnboarded = true;
   if (!profile.phone || !profile.name || !profile.isWaiverSigned) {
     isOnboarded = false;
@@ -121,7 +118,7 @@ export default async function Page({
         {!prelaunchView && (
           <StartPlungeSection
             isOnboarded={isOnboarded}
-            freeCredits={totalFreeCredits}
+            freeCredits={profile.freeCredits}
             isMember={profile.isMember}
             isSweat440Member={isSweat440Member}
           />
@@ -131,7 +128,7 @@ export default async function Page({
           <section>
             <H2 className="mb-3">Start Plunge</H2>
             <StartNewPlungeCard
-              freeCredits={totalFreeCredits}
+              freeCredits={profile.freeCredits}
               isMember={profile.isMember}
             />
           </section>
@@ -153,6 +150,7 @@ export default async function Page({
           <PlungeOffersSection
             isOnboarded={isOnboarded}
             isSweat440Member={isSweat440Member}
+            hasS440MemberCredit={profile.hasS440MemberCredit}
           />
         )}
 

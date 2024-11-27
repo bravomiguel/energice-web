@@ -92,25 +92,7 @@ export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
   // check how many free credits left
   const profile = await getOrCreateProfileById(user.id);
 
-  // if user has sweat440 member credit, use this one first
-  if (profile.hasS440MemberCredit) {
-    // set extra credit to false
-    try {
-      await prisma.profile.update({
-        where: { id: user.id },
-        data: {
-          hasS440MemberCredit: false,
-        },
-      });
-    } catch (e) {
-      console.error(e);
-      return {
-        error: 'Failed to apply free credit.',
-      };
-    }
-  }
-
-  // if they have any other credits, use these
+  // apply free credit if available
   if (profile.freeCredits > 0) {
     // decrement free credits balance by 1.
     try {
@@ -133,7 +115,10 @@ export async function applyFreeCredit(data: { sessionId: Session['id'] }) {
     await prisma.session.update({
       where: { id: sessionId },
       data: {
-        hasUsedFreeCredit: true,
+        type: !!profile.sweat440MemberEmail
+          ? 'single_member_free_credit'
+          : 'single_nonmember_free_credit',
+        userName: profile.name,
       },
     });
   } catch (e) {
@@ -179,11 +164,16 @@ export async function applyUnlimited(data: { sessionId: Session['id'] }) {
     };
   }
 
+  const profile = await getOrCreateProfileById(user.id);
+
   try {
     await prisma.session.update({
       where: { id: sessionId },
       data: {
-        hasUsedUnlimited: true,
+        type: !!profile.sweat440MemberEmail
+          ? 'unlimited_member_free_week'
+          : 'unlimited_nonmember_free_week',
+        userName: profile.name,
       },
     });
   } catch (e) {

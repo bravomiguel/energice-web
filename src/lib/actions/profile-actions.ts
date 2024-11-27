@@ -24,6 +24,7 @@ import {
   deleteCustomer,
   updateCustomerName,
 } from './payment-actions';
+import { revalidatePath } from 'next/cache';
 
 export async function sendPhoneOtp(data: Pick<TPhoneOtpForm, 'phone'>) {
   // data validation check
@@ -341,7 +342,6 @@ export async function deleteProfile() {
         memberPeriodEnd: null,
         memberRenewing: null,
         sweat440MemberEmail: null,
-        hasS440MemberCredit: false,
         deleted: true,
         deletedAt: new Date(),
       },
@@ -435,6 +435,7 @@ export async function confirmPartnerMembership(data: {
       data: {
         sweat440MemberEmail: email.toLowerCase(),
         hasS440MemberCredit: extraCredit,
+        freeCredits: { increment: extraCredit ? 1 : 0 },
       },
     });
   } catch (e) {
@@ -451,4 +452,20 @@ export async function confirmPartnerMembership(data: {
   }
 
   redirect('/');
+}
+
+export async function extraCreditAction() {
+  const user = await checkAuth();
+
+  try {
+    await prisma.profile.update({
+      where: { id: user.id },
+      data: { hasS440MemberCredit: true, freeCredits: { increment: 1 } },
+    });
+  } catch (e) {
+    console.error(e);
+    return { error: 'Error adding free credit, please try again' };
+  }
+
+  revalidatePath('/profile', 'page');
 }

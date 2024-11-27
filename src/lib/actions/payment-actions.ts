@@ -60,6 +60,8 @@ export async function plungeCheckoutSession(data: {
         : `${origin}/unit/${unitId}`,
       metadata: {
         session_id: sessionId,
+        user_name: profile.name,
+        is_sweat440_member: !!profile.sweat440MemberEmail,
       },
     });
   } catch (e) {

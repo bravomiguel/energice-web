@@ -18,12 +18,10 @@ export default function StartSessionBtn({
   isValid,
   handleStartSession,
   isPending,
-  hasFreeCredit,
   isMember,
 }: {
   isValid: boolean;
   isPending: boolean;
-  hasFreeCredit: boolean;
   isMember: boolean;
   handleStartSession: () => Promise<void>;
 }) {

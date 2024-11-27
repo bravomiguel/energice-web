@@ -61,6 +61,8 @@ export default function PartnerMemberForm({
       await subscriptionCheckoutSession({ sweat440MemberOption: true });
     } else if (extraCredit) {
       toast.success('Extra credit added');
+      await sleep(4000);
+      toast.success('SWEAT440 membership confirmed');
     } else {
       toast.success('SWEAT440 membership confirmed');
     }

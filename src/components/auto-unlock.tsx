@@ -58,7 +58,7 @@ export default function AutoUnlock({
       <div className={cn(className)}>
         <LoadingSpinner
           className="flex-1 flex flex-col items-center justify-center text-sm w-44 mx-auto gap-2 text-zinc-500 text-center"
-          size={35}
+          size={30}
           color="text-indigo-700"
           messages={[
             'Unlocking plunge...',

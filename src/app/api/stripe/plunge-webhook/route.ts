@@ -19,15 +19,17 @@ export async function POST(request: Request) {
     return Response.json(null, { status: 400 });
   }
 
-  console.log({ sessionId: event.data.object.metadata.session_id });
+  const { session_id, user_name, is_sweat440_member } =
+    event.data.object.metadata;
 
   // reflect payment in db
   if (event.type === 'checkout.session.completed') {
     // update session record
     await prisma.session.update({
-      where: { id: event.data.object.metadata.session_id },
+      where: { id: session_id },
       data: {
-        hasPaid: true,
+        type: is_sweat440_member ? 'single_member' : 'single_nonmember',
+        userName: user_name,
         amountSubtotal: event.data.object.amount_subtotal,
         amountTotal: event.data.object.amount_total,
       },

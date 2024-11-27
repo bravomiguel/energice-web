@@ -40,7 +40,6 @@ import {
   AccordionTrigger,
 } from './ui/accordion';
 import StartSessionBtn from './buttons/start-session-btn';
-import { Infinity } from 'lucide-react';
 
 export default function UnitDetails({
   unitId,
@@ -225,7 +224,6 @@ export default function UnitDetails({
               handleStartSession={handleStartSession}
               isPending={isPending}
               isMember={isMember}
-              hasFreeCredit={freeCredits > 0}
             />
           ) : (
             <Button

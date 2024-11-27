@@ -13,31 +13,48 @@ import { Button } from './ui/button';
 import { BsFillBox2HeartFill } from 'react-icons/bs';
 import { useRouter } from 'next/navigation';
 import { useTransition } from 'react';
+import prisma from '@/lib/db';
+import { checkAuth } from '@/lib/server-utils';
+import { toast } from 'sonner';
+import { extraCreditAction } from '@/lib/actions/profile-actions';
 
 export default function PlungeOffersSection({
   isOnboarded,
+  hasS440MemberCredit,
   isSweat440Member,
 }: {
   isOnboarded: boolean;
+  hasS440MemberCredit: boolean;
   isSweat440Member: boolean;
 }) {
-  if (!isOnboarded || isSweat440Member) {
+  if (!isOnboarded || hasS440MemberCredit) {
     return null;
   }
 
   return (
     <section className="space-y-4">
       <H2 className="mb-3">Offers</H2>
-      <ExtraCreditCard />
+      <ExtraCreditCard isSweat440Member={isSweat440Member} />
     </section>
   );
 }
 
-function ExtraCreditCard() {
+function ExtraCreditCard({ isSweat440Member }: { isSweat440Member: boolean }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const navToSweat400MemberScreen = async () => {
+
+  const handleExtraCredit = async () => {
     startTransition(async () => {
+      if (isSweat440Member) {
+        const response = await extraCreditAction();
+        if (response?.error) {
+          console.error({ error: response.error });
+          toast.error(response.error);
+          return;
+        }
+        toast.success('Extra credit added');
+        return;
+      }
       router.push(
         `/partner-membership/${process.env.NEXT_PUBLIC_SWEAT440_HIGHLAND_ID}?extraCredit=true`,
       );
@@ -66,7 +83,7 @@ function ExtraCreditCard() {
       <CardFooter>
         <Button
           className="bg-indigo-800 hover:bg-indigo-800/90 w-full"
-          onClick={async () => await navToSweat400MemberScreen()}
+          onClick={async () => await handleExtraCredit()}
           disabled={isPending}
           isLoading={isPending}
         >

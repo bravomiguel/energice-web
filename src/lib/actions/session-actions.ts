@@ -43,7 +43,7 @@ export async function createSession(data: {
       data: { profileId: user.id, unitId, plungeTimerSecs },
     });
   } catch (e) {
-    // console.log(e);
+    console.error(e);
     return {
       error: 'Failed to create new session',
       data: null,

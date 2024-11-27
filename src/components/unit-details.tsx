@@ -90,13 +90,16 @@ export default function UnitDetails({
   const handleStartSession = async () => {
     startTransition(async () => {
       if (!plungeTimerSecs) return;
+
       const respSession = await createSession({
         unitId,
         plungeTimerSecs,
       });
+
       if (respSession?.error) {
         console.error({ error: respSession.error });
         toast.error(respSession.error);
+        return;
       }
 
       let sessionId;

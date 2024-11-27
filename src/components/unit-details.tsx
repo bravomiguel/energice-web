@@ -40,6 +40,7 @@ import {
   AccordionTrigger,
 } from './ui/accordion';
 import StartSessionBtn from './buttons/start-session-btn';
+import { Infinity, Tickets } from 'lucide-react';
 
 export default function UnitDetails({
   unitId,
@@ -202,16 +203,22 @@ export default function UnitDetails({
           <PlungeTipsItem />
         </div>
       </div>
-      <BottomNav className="gap-1 pt-2 pb-3">
+      <BottomNav className="gap-1 pt-2 pb-3 items-end">
         <div className="flex flex-row w-full gap-4 items-center">
           {isMember ? (
-            <span className="text-base font-bold w-fit text-center whitespace-nowrap">
-              Unlimited
+            // <span className="text-sm font-bold w-fit text-center whitespace-nowrap flex flex-col items-center leading-4">
+            //   Unlimited <Infinity className="w-6 h-6" />
+            // </span>
+            <span className="text-sm font-bold w-fit text-center whitespace-nowrap flex flex-col items-center leading-4">
+              1st Week
+              <p className="flex gap-1 items-center">
+                Free <Infinity className="w-5 h-5" />
+              </p>
             </span>
           ) : freeCredits > 0 ? (
-            <span className="text-lg font-bold w-fit text-center whitespace-nowrap">
-              {freeCredits > 0 &&
-                `${freeCredits} credit${freeCredits > 1 ? 's' : ''}`}
+            <span className="text-sm font-bold w-fit text-center whitespace-nowrap flex flex-col items-center leading-4">
+              {`${freeCredits} credit${freeCredits > 1 ? 's' : ''}`}{' '}
+              <Tickets className="w-5 h-5" />
             </span>
           ) : (
             <span className="text-3xl font-bold">

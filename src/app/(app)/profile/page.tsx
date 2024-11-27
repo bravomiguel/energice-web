@@ -32,9 +32,11 @@ import { Profile } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Infinity, Tickets } from 'lucide-react';
+import StartPlungeBtn from '@/components/buttons/start-plunge-btn';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const prelaunchView = process.env.PRELAUNCH_VIEW === 'true';
+const firstWeekFree = process.env.FIRST_WEEK_FREE === 'true';
 
 export default async function Page({
   searchParams,
@@ -115,21 +117,32 @@ export default async function Page({
 
         {!prelaunchView && <PlungeStatsSection isOnboarded={isOnboarded} />}
 
-        {!prelaunchView && (
-          <StartPlungeSection
-            isOnboarded={isOnboarded}
-            freeCredits={profile.freeCredits}
-            isMember={profile.isMember}
-            isSweat440Member={isSweat440Member}
-          />
-        )}
+        {!prelaunchView ||
+          (!firstWeekFree && (
+            <StartPlungeSection
+              isOnboarded={isOnboarded}
+              freeCredits={profile.freeCredits}
+              isMember={profile.isMember}
+              isSweat440Member={isSweat440Member}
+            />
+          ))}
 
         {prelaunchView && isOnboarded && (
           <section>
             <H2 className="mb-3">Start Plunge</H2>
-            <StartNewPlungeCard
+            <ComingSoonPlungeCard
               freeCredits={profile.freeCredits}
               isMember={profile.isMember}
+            />
+          </section>
+        )}
+
+        {!prelaunchView && firstWeekFree && isOnboarded && (
+          <section>
+            <H2 className="mb-3">Start Plunge</H2>
+            <FirstWeekFreePlungeCard
+              freeCredits={profile.freeCredits}
+              isMember={true}
             />
           </section>
         )}
@@ -219,6 +232,7 @@ function ComingSoonCard() {
     </Card>
   );
 }
+
 function CompleteOnboardingCard({
   isNameSaved,
   isWaiverSigned,
@@ -251,7 +265,7 @@ function CompleteOnboardingCard({
   );
 }
 
-function StartNewPlungeCard({
+function ComingSoonPlungeCard({
   freeCredits,
   isMember,
 }: {
@@ -287,6 +301,55 @@ function StartNewPlungeCard({
                 <Infinity className="h-5 w-5" />
               </div>
             )}
+            {freeCredits > 0 && (
+              <div className="flex gap-2 items-center">
+                <p>
+                  {freeCredits === 1
+                    ? `1 free credit`
+                    : `${freeCredits} free credits`}
+                </p>
+                <Tickets className="h-5 w-5" />
+              </div>
+            )}
+          </div>
+        </div>
+      </CardFooter>
+    </Card>
+  );
+}
+
+function FirstWeekFreePlungeCard({
+  freeCredits,
+  isMember,
+}: {
+  freeCredits: Profile['freeCredits'];
+  isMember: Profile['isMember'];
+}) {
+  return (
+    <Card className="w-full relative overflow-hidden bg-zinc-50">
+      <CardHeader className="pt-5 pb-3">
+        <div className="flex gap-2 items-center">
+          <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
+          <CardTitle>Plunge Session</CardTitle>
+        </div>
+        <CardDescription className="text-sm">
+          Feel amazing in just a few minutes.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="pb-2"></CardContent>
+      <CardFooter className="pb-5">
+        <div className="flex flex-col w-full gap-3">
+          <StartPlungeBtn className="w-full">Start session</StartPlungeBtn>
+          <div
+            className={cn(
+              'font-semibold text-sm flex items-center justify-between w-full',
+            )}
+          >
+            <div className="flex gap-2 items-center">
+              <p>1st Week Free</p>
+              <Infinity className="h-5 w-5" />
+            </div>
+
             {freeCredits > 0 && (
               <div className="flex gap-2 items-center">
                 <p>

@@ -8,7 +8,7 @@ export default function PenaltyChargeWarning({
 }) {
   return (
     <div className={cn('flex gap-1.5 items-center', className)}>
-      <IoWarningOutline className="ml-1 h-4 w-4 text-red-500 self-start" />
+      <IoWarningOutline className="ml-1 h-4 w-4 text-red-500 self-center" />
       <p className="text-600 text-red-500 font-semibold w-fit pr-2 text-xs">
         {`Don't forget to close the lid when you're done`}
       </p>

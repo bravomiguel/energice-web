@@ -152,7 +152,7 @@ export default async function Page({
         {!prelaunchView && (
           <PlungeOffersSection
             isOnboarded={isOnboarded}
-            hasSweat440MemberCredit={profile.hasS440MemberCredit}
+            isSweat440Member={isSweat440Member}
           />
         )}
 

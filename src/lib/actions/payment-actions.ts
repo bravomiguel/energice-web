@@ -53,7 +53,7 @@ export async function plungeCheckoutSession(data: {
         },
       ],
       mode: 'payment',
-      // allow_promotion_codes: true,
+      allow_promotion_codes: true,
       success_url: `${origin}/session/${sessionId}/unlock`,
       cancel_url: sweat440MemberOption
         ? `${origin}/unit/${unitId}?sweat440Member=true`
@@ -104,7 +104,7 @@ export async function subscriptionCheckoutSession(data: {
   try {
     checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
-      // allow_promotion_codes: true,
+      allow_promotion_codes: true,
       // customer_email: user.email,
       customer: profile.stripeCustomerId,
       line_items: [
@@ -116,13 +116,13 @@ export async function subscriptionCheckoutSession(data: {
           tax_rates: [process.env.TAX_RATE_ID],
         },
       ],
-      discounts: [
-        {
-          coupon: sweat440MemberOption
-            ? process.env.COUPON_FOUNDING_MEMBER
-            : process.env.COUPON_EARLY_BIRD_NONMEMBER,
-        },
-      ],
+      // discounts: [
+      //   {
+      //     coupon: sweat440MemberOption
+      //       ? process.env.COUPON_FOUNDING_MEMBER
+      //       : process.env.COUPON_EARLY_BIRD_NONMEMBER,
+      //   },
+      // ],
       success_url: `${origin}/profile?success=true`,
       cancel_url: `${origin}/profile`,
       metadata: { price_id: process.env.SUBSCRIPTION_PRICE_ID_NONMEMBERS },

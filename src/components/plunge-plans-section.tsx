@@ -153,35 +153,45 @@ function MembershipCard({
       </CardHeader>
       <CardContent className="pb-4">
         {sweat440MemberOption ? (
-          <div className="flex gap-4 items-center">
-            <div className="w-fit relative flex justify-center items-center">
-              <p className="text-3xl text-zinc-400">$99</p>
-              <div className="border border-red-900 w-full -rotate-[20deg] absolute" />
+          <div className="space-y-1">
+            <div className="flex gap-4 items-center">
+              <div className="w-fit relative flex justify-center items-center">
+                <p className="text-3xl text-zinc-400">$99</p>
+                <div className="border border-red-900 w-full -rotate-[20deg] absolute" />
+              </div>
+              <div className="flex gap-2 items-center">
+                <p className="text-3xl">$49</p>
+                <div className="h-8 border-[0.5px] border-zinc-600" />
+                <p className="text-xs text-zinc-600">
+                  Founding Member <br />
+                  {!!foundingMemberRedemptions
+                    ? `${20 - foundingMemberRedemptions}/20 left`
+                    : `Only 20 available`}
+                </p>
+              </div>
             </div>
-            <div className="flex gap-2 items-center">
-              <p className="text-3xl">$49</p>
-              <div className="h-8 border-[0.5px] border-zinc-600" />
-              <p className="text-xs text-zinc-600">
-                Founding Member <br />
-                {!!foundingMemberRedemptions
-                  ? `${20 - foundingMemberRedemptions}/20 left`
-                  : `Only 20 available`}
-              </p>
-            </div>
+            <p className="text-xs text-zinc-600 pl-[148px]">
+              Use code: <span className="font-semibold">FOUNDER10</span>
+            </p>
           </div>
         ) : (
-          <div className="flex gap-4 ">
-            <div className="w-fit relative flex justify-center items-center">
-              <p className="text-3xl text-zinc-400">$149</p>
-              <div className="border border-red-900 w-full -rotate-[20deg] absolute" />
+          <div className="space-y-1">
+            <div className="flex gap-4 ">
+              <div className="w-fit relative flex justify-center items-center">
+                <p className="text-3xl text-zinc-400">$149</p>
+                <div className="border border-red-900 w-full -rotate-[20deg] absolute" />
+              </div>
+              <div className="flex gap-2 items-center">
+                <p className="text-3xl">$99</p>
+                <div className="h-8 border-[0.5px] border-zinc-600" />
+                <p className="text-xs text-zinc-600">
+                  Early Bird <br /> Valid until Dec 31st
+                </p>
+              </div>
             </div>
-            <div className="flex gap-2 items-center">
-              <p className="text-3xl">$99</p>
-              <div className="h-8 border-[0.5px] border-zinc-600" />
-              <p className="text-xs text-zinc-600">
-                Early Bird <br /> Valid until Dec 31st
-              </p>
-            </div>
+            <p className="text-xs text-zinc-600 pl-[160px]">
+              Use code: <span className="font-semibold">EARLY10</span>
+            </p>
           </div>
         )}
       </CardContent>

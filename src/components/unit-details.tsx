@@ -221,7 +221,7 @@ export default function UnitDetails({
               <Tickets className="w-5 h-5" />
             </span>
           ) : (
-            <span className="text-3xl font-bold">
+            <span className="text-3xl font-semibold">
               {sweat440MemberOption ? `$20` : `$25`}
             </span>
           )}

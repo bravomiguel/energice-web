@@ -171,7 +171,7 @@ function MembershipCard({
               </div>
             </div>
             <p className="text-xs text-zinc-600 pl-[148px]">
-              Use code: <span className="font-semibold">FOUNDER10</span>
+              Code: <span className="font-semibold">FOUNDER10</span>
             </p>
           </div>
         ) : (
@@ -185,12 +185,12 @@ function MembershipCard({
                 <p className="text-3xl">$99</p>
                 <div className="h-8 border-[0.5px] border-zinc-600" />
                 <p className="text-xs text-zinc-600">
-                  Early Bird <br /> Valid until Dec 31st
+                  Early Bird <br /> Valid to Dec 31
                 </p>
               </div>
             </div>
             <p className="text-xs text-zinc-600 pl-[160px]">
-              Use code: <span className="font-semibold">EARLY10</span>
+              Code: <span className="font-semibold">EARLY10</span>
             </p>
           </div>
         )}

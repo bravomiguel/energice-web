@@ -22,11 +22,8 @@ export default async function Home() {
   // redirect to session screen, if session is valid and has already started
   if (plungeSession && plungeSessionStatus === 'valid_started') {
     redirect(`/session/${plungeSession.id}`);
-  } else if (plungeSession && plungeSessionStatus === 'valid_not_started') {
-    // redirect to session unlock screen, if session not started yet
-    redirect(`/session/${plungeSession.id}/unlock`);
-  }
-
+  } 
+  
   // redirect to profile (currently, no need for home screen)
   redirect('/profile');
 

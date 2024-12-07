@@ -22,11 +22,7 @@ export default async function Page({
   // redirect to session screen, if session is valid and has already started
   if (plungeSessionStatus === 'valid_started') {
     redirect(`/session/${plungeSession.id}`);
-  } else if (plungeSessionStatus === 'valid_not_started') {
-    // redirect to correct session unlock screen, if session not started yet
-    if (plungeSession.id !== sessionId)
-      redirect(`/session/${plungeSession.id}/unlock`);
-  }
+  } 
 
   return (
     <main className="flex-1 flex flex-col gap-3">

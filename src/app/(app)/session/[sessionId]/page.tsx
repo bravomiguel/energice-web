@@ -28,10 +28,7 @@ export default async function Page({
   if (plungeSessionStatus === 'valid_started') {
     if (plungeSession.id !== sessionId)
       redirect(`/session/${plungeSession.id}`);
-  } else if (plungeSessionStatus === 'valid_not_started') {
-    // redirect to session unlock screen, if session not started yet
-    redirect(`/session/${plungeSession.id}/unlock`);
-  }
+  } 
 
   // calculate session seconds left, before passing it to client (put this into session context?)
   const now = new Date();

@@ -117,12 +117,14 @@ export default async function Page({
 
         {!prelaunchView && <PlungeStatsSection isOnboarded={isOnboarded} />}
 
-        {/* <StartPlungeSection
-          isOnboarded={isOnboarded}
-          freeCredits={profile.freeCredits}
-          isMember={profile.isMember}
-          isSweat440Member={isSweat440Member}
-        /> */}
+        {!prelaunchView && !firstWeekFree && isOnboarded && (
+          <StartPlungeSection
+            isOnboarded={isOnboarded}
+            freeCredits={profile.freeCredits}
+            isMember={profile.isMember}
+            isSweat440Member={isSweat440Member}
+          />
+        )}
 
         {prelaunchView && isOnboarded && (
           <section>

@@ -13,10 +13,8 @@ import {
 } from '@/lib/server-utils';
 import H1 from '@/components/h1';
 import Image from 'next/image';
-// import { createLockCode } from '@/actions/actions';
 import Subtitle from '@/components/subtitle';
 import UnitDetails from '@/components/unit-details';
-import { cn } from '@/lib/utils';
 
 export default async function Page({
   params: { unitId },
@@ -42,10 +40,7 @@ export default async function Page({
   // redirect to session screen, if session is valid and has already started
   if (plungeSession && plungeSessionStatus === 'valid_started') {
     redirect(`/session/${plungeSession.id}`);
-  } else if (plungeSession && plungeSessionStatus === 'valid_not_started') {
-    // redirect to session unlock screen, if session not started yet
-    redirect(`/session/${plungeSession.id}/unlock`);
-  }
+  } 
 
   // get unit
   const unit = await getUnitById(unitId);

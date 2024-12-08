@@ -16,12 +16,14 @@ export default async function Page({
     singlePlunge?: string;
     unlimitedMembership?: string;
     extraCredit?: string;
+    founderCheckout?: string;
   }>;
 }) {
   const params = await searchParams;
   const singlePlunge = params.singlePlunge === 'true';
   const unlimitedMembership = params.unlimitedMembership === 'true';
   const extraCredit = params.extraCredit === 'true';
+  const founderCheckout = params.founderCheckout === 'true';
 
   const user = await checkAuth();
   const profile = await getOrCreateProfileById(user.id);
@@ -50,6 +52,7 @@ export default async function Page({
         singlePlunge={singlePlunge}
         unlimitedMembership={unlimitedMembership}
         extraCredit={extraCredit}
+        founderCheckout={founderCheckout}
       />
     </main>
   );

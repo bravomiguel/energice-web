@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       // redirect user to specified redirect URL or root of app
       if (prelaunchCheckout) {
         await createProfile();
-        redirect(`/partner-membership/${unitId}?unlimitedMembership=true`);
+        redirect(`/partner-membership/${unitId}?unlimitedMembership=true&founderCheckout=true`);
       }
       redirect(next);
     }

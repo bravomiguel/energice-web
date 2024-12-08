@@ -22,11 +22,13 @@ export default function PartnerMemberForm({
   singlePlunge,
   unlimitedMembership,
   extraCredit,
+  founderCheckout,
 }: {
   unitId: Unit['id'];
   singlePlunge: boolean;
   unlimitedMembership: boolean;
   extraCredit: boolean;
+  founderCheckout: boolean;
 }) {
   const [redirectingToCheckout, setRedirectingToCheckout] = useState(false);
 
@@ -58,7 +60,11 @@ export default function PartnerMemberForm({
       toast.success('SWEAT440 membership confirmed');
       setRedirectingToCheckout(() => true);
       await sleep(1000);
-      await subscriptionCheckoutSession({ sweat440MemberOption: true });
+      if (founderCheckout) {
+        await subscriptionCheckoutSession({ sweat440MemberOption: true, founderCheckout: true });
+      } else {
+        await subscriptionCheckoutSession({ sweat440MemberOption: true });
+      }
     } else if (extraCredit) {
       toast.success('Extra credit added');
       await sleep(4000);

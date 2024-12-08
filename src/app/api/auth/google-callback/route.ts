@@ -23,7 +23,7 @@ export async function GET(request: Request) {
         if (prelaunchCheckout) {
           await createProfile();
           return NextResponse.redirect(
-            `${origin}/partner-membership/${unitId}?unlimitedMembership=true`,
+            `${origin}/partner-membership/${unitId}?unlimitedMembership=true&founderCheckout=true`,
           );
         }
         return NextResponse.redirect(`${origin}${next}`);
@@ -31,7 +31,7 @@ export async function GET(request: Request) {
         if (prelaunchCheckout) {
           await createProfile();
           return NextResponse.redirect(
-            `https://${forwardedHost}/partner-membership/${unitId}?unlimitedMembership=true`,
+            `https://${forwardedHost}/partner-membership/${unitId}?unlimitedMembership=true&founderCheckout=true`,
           );
         }
         return NextResponse.redirect(`https://${forwardedHost}${next}`);
@@ -39,7 +39,7 @@ export async function GET(request: Request) {
         if (prelaunchCheckout) {
           await createProfile();
           return NextResponse.redirect(
-            `${origin}/partner-membership/${unitId}?unlimitedMembership=true`,
+            `${origin}/partner-membership/${unitId}?unlimitedMembership=true&founderCheckout=true`,
           );
         }
         return NextResponse.redirect(`${origin}${next}`);

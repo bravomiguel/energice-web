@@ -77,6 +77,7 @@ export async function plungeCheckoutSession(data: {
 
 export async function subscriptionCheckoutSession(data: {
   sweat440MemberOption: boolean;
+  founderCheckout?: boolean;
 }) {
   const user = await checkAuth();
 
@@ -84,6 +85,7 @@ export async function subscriptionCheckoutSession(data: {
   const validatedData = z
     .object({
       sweat440MemberOption: z.boolean(),
+      founderCheckout: z.union([z.boolean(), z.undefined()]),
     })
     .safeParse(data);
 
@@ -93,7 +95,7 @@ export async function subscriptionCheckoutSession(data: {
     };
   }
 
-  const { sweat440MemberOption } = validatedData.data;
+  const { sweat440MemberOption, founderCheckout } = validatedData.data;
 
   const profile = await getOrCreateProfileById(user.id);
 
@@ -104,7 +106,7 @@ export async function subscriptionCheckoutSession(data: {
   try {
     checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
-      allow_promotion_codes: true,
+      allow_promotion_codes: !founderCheckout ? true : undefined,
       // customer_email: user.email,
       customer: profile.stripeCustomerId,
       line_items: [
@@ -116,13 +118,11 @@ export async function subscriptionCheckoutSession(data: {
           tax_rates: [process.env.TAX_RATE_ID],
         },
       ],
-      // discounts: [
-      //   {
-      //     coupon: sweat440MemberOption
-      //       ? process.env.COUPON_FOUNDING_MEMBER
-      //       : process.env.COUPON_EARLY_BIRD_NONMEMBER,
-      //   },
-      // ],
+      discounts: [
+        {
+          coupon: founderCheckout ? process.env.COUPON_FOUNDING_MEMBER : undefined,
+        },
+      ],
       success_url: `${origin}/profile?success=true`,
       cancel_url: `${origin}/profile`,
       metadata: { price_id: process.env.SUBSCRIPTION_PRICE_ID_NONMEMBERS },

@@ -72,8 +72,8 @@ export default async function Page({
       <UnitDetails
         unitId={unitId}
         freeCredits={profile.freeCredits}
-        isMember={profile.isMember}
-        // isMember={true}
+        // isMember={profile.isMember}
+        isMember={true}
         sweat440MemberOption={sweat440MemberOption}
       />
     </main>

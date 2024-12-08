@@ -165,8 +165,8 @@ function MembershipCard({
                 <p className="text-xs text-zinc-600">
                   Founding Member <br />
                   {!!foundingMemberRedemptions
-                    ? `${20 - foundingMemberRedemptions}/20 left`
-                    : `Only 20 available`}
+                    ? `${19 - foundingMemberRedemptions}/20 left`
+                    : `19/20 available`}
                 </p>
               </div>
             </div>

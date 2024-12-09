@@ -166,7 +166,7 @@ function MembershipCard({
                   Founding Member <br />
                   {!!foundingMemberRedemptions
                     ? `${19 - foundingMemberRedemptions}/20 left`
-                    : `19/20 available`}
+                    : `19/20 left`}
                 </p>
               </div>
             </div>

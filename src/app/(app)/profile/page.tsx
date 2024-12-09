@@ -10,7 +10,6 @@ import StartPlungeSection from '@/components/start-plunge-section';
 import PlungePlansSection from '@/components/plunge-plans-section';
 import ProfileSettings from '@/components/profile-settings';
 import { checkAuth, getOrCreateProfileById } from '@/lib/server-utils';
-import FreeCreditModal from '@/components/free-credit-modal';
 import PlungeOffersSection from '@/components/plunge-offers-section';
 import { Badge } from '@/components/ui/badge';
 import Sweat440MembershipSection from '@/components/sweat440-membership-section';
@@ -27,16 +26,8 @@ import OnboardReturnBtn from '@/components/buttons/onboard-return-btn';
 import Image from 'next/image';
 import { BsFillBox2HeartFill } from 'react-icons/bs';
 import { BsLightningChargeFill } from 'react-icons/bs';
-import { RiWaterFlashFill } from 'react-icons/ri';
-import { Profile } from '@prisma/client';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { Infinity, Tickets } from 'lucide-react';
-import StartPlungeBtn from '@/components/buttons/start-plunge-btn';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const prelaunchView = process.env.PRELAUNCH_VIEW === 'true';
-const firstWeekFree = process.env.FIRST_WEEK_FREE === 'true';
 
 export default async function Page({
   searchParams,
@@ -98,13 +89,6 @@ export default async function Page({
           )}
         </div>
 
-        {prelaunchView && (
-          <section className="space-y-4">
-            <H2 className="mb-3">Coming Soon</H2>
-            <ComingSoonCard />
-          </section>
-        )}
-
         {!isOnboarded && (
           <section className="space-y-4">
             <H2 className="mb-3">Onboarding</H2>
@@ -115,36 +99,14 @@ export default async function Page({
           </section>
         )}
 
-        {!prelaunchView && <PlungeStatsSection isOnboarded={isOnboarded} />}
+        <PlungeStatsSection isOnboarded={isOnboarded} />
 
-        {/* {!prelaunchView && !firstWeekFree && isOnboarded && (
-          <StartPlungeSection
-            isOnboarded={isOnboarded}
-            freeCredits={profile.freeCredits}
-            isMember={profile.isMember}
-            isSweat440Member={isSweat440Member}
-          />
-        )} */}
-
-        {prelaunchView && isOnboarded && (
-          <section>
-            <H2 className="mb-3">Start Plunge</H2>
-            <ComingSoonPlungeCard
-              freeCredits={profile.freeCredits}
-              isMember={profile.isMember}
-            />
-          </section>
-        )}
-
-        {!prelaunchView && firstWeekFree && isOnboarded && (
-          <section>
-            <H2 className="mb-3">Start Plunge</H2>
-            <FirstWeekFreePlungeCard
-              freeCredits={profile.freeCredits}
-              isMember={true}
-            />
-          </section>
-        )}
+        <StartPlungeSection
+          isOnboarded={isOnboarded}
+          freeCredits={profile.freeCredits}
+          isMember={profile.isMember}
+          isSweat440Member={isSweat440Member}
+        />
 
         <PlungePlansSection
           // isOnboarded={isOnboarded}
@@ -158,13 +120,11 @@ export default async function Page({
           subscriptionSuccess={subscriptionSuccess}
         />
 
-        {!prelaunchView && (
-          <PlungeOffersSection
-            isOnboarded={isOnboarded}
-            isSweat440Member={isSweat440Member}
-            hasS440MemberCredit={profile.hasS440MemberCredit}
-          />
-        )}
+        <PlungeOffersSection
+          isOnboarded={isOnboarded}
+          isSweat440Member={isSweat440Member}
+          hasS440MemberCredit={profile.hasS440MemberCredit}
+        />
 
         <Sweat440MembershipSection
           isOnboarded={isOnboarded}
@@ -196,42 +156,6 @@ export default async function Page({
   );
 }
 
-function ComingSoonCard() {
-  return (
-    <Card className="w-full relative overflow-hidden bg-zinc-50">
-      <CardHeader className="py-5">
-        <div className="flex gap-2 items-center">
-          <BsLightningChargeFill className="h-5 w-5 fill-indigo-800" />
-          <CardTitle>The Ultimate Recovery Experience </CardTitle>
-        </div>
-        <CardDescription className="text-sm">
-          Landing at SWEAT440 Austin Highland <br /> on Dec 1st
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pb-2 space-y-5">
-        <div className="w-full h-52 rounded-lg overflow-hidden flex justify-center items-center bg-zinc-200">
-          <Image
-            src={'/coming-soon.png'}
-            alt="cold plunge image"
-            width={300}
-            height={50}
-            className="w-full"
-            priority={true}
-          />
-        </div>
-        <div className="flex gap-2">
-          <BsFillBox2HeartFill className="h-5 w-5 fill-indigo-700" />
-          <p className="text-sm">
-            <span className="font-semibold">Launch Promo:</span> Free unlimited
-            plunges from Dec 1st - 7th!
-          </p>
-        </div>
-      </CardContent>
-      <CardFooter className="pb-5"></CardFooter>
-    </Card>
-  );
-}
-
 function CompleteOnboardingCard({
   isNameSaved,
   isWaiverSigned,
@@ -259,108 +183,6 @@ function CompleteOnboardingCard({
         >
           Return to onboarding
         </OnboardReturnBtn>
-      </CardFooter>
-    </Card>
-  );
-}
-
-function ComingSoonPlungeCard({
-  freeCredits,
-  isMember,
-}: {
-  freeCredits: Profile['freeCredits'];
-  isMember: Profile['isMember'];
-}) {
-  return (
-    <Card className="w-full relative overflow-hidden bg-zinc-300/50">
-      <CardHeader className="pt-5 pb-3">
-        <div className="flex gap-2 items-center">
-          <RiWaterFlashFill className="h-5 w-5 fill-zinc-400/90" />
-          <CardTitle className="text-zinc-400/90">Plunge Session</CardTitle>
-        </div>
-        <CardDescription className="text-sm text-zinc-400">
-          Energice your life. Start plunging from Dec 1st!
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pb-2"></CardContent>
-      <CardFooter className="pb-5">
-        <div className="flex flex-col w-full gap-3">
-          <Button className="w-full text-zinc-200 bg-zinc-400/50 hover:bg-zinc-400/50 cursor-not-allowed">
-            Start on Dec 1st
-          </Button>
-          <div
-            className={cn(
-              'font-semibold text-sm flex items-center justify-between w-full text-zinc-400/90',
-              { 'justify-end': freeCredits > 0 && !isMember },
-            )}
-          >
-            {isMember && (
-              <div className="flex gap-2 items-center">
-                <p>Unlimited</p>
-                <Infinity className="h-5 w-5" />
-              </div>
-            )}
-            {freeCredits > 0 && (
-              <div className="flex gap-2 items-center">
-                <p>
-                  {freeCredits === 1
-                    ? `1 free credit`
-                    : `${freeCredits} free credits`}
-                </p>
-                <Tickets className="h-5 w-5" />
-              </div>
-            )}
-          </div>
-        </div>
-      </CardFooter>
-    </Card>
-  );
-}
-
-function FirstWeekFreePlungeCard({
-  freeCredits,
-  isMember,
-}: {
-  freeCredits: Profile['freeCredits'];
-  isMember: Profile['isMember'];
-}) {
-  return (
-    <Card className="w-full relative overflow-hidden bg-zinc-50">
-      <CardHeader className="pt-5 pb-3">
-        <div className="flex gap-2 items-center">
-          <RiWaterFlashFill className="h-5 w-5 fill-indigo-800" />
-          <CardTitle>Plunge Session</CardTitle>
-        </div>
-        <CardDescription className="text-sm">
-          Feel amazing in just a few minutes.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="pb-2"></CardContent>
-      <CardFooter className="pb-5">
-        <div className="flex flex-col w-full gap-3">
-          <StartPlungeBtn className="w-full">Start session</StartPlungeBtn>
-          <div
-            className={cn(
-              'font-semibold text-sm flex items-center justify-between w-full',
-            )}
-          >
-            <div className="flex gap-2 items-center">
-              <p>1st Week Free</p>
-              <Infinity className="h-5 w-5" />
-            </div>
-
-            {freeCredits > 0 && (
-              <div className="flex gap-2 items-center">
-                <p>
-                  {freeCredits === 1
-                    ? `1 free credit`
-                    : `${freeCredits} free credits`}
-                </p>
-                <Tickets className="h-5 w-5" />
-              </div>
-            )}
-          </div>
-        </div>
       </CardFooter>
     </Card>
   );

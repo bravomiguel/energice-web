@@ -171,8 +171,8 @@ export async function applyUnlimited(data: { sessionId: Session['id'] }) {
       where: { id: sessionId },
       data: {
         type: !!profile.sweat440MemberEmail
-          ? 'unlimited_member_free_week'
-          : 'unlimited_nonmember_free_week',
+          ? 'unlimited_member'
+          : 'unlimited_nonmember',
         userName: profile.name,
       },
     });

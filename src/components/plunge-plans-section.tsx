@@ -164,9 +164,10 @@ function MembershipCard({
                 <div className="h-8 border-[0.5px] border-zinc-600" />
                 <p className="text-xs text-zinc-600">
                   Founding Member <br />
-                  {!!foundingMemberRedemptions
+                  {/* {!!foundingMemberRedemptions
                     ? `${19 - foundingMemberRedemptions}/20 left`
-                    : `19/20 left`}
+                    : `19/20 left`} */}
+                    Only 18 left!
                 </p>
               </div>
             </div>

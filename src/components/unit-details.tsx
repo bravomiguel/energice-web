@@ -206,14 +206,8 @@ export default function UnitDetails({
       <BottomNav className="gap-1 pt-2 pb-3 items-end">
         <div className="flex flex-row w-full gap-4 items-center">
           {isMember ? (
-            // <span className="text-sm font-bold w-fit text-center whitespace-nowrap flex flex-col items-center leading-4">
-            //   Unlimited <Infinity className="w-6 h-6" />
-            // </span>
             <span className="text-sm font-bold w-fit text-center whitespace-nowrap flex flex-col items-center leading-4">
-              1st Week
-              <p className="flex gap-1 items-center">
-                Free <Infinity className="w-5 h-5" />
-              </p>
+              Unlimited <Infinity className="w-6 h-6" />
             </span>
           ) : freeCredits > 0 ? (
             <span className="text-sm font-bold w-fit text-center whitespace-nowrap flex flex-col items-center leading-4">

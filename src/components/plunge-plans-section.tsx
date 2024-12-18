@@ -167,7 +167,7 @@ function MembershipCard({
                   {/* {!!foundingMemberRedemptions
                     ? `${19 - foundingMemberRedemptions}/20 left`
                     : `19/20 left`} */}
-                    Only 18 left!
+                    Only 20 spots!
                 </p>
               </div>
             </div>

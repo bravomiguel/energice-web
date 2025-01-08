@@ -106,7 +106,7 @@ export async function subscriptionCheckoutSession(data: {
   try {
     checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
-      allow_promotion_codes: !founderCheckout ? true : undefined,
+      // allow_promotion_codes: !founderCheckout ? true : undefined,
       // customer_email: user.email,
       customer: profile.stripeCustomerId,
       line_items: [
@@ -120,7 +120,8 @@ export async function subscriptionCheckoutSession(data: {
       ],
       discounts: [
         {
-          coupon: founderCheckout ? process.env.COUPON_NEWYEAR_SPECIAL : undefined,
+          // coupon: founderCheckout ? process.env.COUPON_NEWYEAR_SPECIAL : undefined,
+          coupon: process.env.COUPON_NEWYEAR_SPECIAL,
         },
       ],
       success_url: `${origin}/profile?success=true`,

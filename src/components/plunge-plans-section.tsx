@@ -163,17 +163,19 @@ function MembershipCard({
                 <p className="text-3xl">$49</p>
                 <div className="h-8 border-[0.5px] border-zinc-600" />
                 <p className="text-xs text-zinc-600">
-                  Founding Member <br />
+                  {/* Founding Member <br /> */}
+                  New Year Special <br />
                   {/* {!!foundingMemberRedemptions
                     ? `${19 - foundingMemberRedemptions}/20 left`
                     : `19/20 left`} */}
-                    Only 20 spots!
+                    {/* Only 20 spots! */}
+                    (+ 2nd Month Free!)
                 </p>
               </div>
             </div>
-            <p className="text-xs text-zinc-600 pl-[148px]">
+            {/* <p className="text-xs text-zinc-600 pl-[148px]">
               Code: <span className="font-semibold">FOUNDER10</span>
-            </p>
+            </p> */}
           </div>
         ) : (
           <div className="space-y-1">

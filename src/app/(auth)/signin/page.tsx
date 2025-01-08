@@ -32,12 +32,16 @@ export default async function Page({
         {prelaunchCheckout ? (
           <div className='flex flex-col gap-2'>
             <H1 className="text-zinc-100 text-center flex flex-col">
-              <span className="text-lg font-semibold leading-6">Become a</span>
-              <span className="text-2xl font-bold">Founding Member</span>
+              <span className="text-2xl font-bold">New Year Special Offer</span>
             </H1>
-            <Subtitle className="text-zinc-100 text-base font-medium mb-4 text-center">
-              Only 20 spots available
-            </Subtitle>
+            <div>
+              <Subtitle className="text-zinc-100 text-base font-medium text-center">
+                Unlimited plunges for just $49/month
+              </Subtitle>
+              <Subtitle className="text-zinc-100 text-base font-medium mb-4 text-center">
+                2nd month free!
+              </Subtitle>
+            </div>
           </div>
         ) : (
           <H1 className="text-zinc-100 text-xl font-bold mb-4 text-center">

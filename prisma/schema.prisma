@@ -69,3 +69,12 @@ model Sweat440Member {
   email String  @id
   name  String?
 }
+
+model AdminUser {
+  id             String   @id @default(uuid())
+  name           String?
+  email          String?  @unique
+  hashedPassword String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}

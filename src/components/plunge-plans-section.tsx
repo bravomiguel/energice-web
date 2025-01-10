@@ -34,6 +34,7 @@ type TPlungePlansSection = {
   isSweat440Member?: boolean;
   foundingMemberRedemptions: number | null;
   subscriptionSuccess: boolean;
+  nonmemberCheckout: boolean;
 };
 
 export default function PlungePlansSection({
@@ -43,8 +44,8 @@ export default function PlungePlansSection({
   memberPayFailed,
   memberRenewing,
   isSweat440Member,
-  foundingMemberRedemptions,
   subscriptionSuccess,
+  nonmemberCheckout,
 }: TPlungePlansSection) {
   useEffect(() => {
     let timerId: NodeJS.Timeout;
@@ -60,6 +61,15 @@ export default function PlungePlansSection({
       }
     };
   }, []);
+
+  useEffect(() => {
+    const handleCheckout = async () => {
+      if (nonmemberCheckout) {
+        await subscriptionCheckoutSession({ sweat440MemberOption: false });
+      }
+    };
+    handleCheckout();
+  }, [nonmemberCheckout]);
 
   if (memberPayFailed)
     return (
@@ -95,7 +105,6 @@ export default function PlungePlansSection({
         <MembershipCard
           sweat440MemberOption={true}
           isSweat440Member={isSweat440Member}
-          foundingMemberRedemptions={foundingMemberRedemptions}
         />
       </section>
     );
@@ -110,7 +119,6 @@ export default function PlungePlansSection({
             <MembershipCard
               sweat440MemberOption={true}
               isSweat440Member={isSweat440Member}
-              foundingMemberRedemptions={foundingMemberRedemptions}
             />
           </CarouselItem>
           <CarouselItem className="basis-[87%]">
@@ -125,11 +133,9 @@ export default function PlungePlansSection({
 function MembershipCard({
   isSweat440Member,
   sweat440MemberOption,
-  foundingMemberRedemptions,
 }: {
   isSweat440Member?: boolean;
   sweat440MemberOption: boolean;
-  foundingMemberRedemptions?: number | null;
 }) {
   return (
     <Card className="w-full relative overflow-hidden bg-zinc-50">
@@ -168,8 +174,8 @@ function MembershipCard({
                   {/* {!!foundingMemberRedemptions
                     ? `${19 - foundingMemberRedemptions}/20 left`
                     : `19/20 left`} */}
-                    {/* Only 20 spots! */}
-                    (+ 2nd Month Free!)
+                  {/* Only 20 spots! */}
+                  (+ 2nd Month Free!)
                 </p>
               </div>
             </div>
@@ -185,16 +191,17 @@ function MembershipCard({
                 <div className="border border-red-900 w-full -rotate-[20deg] absolute" />
               </div>
               <div className="flex gap-2 items-center">
-                <p className="text-3xl">$99</p>
+                <p className="text-3xl">$69</p>
                 <div className="h-8 border-[0.5px] border-zinc-600" />
                 <p className="text-xs text-zinc-600">
-                  Early Bird <br /> Valid to Dec 31
+                  New Year Special <br />
+                  Valid to Jan 31
                 </p>
               </div>
             </div>
-            <p className="text-xs text-zinc-600 pl-[160px]">
+            {/* <p className="text-xs text-zinc-600 pl-[160px]">
               Code: <span className="font-semibold">EARLY10</span>
-            </p>
+            </p> */}
           </div>
         )}
       </CardContent>

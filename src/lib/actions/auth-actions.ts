@@ -13,12 +13,12 @@ import {
 import { deleteProfile } from './profile-actions';
 
 export async function signinWithEmail(
-  data: TSigninForm & { prelaunchCheckout: boolean },
+  data: TSigninForm & { nonmemberCheckout: boolean; memberCheckout: boolean },
 ) {
   // console.log({ data });
   // validation check
   const validatedData = signinSchema
-    .extend({ prelaunchCheckout: z.boolean() })
+    .extend({ nonmemberCheckout: z.boolean(), memberCheckout: z.boolean() })
     .safeParse(data);
 
   if (!validatedData.success) {
@@ -28,19 +28,21 @@ export async function signinWithEmail(
     };
   }
 
-  const { email, prelaunchCheckout } = validatedData.data;
+  const { email, nonmemberCheckout, memberCheckout } = validatedData.data;
 
   const supabase = await createServerClient();
 
   const origin = (await headers()).get('origin');
 
+  const emailRedirectTo = memberCheckout
+    ? `${origin}/api/auth/email-callback?memberCheckout=true&`
+    : nonmemberCheckout
+    ? `${origin}/api/auth/email-callback?nonmemberCheckout=true&`
+    : `${origin}/api/auth/email-callback?`;
+
   const { error } = await supabase.auth.signInWithOtp({
     email: email.toLowerCase(),
-    options: {
-      emailRedirectTo: prelaunchCheckout
-        ? `${origin}/api/auth/email-callback?prelaunchCheckout=true&`
-        : `${origin}/api/auth/email-callback?`,
-    },
+    options: { emailRedirectTo },
   });
 
   if (error) {
@@ -51,15 +53,18 @@ export async function signinWithEmail(
   }
 
   redirect(
-    prelaunchCheckout
-      ? '/signin?prelaunchCheckout=true&success=true'
+    nonmemberCheckout
+      ? '/signin?nonmemberCheckout=true&success=true'
       : '/signin?success=true',
   );
 }
 
-export async function signinWithGoogle(data: { prelaunchCheckout: boolean }) {
+export async function signinWithGoogle(data: {
+  nonmemberCheckout: boolean;
+  memberCheckout: boolean;
+}) {
   const validatedData = z
-    .object({ prelaunchCheckout: z.boolean() })
+    .object({ nonmemberCheckout: z.boolean(), memberCheckout: z.boolean() })
     .safeParse(data);
 
   if (!validatedData.success) {
@@ -69,19 +74,21 @@ export async function signinWithGoogle(data: { prelaunchCheckout: boolean }) {
     };
   }
 
-  const { prelaunchCheckout } = validatedData.data;
+  const { nonmemberCheckout, memberCheckout } = validatedData.data;
 
   const origin = (await headers()).get('origin');
 
   const supabase = await createServerClient();
 
+  const redirectTo = memberCheckout
+    ? `${origin}/api/auth/google-callback?memberCheckout=true`
+    : nonmemberCheckout
+    ? `${origin}/api/auth/google-callback?nonmemberCheckout=true`
+    : `${origin}/api/auth/google-callback`;
+
   const { data: dataOAuth, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: {
-      redirectTo: prelaunchCheckout
-        ? `${origin}/api/auth/google-callback?prelaunchCheckout=true`
-        : `${origin}/api/auth/google-callback`,
-    },
+    options: { redirectTo },
   });
 
   if (error) {

@@ -10,7 +10,8 @@ export async function GET(request: Request) {
   const code = searchParams.get('code');
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get('next') ?? '/';
-  const prelaunchCheckout = searchParams.get('prelaunchCheckout') === 'true';
+  const nonmemberCheckout = searchParams.get('nonmemberCheckout') === 'true';
+  const memberCheckout = searchParams.get('memberCheckout') === 'true';
 
   if (code) {
     const supabase = await createServerClient();
@@ -20,28 +21,52 @@ export async function GET(request: Request) {
       const isLocalEnv = process.env.NODE_ENV === 'development';
       if (isLocalEnv) {
         // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-        if (prelaunchCheckout) {
+        if (memberCheckout) {
           await createProfile();
           return NextResponse.redirect(
             `${origin}/partner-membership/${unitId}?unlimitedMembership=true&founderCheckout=true`,
           );
         }
+
+        if (nonmemberCheckout) {
+          await createProfile();
+          return NextResponse.redirect(
+            `${origin}/profile?nonmemberCheckout=true`,
+          );
+        }
+
         return NextResponse.redirect(`${origin}${next}`);
       } else if (forwardedHost) {
-        if (prelaunchCheckout) {
+        if (memberCheckout) {
           await createProfile();
           return NextResponse.redirect(
             `https://${forwardedHost}/partner-membership/${unitId}?unlimitedMembership=true&founderCheckout=true`,
           );
         }
+
+        if (nonmemberCheckout) {
+          await createProfile();
+          return NextResponse.redirect(
+            `https://${forwardedHost}/profile?nonmemberCheckout=true`,
+          );
+        }
+
         return NextResponse.redirect(`https://${forwardedHost}${next}`);
       } else {
-        if (prelaunchCheckout) {
+        if (memberCheckout) {
           await createProfile();
           return NextResponse.redirect(
             `${origin}/partner-membership/${unitId}?unlimitedMembership=true&founderCheckout=true`,
           );
         }
+
+        if (nonmemberCheckout) {
+          await createProfile();
+          return NextResponse.redirect(
+            `${origin}/profile?nonmemberCheckout=true`,
+          );
+        }
+
         return NextResponse.redirect(`${origin}${next}`);
       }
     }

@@ -12,7 +12,8 @@ export async function GET(request: NextRequest) {
   const token_hash = searchParams.get('token_hash');
   const type = searchParams.get('type') as EmailOtpType | null;
   const next = searchParams.get('next') ?? '/';
-  const prelaunchCheckout = searchParams.get('prelaunchCheckout') === 'true';
+  const nonmemberCheckout = searchParams.get('nonmemberCheckout') === 'true';
+  const memberCheckout = searchParams.get('memberCheckout') === 'true';
 
   if (token_hash && type) {
     const supabase = await createServerClient();
@@ -23,10 +24,18 @@ export async function GET(request: NextRequest) {
 
     if (!error) {
       // redirect user to specified redirect URL or root of app
-      if (prelaunchCheckout) {
+      if (memberCheckout) {
         await createProfile();
-        redirect(`/partner-membership/${unitId}?unlimitedMembership=true&founderCheckout=true`);
+        redirect(
+          `/partner-membership/${unitId}?unlimitedMembership=true&founderCheckout=true`,
+        );
       }
+
+      if (nonmemberCheckout) {
+        await createProfile();
+        redirect(`/profile?nonmemberCheckout=true`);
+      }
+
       redirect(next);
     }
   }

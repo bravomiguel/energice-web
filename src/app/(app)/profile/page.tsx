@@ -1,4 +1,13 @@
 import { unstable_noStore as noStore } from 'next/cache';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { IoArrowUndoSharp } from 'react-icons/io5';
 
 import DeleteAccountBtn from '@/components/buttons/delete-account-btn';
 import SignOutBtn from '@/components/buttons/sign-out-btn';
@@ -13,31 +22,21 @@ import { checkAuth, getOrCreateProfileById } from '@/lib/server-utils';
 import PlungeOffersSection from '@/components/plunge-offers-section';
 import { Badge } from '@/components/ui/badge';
 import Sweat440MembershipSection from '@/components/sweat440-membership-section';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { IoArrowUndoSharp } from 'react-icons/io5';
 import OnboardReturnBtn from '@/components/buttons/onboard-return-btn';
-import Image from 'next/image';
-import { BsFillBox2HeartFill } from 'react-icons/bs';
-import { BsLightningChargeFill } from 'react-icons/bs';
+import LoadingSpinner from '@/components/loaders/loading-spinner';
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams: Promise<{ success?: string }>;
+  searchParams: Promise<{ success?: string; nonmemberCheckout?: string }>;
 }) {
   noStore();
 
   const params = await searchParams;
   const subscriptionSuccess = params.success === 'true';
+  const nonmemberCheckout = params.nonmemberCheckout === 'true';
 
   const user = await checkAuth();
   const profile = await getOrCreateProfileById(user.id);
@@ -66,6 +65,14 @@ export default async function Page({
   return (
     <>
       <main className="relative flex-1 flex flex-col gap-8">
+        {nonmemberCheckout && (
+          <LoadingSpinner
+            className="absolute -right-1 -top-4 flex flex-col gap-4 h-[101vh] justify-center items-center z-50 w-[105%] bg-zinc-100"
+            size={30}
+            color="text-indigo-700"
+          />
+        )}
+
         <div className="flex flex-col gap-1">
           {profile.name ? (
             <>
@@ -118,6 +125,7 @@ export default async function Page({
           isSweat440Member={isSweat440Member}
           foundingMemberRedemptions={foundingMemberRedemptions ?? null}
           subscriptionSuccess={subscriptionSuccess}
+          nonmemberCheckout={nonmemberCheckout}
         />
 
         <PlungeOffersSection

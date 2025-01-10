@@ -120,8 +120,10 @@ export async function subscriptionCheckoutSession(data: {
       ],
       discounts: [
         {
-          // coupon: founderCheckout ? process.env.COUPON_NEWYEAR_SPECIAL : undefined,
-          coupon: process.env.COUPON_NEWYEAR_SPECIAL,
+          coupon: sweat440MemberOption
+            ? process.env.COUPON_NEWYEAR_SPECIAL
+            : process.env.COUPON_NEWYEAR_SPECIAL_NONMEMBER,
+          // coupon: process.env.COUPON_NEWYEAR_SPECIAL,
         },
       ],
       success_url: `${origin}/profile?success=true`,

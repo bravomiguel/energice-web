@@ -11,13 +11,14 @@ export default async function Page({
 }: {
   searchParams: Promise<{
     success?: string;
-    confirmError?: string;
-    prelaunchCheckout?: string;
+    memberCheckout?: string;
+    nonmemberCheckout?: string;
   }>;
 }) {
   const params = await searchParams;
   const signupSuccess = params.success === 'true';
-  const prelaunchCheckout = params.prelaunchCheckout === 'true';
+  const nonmemberCheckout = params.nonmemberCheckout === 'true';
+  const memberCheckout = params.memberCheckout === 'true';
 
   return (
     <main className="flex flex-col gap-5 justify-center items-center min-h-screen w-screen bg-custom-gradient px-6">
@@ -29,21 +30,44 @@ export default async function Page({
           </p>
         </div>
 
-        {prelaunchCheckout ? (
-          <div className='flex flex-col gap-2'>
+        {nonmemberCheckout && (
+          <div className="flex flex-col gap-2">
             <H1 className="text-zinc-100 text-center flex flex-col">
               <span className="text-2xl font-bold">New Year Special Offer</span>
             </H1>
             <div>
               <Subtitle className="text-zinc-100 text-base font-medium text-center">
-                Unlimited plunges for just $49/month
+                Unlimited plunges for just{' '}
               </Subtitle>
-              <Subtitle className="text-zinc-100 text-base font-medium mb-4 text-center">
-                2nd month free!
+              <Subtitle className="text-zinc-100 text-2xl font-medium mb-4 text-center">
+                <span className="line-through text-lg">$149</span> $69
+                <span className="text-lg">/month</span>
               </Subtitle>
             </div>
           </div>
-        ) : (
+        )}
+
+        {memberCheckout && (
+          <div className="flex flex-col gap-2">
+            <H1 className="text-zinc-100 text-center flex flex-col">
+              <span className="text-2xl font-bold">New Year Special Offer</span>
+            </H1>
+            <div>
+              <Subtitle className="text-zinc-100 text-base font-medium text-center">
+                Unlimited plunges for just{' '}
+              </Subtitle>
+              <Subtitle className="text-zinc-100 text-2xl font-medium text-center mb-2">
+                <span className="line-through text-lg">$99</span> $49
+                <span className="text-lg">/month</span>
+              </Subtitle>
+              <Subtitle className="text-zinc-100 text-base font-medium text-center mb-4">
+                + 2nd Month Free!
+              </Subtitle>
+            </div>
+          </div>
+        )}
+
+        {!memberCheckout && !nonmemberCheckout && (
           <H1 className="text-zinc-100 text-xl font-bold mb-4 text-center">
             Log in or create an account
           </H1>
@@ -58,7 +82,10 @@ export default async function Page({
           </div>
         )}
 
-        <SigninForm prelaunchCheckout={prelaunchCheckout} />
+        <SigninForm
+          nonmemberCheckout={nonmemberCheckout}
+          memberCheckout={memberCheckout}
+        />
 
         <div className="mt-3 text-xs text-center peer-disabled:cursor-not-allowed peer-disabled:opacity-70 text-zinc-200/70">
           {`By using the app, you agree to the `} <br />

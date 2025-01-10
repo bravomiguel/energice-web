@@ -13,9 +13,11 @@ import { Icons } from '../ui/icons';
 import { Mail } from 'lucide-react';
 
 export default function SigninForm({
-  prelaunchCheckout,
+  nonmemberCheckout,
+  memberCheckout,
 }: {
-  prelaunchCheckout: boolean;
+  nonmemberCheckout: boolean;
+  memberCheckout: boolean;
 }) {
   const {
     register,
@@ -35,7 +37,10 @@ export default function SigninForm({
 
   const handleGoogleSignin = async () => {
     startTransition(async () => {
-      const response = await signinWithGoogle({ prelaunchCheckout });
+      const response = await signinWithGoogle({
+        nonmemberCheckout,
+        memberCheckout,
+      });
       if (response?.error) {
         console.error({ error: response.error });
         setGoogleSigninError(response.error);
@@ -45,8 +50,12 @@ export default function SigninForm({
   };
 
   const onSubmit = handleSubmit(async (data) => {
-    // console.log({...data, prelaunchCheckout});
-    const response = await signinWithEmail({ ...data, prelaunchCheckout });
+    // console.log({...data, nonmemberCheckout});
+    const response = await signinWithEmail({
+      ...data,
+      nonmemberCheckout,
+      memberCheckout,
+    });
     if (response?.error) {
       console.error({ error: response.error });
       setSignupError(response.error);

@@ -77,7 +77,7 @@ export async function plungeCheckoutSession(data: {
 
 export async function subscriptionCheckoutSession(data: {
   sweat440MemberOption: boolean;
-  founderCheckout?: boolean;
+  allowPromoCodes?: boolean;
 }) {
   const user = await checkAuth();
 
@@ -85,7 +85,7 @@ export async function subscriptionCheckoutSession(data: {
   const validatedData = z
     .object({
       sweat440MemberOption: z.boolean(),
-      founderCheckout: z.union([z.boolean(), z.undefined()]),
+      allowPromoCodes: z.union([z.boolean(), z.undefined()]),
     })
     .safeParse(data);
 
@@ -95,7 +95,7 @@ export async function subscriptionCheckoutSession(data: {
     };
   }
 
-  const { sweat440MemberOption, founderCheckout } = validatedData.data;
+  const { sweat440MemberOption, allowPromoCodes } = validatedData.data;
 
   const profile = await getOrCreateProfileById(user.id);
 
@@ -106,7 +106,7 @@ export async function subscriptionCheckoutSession(data: {
   try {
     checkoutSession = await stripe.checkout.sessions.create({
       mode: 'subscription',
-      // allow_promotion_codes: !founderCheckout ? true : undefined,
+      allow_promotion_codes: allowPromoCodes ? true : undefined,
       // customer_email: user.email,
       customer: profile.stripeCustomerId,
       line_items: [
@@ -120,7 +120,9 @@ export async function subscriptionCheckoutSession(data: {
       ],
       discounts: [
         {
-          coupon: sweat440MemberOption
+          coupon: allowPromoCodes
+            ? undefined
+            : sweat440MemberOption
             ? process.env.COUPON_NEWYEAR_SPECIAL
             : process.env.COUPON_NEWYEAR_SPECIAL_NONMEMBER,
           // coupon: process.env.COUPON_NEWYEAR_SPECIAL,

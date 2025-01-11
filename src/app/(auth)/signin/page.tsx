@@ -33,15 +33,15 @@ export default async function Page({
         {nonmemberCheckout && (
           <div className="flex flex-col gap-2">
             <H1 className="text-zinc-100 text-center flex flex-col">
-              <span className="text-2xl font-bold">New Year Special Offer</span>
+              <span className="text-2xl font-bold">New Year Special</span>
             </H1>
             <div>
               <Subtitle className="text-zinc-100 text-base font-medium text-center">
-                Unlimited plunges for just{' '}
+                Unlimited plunges
               </Subtitle>
               <Subtitle className="text-zinc-100 text-2xl font-medium mb-4 text-center">
                 <span className="line-through text-lg">$149</span> $69
-                <span className="text-lg">/month</span>
+                <span className="text-base">/month</span>
               </Subtitle>
             </div>
           </div>
@@ -50,18 +50,18 @@ export default async function Page({
         {memberCheckout && (
           <div className="flex flex-col gap-2">
             <H1 className="text-zinc-100 text-center flex flex-col">
-              <span className="text-2xl font-bold">New Year Special Offer</span>
+              <span className="text-2xl font-bold">New Year Special</span>
             </H1>
             <div>
               <Subtitle className="text-zinc-100 text-base font-medium text-center">
-                Unlimited plunges for just{' '}
+                Unlimited plunges
               </Subtitle>
               <Subtitle className="text-zinc-100 text-2xl font-medium text-center mb-2">
                 <span className="line-through text-lg">$99</span> $49
-                <span className="text-lg">/month</span>
+                <span className="text-base">/month</span>
               </Subtitle>
               <Subtitle className="text-zinc-100 text-base font-medium text-center mb-4">
-                + 2nd Month Free!
+                + 2nd month free!
               </Subtitle>
             </div>
           </div>

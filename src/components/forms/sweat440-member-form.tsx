@@ -60,11 +60,12 @@ export default function PartnerMemberForm({
       toast.success('SWEAT440 membership confirmed');
       setRedirectingToCheckout(() => true);
       await sleep(1000);
-      if (founderCheckout) {
-        await subscriptionCheckoutSession({ sweat440MemberOption: true, founderCheckout: true });
-      } else {
-        await subscriptionCheckoutSession({ sweat440MemberOption: true });
-      }
+      await subscriptionCheckoutSession({ sweat440MemberOption: true });
+      // if (founderCheckout) {
+      //   await subscriptionCheckoutSession({ sweat440MemberOption: true, founderCheckout: true });
+      // } else {
+      //   await subscriptionCheckoutSession({ sweat440MemberOption: true });
+      // }
     } else if (extraCredit) {
       toast.success('Extra credit added');
       await sleep(4000);

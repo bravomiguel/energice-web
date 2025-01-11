@@ -65,7 +65,7 @@ export default function PlungePlansSection({
   useEffect(() => {
     const handleCheckout = async () => {
       if (nonmemberCheckout) {
-        await subscriptionCheckoutSession({ sweat440MemberOption: false });
+        await subscriptionCheckoutSession({ sweat440MemberOption: false, allowPromoCodes: true });
       }
     };
     handleCheckout();
@@ -194,13 +194,14 @@ function MembershipCard({
                 <p className="text-3xl">$69</p>
                 <div className="h-8 border-[0.5px] border-zinc-600" />
                 <p className="text-xs text-zinc-600">
-                  New Year Special <br />
-                  Valid to Jan 31
+                  New Year Special
+                  {/* <br /> */}
+                  {/* Valid to Jan 31 */}
                 </p>
               </div>
             </div>
             {/* <p className="text-xs text-zinc-600 pl-[160px]">
-              Code: <span className="font-semibold">EARLY10</span>
+              Code: <span className="font-semibold">NEWYEAR10</span>
             </p> */}
           </div>
         )}

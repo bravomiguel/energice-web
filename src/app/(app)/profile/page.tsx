@@ -67,7 +67,7 @@ export default async function Page({
       <main className="relative flex-1 flex flex-col gap-8">
         {nonmemberCheckout && (
           <LoadingSpinner
-            className="absolute -right-1 -top-4 flex flex-col gap-4 h-[101vh] justify-center items-center z-50 w-[105%] bg-zinc-100"
+            className="absolute right-0 -top-4 flex flex-col gap-4 h-[101vh] justify-center items-center z-50 w-full bg-zinc-100"
             size={30}
             color="text-indigo-700"
           />

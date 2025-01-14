@@ -266,7 +266,7 @@ function ManageSubscriptionOption({
         <CardDescription className="text-sm">
           {memberPayFailed
             ? `The last subscription payment failed. Please review your billing details.`
-            : `You've got unlimited access! Reactivate your membership at no additional cost.`}
+            : `You've got unlimited access! Check your member details below.`}
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-2"></CardContent>

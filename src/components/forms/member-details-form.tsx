@@ -77,7 +77,7 @@ export default function MemberDetailsForm({ userName }: { userName?: string }) {
           disabled={!isValid || isSubmitting}
           isLoading={isSubmitting || (isSubmitSuccessful && !!errors)}
         >
-          Submit
+          Continue
         </Button>
       </BottomNav>
     </form>

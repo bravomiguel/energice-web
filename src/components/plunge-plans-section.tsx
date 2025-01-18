@@ -65,7 +65,7 @@ export default function PlungePlansSection({
   useEffect(() => {
     const handleCheckout = async () => {
       if (nonmemberCheckout) {
-        await subscriptionCheckoutSession({ sweat440MemberOption: false, allowPromoCodes: true });
+        await subscriptionCheckoutSession({ sweat440MemberOption: false });
       }
     };
     handleCheckout();
@@ -195,8 +195,8 @@ function MembershipCard({
                 <div className="h-8 border-[0.5px] border-zinc-600" />
                 <p className="text-xs text-zinc-600">
                   New Year Special
-                  {/* <br /> */}
-                  {/* Valid to Jan 31 */}
+                  <br />
+                  Valid till Jan 31
                 </p>
               </div>
             </div>

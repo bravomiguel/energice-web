@@ -65,7 +65,10 @@ export default function PlungePlansSection({
   useEffect(() => {
     const handleCheckout = async () => {
       if (nonmemberCheckout) {
-        await subscriptionCheckoutSession({ sweat440MemberOption: false });
+        await subscriptionCheckoutSession({
+          sweat440MemberOption: false,
+          allowPromoCodes: true,
+        });
       }
     };
     handleCheckout();
@@ -212,7 +215,10 @@ function MembershipCard({
           sweat440MemberOption={sweat440MemberOption}
           isSweat440Member={isSweat440Member}
           checkoutAction={async () =>
-            subscriptionCheckoutSession({ sweat440MemberOption })
+            subscriptionCheckoutSession({
+              sweat440MemberOption,
+              allowPromoCodes: !sweat440MemberOption,
+            })
           }
         >
           Get unlimited

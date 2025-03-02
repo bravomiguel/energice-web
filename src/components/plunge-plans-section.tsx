@@ -113,24 +113,26 @@ export default function PlungePlansSection({
     );
   }
 
-  return (
-    <section className="space-y-4">
-      <H2 className="mb-3">Memberships</H2>
-      <Carousel className="w-full mx-auto relative z-10">
-        <CarouselContent>
-          <CarouselItem className="basis-[87%]">
-            <MembershipCard
-              sweat440MemberOption={true}
-              isSweat440Member={isSweat440Member}
-            />
-          </CarouselItem>
-          <CarouselItem className="basis-[87%]">
-            <MembershipCard sweat440MemberOption={false} />
-          </CarouselItem>
-        </CarouselContent>
-      </Carousel>
-    </section>
-  );
+  // return (
+  //   <section className="space-y-4">
+  //     <H2 className="mb-3">Memberships</H2>
+  //     <Carousel className="w-full mx-auto relative z-10">
+  //       <CarouselContent>
+  //         <CarouselItem className="basis-[87%]">
+  //           <MembershipCard
+  //             sweat440MemberOption={true}
+  //             isSweat440Member={isSweat440Member}
+  //           />
+  //         </CarouselItem>
+  //         <CarouselItem className="basis-[87%]">
+  //           <MembershipCard sweat440MemberOption={false} />
+  //         </CarouselItem>
+  //       </CarouselContent>
+  //     </Carousel>
+  //   </section>
+  // );
+
+  return null;
 }
 
 function MembershipCard({
@@ -281,7 +283,7 @@ function ManageSubscriptionOption({
           {memberPeriodEnd && !memberPayFailed ? (
             <p className="flex gap-1 w-full justify-end items-center text-sm">
               <span className="font-semibold">
-                {memberRenewing ? `Renews on ` : `Canceled. Expires on `}
+                {memberRenewing ? `Renews on ` : `Expires on `}
                 {memberPeriodEnd.toLocaleDateString('en-US', {
                   month: 'short',
                   day: '2-digit',
@@ -294,7 +296,7 @@ function ManageSubscriptionOption({
               )}
             </p>
           ) : null}
-          <div className="flex flex-col w-full">
+          {/* <div className="flex flex-col w-full">
             <CheckoutBtn
               className={cn('bg-cyan-700 hover:bg-cyan-700/90', {
                 'bg-red-800 hover:bg-red-800/90': memberPayFailed,
@@ -305,7 +307,7 @@ function ManageSubscriptionOption({
             >
               {memberRenewing ? `Manage billing` : `Reactivate membership`}
             </CheckoutBtn>
-          </div>
+          </div> */}
         </div>
       </CardFooter>
     </Card>

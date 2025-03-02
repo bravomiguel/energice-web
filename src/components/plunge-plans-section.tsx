@@ -113,26 +113,26 @@ export default function PlungePlansSection({
     );
   }
 
-  // return (
-  //   <section className="space-y-4">
-  //     <H2 className="mb-3">Memberships</H2>
-  //     <Carousel className="w-full mx-auto relative z-10">
-  //       <CarouselContent>
-  //         <CarouselItem className="basis-[87%]">
-  //           <MembershipCard
-  //             sweat440MemberOption={true}
-  //             isSweat440Member={isSweat440Member}
-  //           />
-  //         </CarouselItem>
-  //         <CarouselItem className="basis-[87%]">
-  //           <MembershipCard sweat440MemberOption={false} />
-  //         </CarouselItem>
-  //       </CarouselContent>
-  //     </Carousel>
-  //   </section>
-  // );
+  return (
+    <section className="space-y-4">
+      <H2 className="mb-3">Memberships</H2>
+      <Carousel className="w-full mx-auto relative z-10">
+        <CarouselContent>
+          <CarouselItem className="basis-[87%]">
+            <MembershipCard
+              sweat440MemberOption={true}
+              isSweat440Member={isSweat440Member}
+            />
+          </CarouselItem>
+          <CarouselItem className="basis-[87%]">
+            <MembershipCard sweat440MemberOption={false} />
+          </CarouselItem>
+        </CarouselContent>
+      </Carousel>
+    </section>
+  );
 
-  return null;
+  // return null;
 }
 
 function MembershipCard({
@@ -274,7 +274,7 @@ function ManageSubscriptionOption({
         <CardDescription className="text-sm">
           {memberPayFailed
             ? `The last subscription payment failed. Please review your billing details.`
-            : `You've got unlimited access! Check your member details below.`}
+            : `You've got unlimited access!`}
         </CardDescription>
       </CardHeader>
       <CardContent className="pb-2"></CardContent>
